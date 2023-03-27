@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="PodTube.DataAccess.Model.Channel">
+    <Position X="13.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACgACIAAAgAAAAAAAAAAQAAAAAABAAAAAAAAAAAAg=</HashCode>
+      <FileName>Model\Channel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Owner" />
+      <Property Name="Picture" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Videos" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="PodTube.DataAccess.Model.File">
+    <Position X="2.5" Y="3.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Model\File.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PodTube.DataAccess.Model.Frame">
+    <Position X="5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAABBAEAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Model\Frame.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="File" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="PodTube.DataAccess.Model.Playlist">
+    <Position X="13.25" Y="4.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACgACIAAAgAAAAAAAAAAQAAAAAABAAAAAAAAAAAAg=</HashCode>
+      <FileName>Model\Playlist.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Picture" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Videos" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="PodTube.DataAccess.Model.Sound">
+    <Position X="5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Model\Sound.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="File" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="PodTube.DataAccess.Model.User">
+    <Position X="9.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAASAAAAAAAEAAAAAAAAAAQAAAAAAAAABACAAAAAAAA=</HashCode>
+      <FileName>Model\User.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ProfilePicture" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Favorites" />
+      <Property Name="Playlists" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="PodTube.DataAccess.Model.Video">
+    <Position X="7.25" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAQgAAAgAAAAAAAACAQAAAAAAAAABAQAAAAAAAE=</HashCode>
+      <FileName>Model\Video.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Channel" />
+      <Property Name="Sound" />
+      <Property Name="Thumbnail" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Frames" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

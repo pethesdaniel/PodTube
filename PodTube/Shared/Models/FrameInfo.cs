@@ -24,7 +24,7 @@ namespace PodTube.Shared.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class Frame : IEquatable<Frame>
+    public partial class FrameInfo : IEquatable<FrameInfo>
     { 
         [Required]
         [DataMember(Name="url")]
@@ -72,7 +72,7 @@ namespace PodTube.Shared.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Frame)obj);
+            return obj.GetType() == GetType() && Equals((FrameInfo)obj);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace PodTube.Shared.Models
         /// </summary>
         /// <param name="other">Instance of Frame to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(Frame other)
+        public bool Equals(FrameInfo other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;

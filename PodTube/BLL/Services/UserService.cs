@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PodTube.BLL.Converters;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using PodTube.DataAccess.Contexts;
 using PodTube.Shared.Models;
 using System;
@@ -12,15 +13,17 @@ namespace PodTube.BLL.Services {
     public class UserService {
 
         private PodTubeDbContext dbContext;
-        public UserService(PodTubeDbContext dbContext) {
+        private IMapper mapper;
+        public UserService(PodTubeDbContext dbContext, IMapper mapper) {
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
         public UserInfo? GetUserById(long id) {
             return dbContext.Users
                 .Include(u => u.ProfilePicture)
                 .Where(u => u.Id == id)
-                .Select(u => u.ToUserInfoDto())
+                .ProjectTo<UserInfo>(mapper.ConfigurationProvider)
                 .FirstOrDefault();
         }
     }

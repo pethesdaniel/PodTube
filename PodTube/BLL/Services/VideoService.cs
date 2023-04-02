@@ -6,34 +6,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using PodTube.BLL.Converters;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 namespace PodTube.BLL.Services {
     public class VideoService {
         private PodTubeDbContext dbContext;
-        public VideoService(PodTubeDbContext dbContext) {
+        private IMapper mapper;
+        public VideoService(PodTubeDbContext dbContext, IMapper mapper) {
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
         public List<VideoInfo> GetAllVideos() {
-            var videos = dbContext.Video.Select(v => new VideoInfo {
-                Id = v.Id,
-                Name = v.Name,
-                Description = v.Description ?? string.Empty,
-                Cover = v.Thumbnail.ResourceURI ?? string.Empty,
-            });
-            return videos.ToList();
+            return dbContext.Video.ProjectTo<VideoInfo>(mapper.ConfigurationProvider).ToList();
         }
 
         public FullVideoInfo? GetVideoById(long id) {
-            return dbContext.Video
+            var video = dbContext.Video
                 .Include(v => v.Thumbnail)
-                .Include(v=>v.Frames)
+                .Include(v => v.Frames)
                 .ThenInclude(f => f.File)
-                .Include(v=>v.Sound)
+                .Include(v => v.Sound)
                 .ThenInclude(s => s.File)
                 .Where(v => v.Id == id)
-                .FirstOrDefault()?.ToFullVideoInfoDto() ?? null;
+                .FirstOrDefault();
+            return mapper.Map<FullVideoInfo>(video);
         }
     }
 }

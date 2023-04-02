@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.OpenApi.Models;
 using PodTube.BLL.Services;
 using PodTube.DataAccess.Factory;
+using AutoMapper;
+using PodTube.BLL.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,8 @@ builder.Services.AddRazorPages();
 
 builder.Services.SeedDbWithData(builder.Configuration);
 builder.Services.RegisterDbContext(builder.Configuration);
+
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<DbToDtoProfile>());
 
 builder.Services.AddSwaggerGen(c => {
                     c.SwaggerDoc("1.0.0", new OpenApiInfo {

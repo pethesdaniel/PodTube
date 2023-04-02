@@ -39,7 +39,7 @@ namespace PodTube.Shared.Models
         [Required]
 
         [DataMember(Name="frames")]
-        public List<Frame> Frames { get; set; }
+        public List<FrameInfo> Frames { get; set; }
 
         /// <summary>
         /// Gets or Sets Audio

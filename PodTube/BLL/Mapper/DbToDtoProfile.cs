@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace PodTube.BLL.Mapper {
     public class DbToDtoProfile : Profile {
-
         public DbToDtoProfile() {
             /*
                 Id = channel.Id,
@@ -62,6 +61,11 @@ namespace PodTube.BLL.Mapper {
             CreateMap<Video, FullVideoInfo>().ForMember(dest => dest.VideoInfo, opt => opt.MapFrom(video => video))
                 .ForMember(dest=>dest.Audio, opt=>opt.MapFrom(video=>video.Sound));
             CreateMap<Sound, string>().ConvertUsing(audio => audio.File.ResourceURI);
+
+
+            CreateMap<Playlist, PlaylistInfo>().ForMember(dest => dest.Cover, opt => opt.MapFrom(playlist => playlist.Picture.ResourceURI));
+            CreateMap<Playlist, PlaylistInfoWithOwner>().ForMember(dest => dest.Cover, opt => opt.MapFrom(playlist => playlist.Picture.ResourceURI));
+            CreateMap<Playlist, FullPlaylistInfo>().ForMember(dest => dest.PlaylistInfo, opt => opt.MapFrom(playlist => playlist));
         }
     }
 }

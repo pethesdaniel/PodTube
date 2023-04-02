@@ -19,7 +19,7 @@ namespace PodTube.DataAccess.Contexts {
             modelBuilder.Entity<Entities.Channel>().ToTable("Channel");
             modelBuilder.Entity<Entities.File>().ToTable("File");
             modelBuilder.Entity<Entities.Frame>().ToTable("Frame");
-            modelBuilder.Entity<Entities.Playlist>().ToTable("Playlist").HasMany(e=>e.Videos).WithMany();
+            modelBuilder.Entity<Entities.Playlist>().ToTable("Playlist");
             modelBuilder.Entity<Entities.Sound>().ToTable("Sound");
             modelBuilder.Entity<Entities.User>().ToTable("User");
             modelBuilder.Entity<Entities.Video>().ToTable("Video");

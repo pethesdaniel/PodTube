@@ -77,6 +77,25 @@ namespace PodTube.DataAccess.Seed {
 
             context.AddRange(video);
 
+            var playlist = new Playlist[] {
+                new Playlist {
+                   Name = "This is a playlist",
+                   Description = "My favourite videos",
+                   Picture = files[5],
+                   Videos = { video[0] },
+                   Owner = users[0]
+                },
+                new Playlist {
+                   Name = "This is a second playlist",
+                   Description = "My favourite videos again",
+                   Picture = files[5],
+                   Videos = { video[0], video[1] },
+                   Owner = users[1]
+                },
+            };
+
+            context.AddRange(playlist);
+
             context.SaveChanges();
         }
     }

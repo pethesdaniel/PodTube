@@ -13,7 +13,7 @@ namespace PodTube.DataAccess.Entities
         public string Name { get; set; } = null!;
 
         public virtual File? ProfilePicture { get; set; }
-        public int? ProfilePictureId { get; set; }
+        public long? ProfilePictureId { get; set; }
 
         public virtual List<Channel> Favorites { get; set; } = new();
 

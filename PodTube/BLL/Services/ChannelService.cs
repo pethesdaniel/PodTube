@@ -39,9 +39,9 @@ namespace PodTube.BLL.Services {
                 ?? null;
         }
 
-        public PagedChannelList GetChannelsPaged(int page, int limit) {
-            var pagedChannels = dbContext.Channels.ToPagedList(channel => channel.Id, page, limit);
-            return mapper.Map<PagedChannelList>(pagedChannels);
+        public PagedListDto<ChannelInfo> GetChannelsPaged(int page, int limit) {
+            IPagedList<ChannelInfo> pagedChannels = dbContext.Channels.ProjectTo<ChannelInfo>(mapper.ConfigurationProvider).ToPagedList(channel => channel.Id, page, limit);
+            return mapper.Map<PagedListDto<ChannelInfo>>(pagedChannels);
         }
     }
 }

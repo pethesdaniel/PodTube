@@ -7,14 +7,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using X.PagedList;
+using static PodTube.BLL.Mapper.PagedListProfile;
 
 namespace PodTube.BLL.Mapper {
     public class PagedListProfile : Profile {
         public PagedListProfile() {
-            CreateMap<IPagedList<Channel>, PagedChannelList>().ForMember(dest => dest.Limit, opt => opt.MapFrom(pl => pl.PageSize))
-                .ForMember(dest => dest.Page, opt => opt.MapFrom(pl => pl.PageNumber))
-                .ForMember(dest => dest.Total, opt => opt.MapFrom(pl => pl.PageCount))
-                .ForMember(dest => dest.Channels, opt => opt.MapFrom(pl => pl));
+            CreateMap(typeof(IPagedList<>), typeof(PagedListDto<>)).ConvertUsing(typeof(PagedListConverter<>));
+        }
+
+        public class PagedListConverter<T> : ITypeConverter<IPagedList<T>, PagedListDto<T>> {
+            public PagedListConverter() { }
+            public PagedListDto<T> Convert(IPagedList<T> source, PagedListDto<T> destination, ResolutionContext context) {
+                return new PagedListDto<T> {
+                    Limit = source.PageSize,
+                    Total = source.PageCount,
+                    Page = source.PageNumber,
+                    Content = source.ToList()
+                };
+            }
         }
     }
 }

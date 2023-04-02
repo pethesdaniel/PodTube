@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PodTube.DataAccess.Contexts;
 
@@ -11,9 +12,11 @@ using PodTube.DataAccess.Contexts;
 namespace PodTube.DataAccess.Migrations
 {
     [DbContext(typeof(PodTubeDbContext))]
-    partial class PodTubeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230402232315_FixFKs")]
+    partial class FixFKs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,13 +27,13 @@ namespace PodTube.DataAccess.Migrations
 
             modelBuilder.Entity("PlaylistVideo", b =>
                 {
-                    b.Property<long>("PlaylistsId")
+                    b.Property<long>("PlaylistId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("VideosId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("PlaylistsId", "VideosId");
+                    b.HasKey("PlaylistId", "VideosId");
 
                     b.HasIndex("VideosId");
 
@@ -135,14 +138,17 @@ namespace PodTube.DataAccess.Migrations
                     b.Property<long?>("OwnerId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("PictureId")
+                    b.Property<int?>("PictureId")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("PictureId1")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
 
-                    b.HasIndex("PictureId");
+                    b.HasIndex("PictureId1");
 
                     b.ToTable("Playlist", (string)null);
                 });
@@ -229,7 +235,7 @@ namespace PodTube.DataAccess.Migrations
                 {
                     b.HasOne("PodTube.DataAccess.Entities.Playlist", null)
                         .WithMany()
-                        .HasForeignKey("PlaylistsId")
+                        .HasForeignKey("PlaylistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -278,7 +284,7 @@ namespace PodTube.DataAccess.Migrations
 
                     b.HasOne("PodTube.DataAccess.Entities.File", "Picture")
                         .WithMany()
-                        .HasForeignKey("PictureId");
+                        .HasForeignKey("PictureId1");
 
                     b.Navigation("Owner");
 

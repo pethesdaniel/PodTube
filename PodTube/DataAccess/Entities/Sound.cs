@@ -11,7 +11,7 @@ namespace PodTube.DataAccess.Entities
         public long Id { get; set; }
 
         public virtual File File { get; set; } = null!;
-        public int FileId { get; set; }
+        public long FileId { get; set; }
         
     }
 }

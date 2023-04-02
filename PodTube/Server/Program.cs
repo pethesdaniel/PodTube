@@ -17,7 +17,8 @@ builder.Services.AddRazorPages();
 builder.Services.SeedDbWithData(builder.Configuration);
 builder.Services.RegisterDbContext(builder.Configuration);
 
-builder.Services.AddAutoMapper(cfg => { cfg.AddProfile<DbToDtoProfile>(); cfg.AddProfile<PagedListProfile>(); });
+builder.Services.AddAutoMapper(typeof(DbToDtoProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(PagedListProfile).Assembly);
 
 builder.Services.AddSwaggerGen(c => {
                     c.SwaggerDoc("1.0.0", new OpenApiInfo {
@@ -35,6 +36,7 @@ builder.Services.AddSwaggerGen(c => {
 builder.Services.AddScoped<VideoService>();
 builder.Services.AddScoped<ChannelService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<PlaylistService>();
 
 var app = builder.Build();
 

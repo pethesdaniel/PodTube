@@ -11,10 +11,10 @@ namespace PodTube.DataAccess.Entities {
 
         public string? Description { get; set; }
         public virtual User? Owner { get; set; }
-        public int? OwnerId { get; set; }
+        public long? OwnerId { get; set; }
 
         public virtual File? Picture { get; set; }
-        public int? PictureId { get; set; }
+        public long? PictureId { get; set; }
 
         public virtual List<Video> Videos { get; set; } = new();
     }

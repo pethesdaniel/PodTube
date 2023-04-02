@@ -17,7 +17,7 @@ builder.Services.AddRazorPages();
 builder.Services.SeedDbWithData(builder.Configuration);
 builder.Services.RegisterDbContext(builder.Configuration);
 
-builder.Services.AddAutoMapper(cfg => cfg.AddProfile<DbToDtoProfile>());
+builder.Services.AddAutoMapper(cfg => { cfg.AddProfile<DbToDtoProfile>(); cfg.AddProfile<PagedListProfile>(); });
 
 builder.Services.AddSwaggerGen(c => {
                     c.SwaggerDoc("1.0.0", new OpenApiInfo {

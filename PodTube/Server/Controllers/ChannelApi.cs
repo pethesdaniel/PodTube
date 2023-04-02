@@ -117,7 +117,7 @@ namespace PodTube.Controllers
         [ValidateModelState]
         [SwaggerOperation("ChannelGet")]
         [SwaggerResponse(statusCode: 200, type: typeof(PagedChannelList), description: "Successful operation")]
-        public virtual IActionResult ChannelGet([FromQuery][Required()]long page, [FromQuery][Required()]long limit)
+        public virtual IActionResult ChannelGet([FromQuery][Required()]int page, [FromQuery][Required()]int limit)
         {
             var result = ChannelService.GetChannelsPaged(page, limit);
 

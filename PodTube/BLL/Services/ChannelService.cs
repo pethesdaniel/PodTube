@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace PodTube.BLL.Services {
     public class ChannelService {
@@ -38,16 +39,9 @@ namespace PodTube.BLL.Services {
                 ?? null;
         }
 
-        public PagedChannelList GetChannelsPaged(long page, long limit) {
-            var startId = (page - 1) * limit;
-            var endId = page * limit;
-            var channels = dbContext.Channels.Where(c => c.Id > startId && c.Id <= endId).ProjectTo<ChannelInfo>(mapper.ConfigurationProvider);
-            return new PagedChannelList {
-                Channels = channels.ToList(),
-                Limit = limit,
-                Page = page,
-                Total = (long)Math.Ceiling(dbContext.Channels.Count() / ((decimal)limit))
-            };
+        public PagedChannelList GetChannelsPaged(int page, int limit) {
+            var pagedChannels = dbContext.Channels.ToPagedList(channel => channel.Id, page, limit);
+            return mapper.Map<PagedChannelList>(pagedChannels);
         }
     }
 }

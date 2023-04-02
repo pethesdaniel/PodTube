@@ -24,20 +24,36 @@ namespace PodTube.Shared.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class FrameInfo : IEquatable<FrameInfo>
+    public partial class VideoDto : IEquatable<VideoDto>
     { 
-        [Required]
-        [DataMember(Name="url")]
-        public string Url { get; set; }
+        /// <summary>
+        /// Gets or Sets Id
+        /// </summary>
 
-        [Required]
-        [DataMember(Name="timestampStart")]
-        public int TimestampStart { get; set; }
+        [DataMember(Name="id")]
+        public long? Id { get; set; }
 
+        /// <summary>
+        /// Gets or Sets Name
+        /// </summary>
         [Required]
 
-        [DataMember(Name = "timestampEnd")]
-        public int TimestampEnd { get; set; }
+        [DataMember(Name="name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Description
+        /// </summary>
+
+        [DataMember(Name="description")]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Cover
+        /// </summary>
+
+        [DataMember(Name="cover")]
+        public string Cover { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -46,10 +62,11 @@ namespace PodTube.Shared.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class Frame {\n");
-            sb.Append("  Url: ").Append(Url).Append("\n");
-            sb.Append("  TimestampStart: ").Append(TimestampStart).Append("\n");
-            sb.Append("  TimestampEnd: ").Append(TimestampEnd).Append("\n");
+            sb.Append("class VideoInfo {\n");
+            sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  Cover: ").Append(Cover).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -72,36 +89,40 @@ namespace PodTube.Shared.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((FrameInfo)obj);
+            return obj.GetType() == GetType() && Equals((VideoDto)obj);
         }
 
         /// <summary>
-        /// Returns true if Frame instances are equal
+        /// Returns true if VideoInfo instances are equal
         /// </summary>
-        /// <param name="other">Instance of Frame to be compared</param>
+        /// <param name="other">Instance of VideoInfo to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(FrameInfo other)
+        public bool Equals(VideoDto other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
                 (
-                    Url == other.Url ||
-                    Url != null &&
-                    Url.Equals(other.Url)
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
                 ) && 
                 (
-                    TimestampStart == other.TimestampStart ||
-                    TimestampStart != null &&
-                    TimestampStart.Equals(other.TimestampStart)
-                ) &&
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
+                ) && 
                 (
-                    TimestampEnd == other.TimestampEnd ||
-                    TimestampEnd != null &&
-                    TimestampEnd.Equals(other.TimestampEnd)
-                )
-                ;
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
+                ) && 
+                (
+                    Cover == other.Cover ||
+                    Cover != null &&
+                    Cover.Equals(other.Cover)
+                );
         }
 
         /// <summary>
@@ -114,15 +135,16 @@ namespace PodTube.Shared.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (Url != null)
-                    hashCode = hashCode * 59 + Url.GetHashCode();
-                    if (TimestampStart != null)
-                    hashCode = hashCode * 59 + TimestampStart.GetHashCode();
-                    if (TimestampEnd != null)
-                    hashCode = hashCode * 59 + TimestampEnd.GetHashCode();
+                    if (Id != null)
+                    hashCode = hashCode * 59 + Id.GetHashCode();
+                    if (Name != null)
+                    hashCode = hashCode * 59 + Name.GetHashCode();
+                    if (Description != null)
+                    hashCode = hashCode * 59 + Description.GetHashCode();
+                    if (Cover != null)
+                    hashCode = hashCode * 59 + Cover.GetHashCode();
                 return hashCode;
             }
         }
-
     }
 }

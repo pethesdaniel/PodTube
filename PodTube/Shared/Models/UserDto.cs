@@ -24,22 +24,28 @@ namespace PodTube.Shared.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class FullChannelInfo : IEquatable<FullChannelInfo>
+    public partial class UserDto : IEquatable<UserDto>
     { 
         /// <summary>
-        /// Gets or Sets ChannelInfo
+        /// Gets or Sets Id
         /// </summary>
-        [Required]
 
-        [DataMember(Name="channelInfo")]
-        public ChannelInfoWithOwner ChannelInfo { get; set; }
+        [DataMember(Name="id")]
+        public long? Id { get; set; }
 
         /// <summary>
-        /// Gets or Sets Videos
+        /// Gets or Sets Username
         /// </summary>
 
-        [DataMember(Name="videos")]
-        public List<VideoInfo> Videos { get; set; }
+        [DataMember(Name="username")]
+        public string Username { get; set; }
+
+        /// <summary>
+        /// Gets or Sets ProfilePic
+        /// </summary>
+
+        [DataMember(Name="profilePic")]
+        public string ProfilePic { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -48,9 +54,10 @@ namespace PodTube.Shared.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class FullChannelInfo {\n");
-            sb.Append("  ChannelInfo: ").Append(ChannelInfo).Append("\n");
-            sb.Append("  Videos: ").Append(Videos).Append("\n");
+            sb.Append("class UserInfo {\n");
+            sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("  Username: ").Append(Username).Append("\n");
+            sb.Append("  ProfilePic: ").Append(ProfilePic).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -73,29 +80,34 @@ namespace PodTube.Shared.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((FullChannelInfo)obj);
+            return obj.GetType() == GetType() && Equals((UserDto)obj);
         }
 
         /// <summary>
-        /// Returns true if FullChannelInfo instances are equal
+        /// Returns true if UserInfo instances are equal
         /// </summary>
-        /// <param name="other">Instance of FullChannelInfo to be compared</param>
+        /// <param name="other">Instance of UserInfo to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(FullChannelInfo other)
+        public bool Equals(UserDto other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
                 (
-                    ChannelInfo == other.ChannelInfo ||
-                    ChannelInfo != null &&
-                    ChannelInfo.Equals(other.ChannelInfo)
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
                 ) && 
                 (
-                    Videos == other.Videos ||
-                    Videos != null &&
-                    Videos.SequenceEqual(other.Videos)
+                    Username == other.Username ||
+                    Username != null &&
+                    Username.Equals(other.Username)
+                ) && 
+                (
+                    ProfilePic == other.ProfilePic ||
+                    ProfilePic != null &&
+                    ProfilePic.Equals(other.ProfilePic)
                 );
         }
 
@@ -109,10 +121,12 @@ namespace PodTube.Shared.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (ChannelInfo != null)
-                    hashCode = hashCode * 59 + ChannelInfo.GetHashCode();
-                    if (Videos != null)
-                    hashCode = hashCode * 59 + Videos.GetHashCode();
+                    if (Id != null)
+                    hashCode = hashCode * 59 + Id.GetHashCode();
+                    if (Username != null)
+                    hashCode = hashCode * 59 + Username.GetHashCode();
+                    if (ProfilePic != null)
+                    hashCode = hashCode * 59 + ProfilePic.GetHashCode();
                 return hashCode;
             }
         }

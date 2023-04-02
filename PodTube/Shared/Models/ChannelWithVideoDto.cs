@@ -24,35 +24,22 @@ namespace PodTube.Shared.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class PlaylistInfo : IEquatable<PlaylistInfo>
+    public partial class ChannelWithVideoDto : IEquatable<ChannelWithVideoDto>
     { 
         /// <summary>
-        /// Gets or Sets Id
+        /// Gets or Sets ChannelInfo
         /// </summary>
+        [Required]
 
-        [DataMember(Name="id")]
-        public long? Id { get; set; }
+        [DataMember(Name="channelInfo")]
+        public ChannelWithOwnerDto ChannelInfo { get; set; }
 
         /// <summary>
-        /// Gets or Sets Name
+        /// Gets or Sets Videos
         /// </summary>
 
-        [DataMember(Name="name")]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Description
-        /// </summary>
-
-        [DataMember(Name="description")]
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Cover
-        /// </summary>
-
-        [DataMember(Name="cover")]
-        public string Cover { get; set; }
+        [DataMember(Name="videos")]
+        public List<VideoDto> Videos { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -61,11 +48,9 @@ namespace PodTube.Shared.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class PlaylistInfo {\n");
-            sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  Name: ").Append(Name).Append("\n");
-            sb.Append("  Description: ").Append(Description).Append("\n");
-            sb.Append("  Cover: ").Append(Cover).Append("\n");
+            sb.Append("class FullChannelInfo {\n");
+            sb.Append("  ChannelInfo: ").Append(ChannelInfo).Append("\n");
+            sb.Append("  Videos: ").Append(Videos).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -88,39 +73,29 @@ namespace PodTube.Shared.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((PlaylistInfo)obj);
+            return obj.GetType() == GetType() && Equals((ChannelWithVideoDto)obj);
         }
 
         /// <summary>
-        /// Returns true if PlaylistInfo instances are equal
+        /// Returns true if FullChannelInfo instances are equal
         /// </summary>
-        /// <param name="other">Instance of PlaylistInfo to be compared</param>
+        /// <param name="other">Instance of FullChannelInfo to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(PlaylistInfo other)
+        public bool Equals(ChannelWithVideoDto other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
                 (
-                    Id == other.Id ||
-                    Id != null &&
-                    Id.Equals(other.Id)
+                    ChannelInfo == other.ChannelInfo ||
+                    ChannelInfo != null &&
+                    ChannelInfo.Equals(other.ChannelInfo)
                 ) && 
                 (
-                    Name == other.Name ||
-                    Name != null &&
-                    Name.Equals(other.Name)
-                ) && 
-                (
-                    Description == other.Description ||
-                    Description != null &&
-                    Description.Equals(other.Description)
-                ) && 
-                (
-                    Cover == other.Cover ||
-                    Cover != null &&
-                    Cover.Equals(other.Cover)
+                    Videos == other.Videos ||
+                    Videos != null &&
+                    Videos.SequenceEqual(other.Videos)
                 );
         }
 
@@ -134,14 +109,10 @@ namespace PodTube.Shared.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (Id != null)
-                    hashCode = hashCode * 59 + Id.GetHashCode();
-                    if (Name != null)
-                    hashCode = hashCode * 59 + Name.GetHashCode();
-                    if (Description != null)
-                    hashCode = hashCode * 59 + Description.GetHashCode();
-                    if (Cover != null)
-                    hashCode = hashCode * 59 + Cover.GetHashCode();
+                    if (ChannelInfo != null)
+                    hashCode = hashCode * 59 + ChannelInfo.GetHashCode();
+                    if (Videos != null)
+                    hashCode = hashCode * 59 + Videos.GetHashCode();
                 return hashCode;
             }
         }

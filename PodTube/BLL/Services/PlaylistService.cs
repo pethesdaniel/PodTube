@@ -20,19 +20,19 @@ namespace PodTube.BLL.Services {
             this.mapper = mapper;
         }
 
-        public PlaylistInfoWithOwner GetPlaylistById(long id) {
+        public PlaylistWithOwnerDto GetPlaylistById(long id) {
             var entity = dbContext.Playlists.Include(p => p.Picture).Include(p=>p.Owner).FirstOrDefault(playlist => playlist.Id == id);
-            return mapper.Map<PlaylistInfoWithOwner>(entity);
+            return mapper.Map<PlaylistWithOwnerDto>(entity);
         }
 
-        public PagedListDto<PlaylistInfo> GetAllPlaylists(int page, int limit) {
-            var playlistsPaged = dbContext.Playlists.Include(p => p.Picture).ProjectTo<PlaylistInfo>(mapper.ConfigurationProvider).ToPagedList(playlist => playlist.Id, page, limit);
-            return mapper.Map<PagedListDto<PlaylistInfo>>(playlistsPaged);
+        public PagedListDto<PlaylistDto> GetAllPlaylists(int page, int limit) {
+            var playlistsPaged = dbContext.Playlists.Include(p => p.Picture).ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).ToPagedList(playlist => playlist.Id, page, limit);
+            return mapper.Map<PagedListDto<PlaylistDto>>(playlistsPaged);
         }
 
-        public FullPlaylistInfo GetPlaylistWithVideoById(long id) {
+        public PlaylistWithVideoDto GetPlaylistWithVideoById(long id) {
             var entity = dbContext.Playlists.Include(playlist => playlist.Videos).FirstOrDefault(playlist => playlist.Id == id);
-            return mapper.Map<FullPlaylistInfo>(entity);
+            return mapper.Map<PlaylistWithVideoDto>(entity);
         }
     }
 }

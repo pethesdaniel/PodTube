@@ -45,7 +45,7 @@ namespace PodTube.Controllers
         [Route("/playlist")]
         [ValidateModelState]
         [SwaggerOperation("PlaylistGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(PagedListDto<PlaylistInfo>), description: "Successful operation")]
+        [SwaggerResponse(statusCode: 200, type: typeof(PagedListDto<PlaylistDto>), description: "Successful operation")]
         public virtual IActionResult PlaylistGet([FromQuery][Required()]int page, [FromQuery][Required()]int limit)
         {
             var result =  PlaylistService.GetAllPlaylists(page, limit);
@@ -89,7 +89,7 @@ namespace PodTube.Controllers
         [Route("/playlist/{playlistId}")]
         [ValidateModelState]
         [SwaggerOperation("PlaylistPlaylistIdGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(PlaylistInfoWithOwner), description: "Successful operation")]
+        [SwaggerResponse(statusCode: 200, type: typeof(PlaylistWithOwnerDto), description: "Successful operation")]
         public virtual IActionResult PlaylistPlaylistIdGet([FromRoute][Required]long playlistId)
         {
             var result = PlaylistService.GetPlaylistById(playlistId);
@@ -111,7 +111,7 @@ namespace PodTube.Controllers
         [Route("/playlist/{playlistId}/videos")]
         [ValidateModelState]
         [SwaggerOperation("PlaylistPlaylistIdVideosGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(FullPlaylistInfo), description: "Successful operation")]
+        [SwaggerResponse(statusCode: 200, type: typeof(PlaylistWithVideoDto), description: "Successful operation")]
         public virtual IActionResult PlaylistPlaylistIdVideosGet([FromRoute][Required]long playlistId)
         {
             var result = PlaylistService.GetPlaylistWithVideoById(playlistId);

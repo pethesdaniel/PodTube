@@ -24,21 +24,30 @@ namespace PodTube.Shared.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class FullPlaylistInfo : IEquatable<FullPlaylistInfo>
+    public partial class VideoWithFramesDto : IEquatable<VideoWithFramesDto>
     { 
         /// <summary>
-        /// Gets or Sets PlaylistInfo
+        /// Gets or Sets VideoInfo
         /// </summary>
 
-        [DataMember(Name="playlistInfo")]
-        public PlaylistInfoWithOwner PlaylistInfo { get; set; }
+        [DataMember(Name="videoInfo")]
+        public VideoDto VideoInfo { get; set; }
 
         /// <summary>
-        /// Gets or Sets Videos
+        /// Gets or Sets Frames
         /// </summary>
+        [Required]
 
-        [DataMember(Name="videos")]
-        public List<VideoInfo> Videos { get; set; }
+        [DataMember(Name="frames")]
+        public List<FrameDto> Frames { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Audio
+        /// </summary>
+        [Required]
+
+        [DataMember(Name="audio")]
+        public List<string> Audio { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -47,9 +56,10 @@ namespace PodTube.Shared.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class FullPlaylistInfo {\n");
-            sb.Append("  PlaylistInfo: ").Append(PlaylistInfo).Append("\n");
-            sb.Append("  Videos: ").Append(Videos).Append("\n");
+            sb.Append("class FullVideoInfo {\n");
+            sb.Append("  VideoInfo: ").Append(VideoInfo).Append("\n");
+            sb.Append("  Frames: ").Append(Frames).Append("\n");
+            sb.Append("  Audio: ").Append(Audio).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -72,29 +82,34 @@ namespace PodTube.Shared.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((FullPlaylistInfo)obj);
+            return obj.GetType() == GetType() && Equals((VideoWithFramesDto)obj);
         }
 
         /// <summary>
-        /// Returns true if FullPlaylistInfo instances are equal
+        /// Returns true if FullVideoInfo instances are equal
         /// </summary>
-        /// <param name="other">Instance of FullPlaylistInfo to be compared</param>
+        /// <param name="other">Instance of FullVideoInfo to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(FullPlaylistInfo other)
+        public bool Equals(VideoWithFramesDto other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
                 (
-                    PlaylistInfo == other.PlaylistInfo ||
-                    PlaylistInfo != null &&
-                    PlaylistInfo.Equals(other.PlaylistInfo)
+                    VideoInfo == other.VideoInfo ||
+                    VideoInfo != null &&
+                    VideoInfo.Equals(other.VideoInfo)
                 ) && 
                 (
-                    Videos == other.Videos ||
-                    Videos != null &&
-                    Videos.SequenceEqual(other.Videos)
+                    Frames == other.Frames ||
+                    Frames != null &&
+                    Frames.SequenceEqual(other.Frames)
+                ) && 
+                (
+                    Audio == other.Audio ||
+                    Audio != null &&
+                    Audio.Equals(other.Audio)
                 );
         }
 
@@ -108,10 +123,12 @@ namespace PodTube.Shared.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (PlaylistInfo != null)
-                    hashCode = hashCode * 59 + PlaylistInfo.GetHashCode();
-                    if (Videos != null)
-                    hashCode = hashCode * 59 + Videos.GetHashCode();
+                    if (VideoInfo != null)
+                    hashCode = hashCode * 59 + VideoInfo.GetHashCode();
+                    if (Frames != null)
+                    hashCode = hashCode * 59 + Frames.GetHashCode();
+                    if (Audio != null)
+                    hashCode = hashCode * 59 + Audio.GetHashCode();
                 return hashCode;
             }
         }

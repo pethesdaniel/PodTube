@@ -40,10 +40,10 @@ else
 }
 
 @code {
-    private VideoInfo[]? videos;
+    private VideoDto[]? videos;
 
     protected override async Task OnInitializedAsync()
     {
-        videos = await Http.GetFromJsonAsync<VideoInfo[]>("video");
+        videos = await Http.GetFromJsonAsync<VideoDto[]>("video");
     }
 }

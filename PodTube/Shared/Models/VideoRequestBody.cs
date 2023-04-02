@@ -40,7 +40,7 @@ namespace PodTube.Shared.Models
         [Required]
 
         [DataMember(Name="data")]
-        public FullVideoInfo Data { get; set; }
+        public VideoWithFramesDto Data { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object

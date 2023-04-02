@@ -69,7 +69,7 @@ namespace PodTube.Controllers
         [Route("/channel/{channelId}")]
         [ValidateModelState]
         [SwaggerOperation("ChannelChannelIdGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(ChannelInfoWithOwner), description: "Successful operation")]
+        [SwaggerResponse(statusCode: 200, type: typeof(ChannelWithOwnerDto), description: "Successful operation")]
         public virtual IActionResult ChannelChannelIdGet([FromRoute][Required]long channelId)
         {
             var result = ChannelService.GetChannelById(channelId);
@@ -93,7 +93,7 @@ namespace PodTube.Controllers
         [Route("/channel/{channelId}/videos")]
         [ValidateModelState]
         [SwaggerOperation("ChannelChannelIdVideosGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(FullChannelInfo), description: "Successful operation")]
+        [SwaggerResponse(statusCode: 200, type: typeof(ChannelWithVideoDto), description: "Successful operation")]
         public virtual IActionResult ChannelChannelIdVideosGet([FromRoute][Required]long channelId)
         {
             var result = ChannelService.GetFullChannelById(channelId);
@@ -116,7 +116,7 @@ namespace PodTube.Controllers
         [Route("/channel")]
         [ValidateModelState]
         [SwaggerOperation("ChannelGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(PagedListDto<ChannelInfo>), description: "Successful operation")]
+        [SwaggerResponse(statusCode: 200, type: typeof(PagedListDto<ChannelDto>), description: "Successful operation")]
         public virtual IActionResult ChannelGet([FromQuery][Required()]int page, [FromQuery][Required()]int limit)
         {
             var result = ChannelService.GetChannelsPaged(page, limit);

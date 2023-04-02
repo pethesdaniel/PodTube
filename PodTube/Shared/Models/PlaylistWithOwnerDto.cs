@@ -24,28 +24,14 @@ namespace PodTube.Shared.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class UserInfo : IEquatable<UserInfo>
+    public partial class PlaylistWithOwnerDto : PlaylistDto, IEquatable<PlaylistWithOwnerDto>
     { 
         /// <summary>
-        /// Gets or Sets Id
+        /// Gets or Sets Owner
         /// </summary>
 
-        [DataMember(Name="id")]
-        public long? Id { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Username
-        /// </summary>
-
-        [DataMember(Name="username")]
-        public string Username { get; set; }
-
-        /// <summary>
-        /// Gets or Sets ProfilePic
-        /// </summary>
-
-        [DataMember(Name="profilePic")]
-        public string ProfilePic { get; set; }
+        [DataMember(Name="owner")]
+        public UserDto Owner { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -54,10 +40,8 @@ namespace PodTube.Shared.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class UserInfo {\n");
-            sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  Username: ").Append(Username).Append("\n");
-            sb.Append("  ProfilePic: ").Append(ProfilePic).Append("\n");
+            sb.Append("class PlaylistInfoWithOwner {\n");
+            sb.Append("  Owner: ").Append(Owner).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -66,7 +50,7 @@ namespace PodTube.Shared.Models
         /// Returns the JSON string presentation of the object
         /// </summary>
         /// <returns>JSON string presentation of the object</returns>
-        public string ToJson()
+        public  new string ToJson()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
@@ -80,34 +64,24 @@ namespace PodTube.Shared.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((UserInfo)obj);
+            return obj.GetType() == GetType() && Equals((PlaylistWithOwnerDto)obj);
         }
 
         /// <summary>
-        /// Returns true if UserInfo instances are equal
+        /// Returns true if PlaylistInfoWithOwner instances are equal
         /// </summary>
-        /// <param name="other">Instance of UserInfo to be compared</param>
+        /// <param name="other">Instance of PlaylistInfoWithOwner to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(UserInfo other)
+        public bool Equals(PlaylistWithOwnerDto other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
                 (
-                    Id == other.Id ||
-                    Id != null &&
-                    Id.Equals(other.Id)
-                ) && 
-                (
-                    Username == other.Username ||
-                    Username != null &&
-                    Username.Equals(other.Username)
-                ) && 
-                (
-                    ProfilePic == other.ProfilePic ||
-                    ProfilePic != null &&
-                    ProfilePic.Equals(other.ProfilePic)
+                    Owner == other.Owner ||
+                    Owner != null &&
+                    Owner.Equals(other.Owner)
                 );
         }
 
@@ -121,12 +95,8 @@ namespace PodTube.Shared.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (Id != null)
-                    hashCode = hashCode * 59 + Id.GetHashCode();
-                    if (Username != null)
-                    hashCode = hashCode * 59 + Username.GetHashCode();
-                    if (ProfilePic != null)
-                    hashCode = hashCode * 59 + ProfilePic.GetHashCode();
+                    if (Owner != null)
+                    hashCode = hashCode * 59 + Owner.GetHashCode();
                 return hashCode;
             }
         }

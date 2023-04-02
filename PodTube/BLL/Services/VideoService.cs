@@ -18,11 +18,11 @@ namespace PodTube.BLL.Services {
             this.mapper = mapper;
         }
 
-        public List<VideoInfo> GetAllVideos() {
-            return dbContext.Video.ProjectTo<VideoInfo>(mapper.ConfigurationProvider).ToList();
+        public List<VideoDto> GetAllVideos() {
+            return dbContext.Video.ProjectTo<VideoDto>(mapper.ConfigurationProvider).ToList();
         }
 
-        public FullVideoInfo? GetVideoById(long id) {
+        public VideoWithFramesDto? GetVideoById(long id) {
             var video = dbContext.Video
                 .Include(v => v.Thumbnail)
                 .Include(v => v.Frames)
@@ -31,7 +31,7 @@ namespace PodTube.BLL.Services {
                 .ThenInclude(s => s.File)
                 .Where(v => v.Id == id)
                 .FirstOrDefault();
-            return mapper.Map<FullVideoInfo>(video);
+            return mapper.Map<VideoWithFramesDto>(video);
         }
     }
 }

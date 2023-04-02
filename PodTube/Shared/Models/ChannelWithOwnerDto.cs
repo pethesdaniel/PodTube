@@ -24,14 +24,14 @@ namespace PodTube.Shared.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class ChannelInfoWithOwner : ChannelInfo, IEquatable<ChannelInfoWithOwner>
+    public partial class ChannelWithOwnerDto : ChannelDto, IEquatable<ChannelWithOwnerDto>
     { 
         /// <summary>
         /// Gets or Sets Owner
         /// </summary>
 
         [DataMember(Name="owner")]
-        public UserInfo Owner { get; set; }
+        public UserDto Owner { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -64,7 +64,7 @@ namespace PodTube.Shared.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((ChannelInfoWithOwner)obj);
+            return obj.GetType() == GetType() && Equals((ChannelWithOwnerDto)obj);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace PodTube.Shared.Models
         /// </summary>
         /// <param name="other">Instance of ChannelInfoWithOwner to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(ChannelInfoWithOwner other)
+        public bool Equals(ChannelWithOwnerDto other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;

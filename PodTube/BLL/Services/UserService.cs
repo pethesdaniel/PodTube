@@ -19,11 +19,11 @@ namespace PodTube.BLL.Services {
             this.mapper = mapper;
         }
 
-        public UserInfo? GetUserById(long id) {
+        public UserDto? GetUserById(long id) {
             return dbContext.Users
                 .Include(u => u.ProfilePicture)
                 .Where(u => u.Id == id)
-                .ProjectTo<UserInfo>(mapper.ConfigurationProvider)
+                .ProjectTo<UserDto>(mapper.ConfigurationProvider)
                 .FirstOrDefault();
         }
     }

@@ -74,7 +74,7 @@ namespace PodTube.Controllers
         [Route("/user/{userId}")]
         [ValidateModelState]
         [SwaggerOperation("UserUserIdGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(UserInfo), description: "Successful operation")]
+        [SwaggerResponse(statusCode: 200, type: typeof(UserDto), description: "Successful operation")]
         public virtual IActionResult UserUserIdGet([FromRoute][Required]long userId)
         {
             var result = UserService.GetUserById(userId);

@@ -24,14 +24,36 @@ namespace PodTube.Shared.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class PlaylistInfoWithOwner : PlaylistInfo, IEquatable<PlaylistInfoWithOwner>
+    public partial class ChannelDto : IEquatable<ChannelDto>
     { 
         /// <summary>
-        /// Gets or Sets Owner
+        /// Gets or Sets Id
         /// </summary>
 
-        [DataMember(Name="owner")]
-        public UserInfo Owner { get; set; }
+        [DataMember(Name="id")]
+        public long? Id { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Name
+        /// </summary>
+        [Required]
+
+        [DataMember(Name="name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Description
+        /// </summary>
+
+        [DataMember(Name="description")]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Cover
+        /// </summary>
+
+        [DataMember(Name="cover")]
+        public string Cover { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -40,8 +62,11 @@ namespace PodTube.Shared.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class PlaylistInfoWithOwner {\n");
-            sb.Append("  Owner: ").Append(Owner).Append("\n");
+            sb.Append("class ChannelInfo {\n");
+            sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  Cover: ").Append(Cover).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -50,7 +75,7 @@ namespace PodTube.Shared.Models
         /// Returns the JSON string presentation of the object
         /// </summary>
         /// <returns>JSON string presentation of the object</returns>
-        public  new string ToJson()
+        public string ToJson()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
@@ -64,24 +89,39 @@ namespace PodTube.Shared.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((PlaylistInfoWithOwner)obj);
+            return obj.GetType() == GetType() && Equals((ChannelDto)obj);
         }
 
         /// <summary>
-        /// Returns true if PlaylistInfoWithOwner instances are equal
+        /// Returns true if ChannelInfo instances are equal
         /// </summary>
-        /// <param name="other">Instance of PlaylistInfoWithOwner to be compared</param>
+        /// <param name="other">Instance of ChannelInfo to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(PlaylistInfoWithOwner other)
+        public bool Equals(ChannelDto other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
                 (
-                    Owner == other.Owner ||
-                    Owner != null &&
-                    Owner.Equals(other.Owner)
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
+                ) && 
+                (
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
+                ) && 
+                (
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
+                ) && 
+                (
+                    Cover == other.Cover ||
+                    Cover != null &&
+                    Cover.Equals(other.Cover)
                 );
         }
 
@@ -95,8 +135,14 @@ namespace PodTube.Shared.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (Owner != null)
-                    hashCode = hashCode * 59 + Owner.GetHashCode();
+                    if (Id != null)
+                    hashCode = hashCode * 59 + Id.GetHashCode();
+                    if (Name != null)
+                    hashCode = hashCode * 59 + Name.GetHashCode();
+                    if (Description != null)
+                    hashCode = hashCode * 59 + Description.GetHashCode();
+                    if (Cover != null)
+                    hashCode = hashCode * 59 + Cover.GetHashCode();
                 return hashCode;
             }
         }

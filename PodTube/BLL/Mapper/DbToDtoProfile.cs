@@ -14,22 +14,10 @@ namespace PodTube.BLL.Mapper {
                 Id = channel.Id,
                 Name = channel.Name,
                 Description = channel.Description ?? string.Empty,
-                Cover = channel.Picture?.ResourceURI ?? string.Empty
-             */
-            CreateMap<Channel, ChannelDto>().ForMember(dest => dest.Cover, opt => opt.MapFrom(channel => channel.Picture.ResourceURI));
-            /*
-                Id = channel.Id,
-                Name = channel.Name,
-                Description = channel.Description ?? string.Empty,
                 Cover = channel.Picture?.ResourceURI ?? string.Empty,
                 Owner = channel?.Owner?.ToUserInfoDto() ?? null
              */
-            CreateMap<Channel, ChannelWithOwnerDto>().ForMember(dest => dest.Cover, opt => opt.MapFrom(channel => channel.Picture.ResourceURI));
-            /*
-             ChannelInfo = channel.ToChannelInfoWithOwnerDto(),
-             Videos = channel.Videos.Select(v => v.ToVideoInfoDto()).ToList()
-             */
-            CreateMap<Channel, ChannelWithVideoDto>().ForMember(dest => dest.ChannelInfo, opt =>opt.MapFrom(channel => channel));
+            CreateMap<Channel, ChannelDto>().ForMember(dest => dest.Cover, opt => opt.MapFrom(channel => channel.Picture.ResourceURI));
 
             /*
                 Url = frame.File.ResourceURI,
@@ -52,20 +40,12 @@ namespace PodTube.BLL.Mapper {
                 Description = video.Description ?? string.Empty,
                 Cover = video.Thumbnail?.ResourceURI ?? string.Empty,
              */
-            CreateMap<Video, VideoDto>().ForMember(dest => dest.Cover, opt => opt.MapFrom(video => video.Thumbnail.ResourceURI));
-            /*
-                VideoInfo = video.ToVideoInfoDto(),
-                Frames = video.Frames.Select(f => f.ToFrameDto()).ToList(),
-                Audio = video.Sound.Select(a => a.File.ResourceURI).ToList()
-             */
-            CreateMap<Video, VideoWithFramesDto>().ForMember(dest => dest.VideoInfo, opt => opt.MapFrom(video => video))
+            CreateMap<Video, VideoDto>().ForMember(dest => dest.Cover, opt => opt.MapFrom(video => video.Thumbnail.ResourceURI))
                 .ForMember(dest=>dest.Audio, opt=>opt.MapFrom(video=>video.Sound));
             CreateMap<Sound, string>().ConvertUsing(audio => audio.File.ResourceURI);
 
 
             CreateMap<Playlist, PlaylistDto>().ForMember(dest => dest.Cover, opt => opt.MapFrom(playlist => playlist.Picture.ResourceURI));
-            CreateMap<Playlist, PlaylistWithOwnerDto>().ForMember(dest => dest.Cover, opt => opt.MapFrom(playlist => playlist.Picture.ResourceURI));
-            CreateMap<Playlist, PlaylistWithVideoDto>().ForMember(dest => dest.PlaylistInfo, opt => opt.MapFrom(playlist => playlist));
         }
     }
 }

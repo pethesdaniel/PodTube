@@ -21,10 +21,8 @@ namespace PodTube.BLL.Services {
 
         public UserDto? GetUserById(long id) {
             return dbContext.Users
-                .Include(u => u.ProfilePicture)
-                .Where(u => u.Id == id)
                 .ProjectTo<UserDto>(mapper.ConfigurationProvider)
-                .FirstOrDefault();
+                .FirstOrDefault(u => u.Id == id);
         }
     }
 }

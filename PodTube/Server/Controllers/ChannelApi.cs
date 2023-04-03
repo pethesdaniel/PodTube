@@ -21,13 +21,12 @@ using PodTube.Shared.Models;
 using PodTube.BLL.Services;
 
 namespace PodTube.Controllers
-{ 
+{
     /// <summary>
     /// 
     /// </summary>
     [ApiController]
-    public class ChannelApiController : ControllerBase
-    {
+    public class ChannelApiController : ControllerBase {
         private ChannelService ChannelService { get; set; }
         public ChannelApiController(ChannelService channelService) : base() {
             this.ChannelService = channelService;
@@ -69,12 +68,11 @@ namespace PodTube.Controllers
         [Route("/channel/{channelId}")]
         [ValidateModelState]
         [SwaggerOperation("ChannelChannelIdGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(ChannelWithOwnerDto), description: "Successful operation")]
-        public virtual IActionResult ChannelChannelIdGet([FromRoute][Required]long channelId)
-        {
+        [SwaggerResponse(statusCode: 200, type: typeof(ChannelDto), description: "Successful operation")]
+        public virtual IActionResult ChannelChannelIdGet([FromRoute][Required] long channelId) {
             var result = ChannelService.GetChannelById(channelId);
 
-            if(result == null) {
+            if (result == null) {
                 return StatusCode(404);
             }
 
@@ -93,10 +91,9 @@ namespace PodTube.Controllers
         [Route("/channel/{channelId}/videos")]
         [ValidateModelState]
         [SwaggerOperation("ChannelChannelIdVideosGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(ChannelWithVideoDto), description: "Successful operation")]
-        public virtual IActionResult ChannelChannelIdVideosGet([FromRoute][Required]long channelId)
-        {
-            var result = ChannelService.GetFullChannelById(channelId);
+        [SwaggerResponse(statusCode: 200, type: typeof(PagedListDto<VideoDto>), description: "Successful operation")]
+        public virtual IActionResult ChannelChannelIdVideosGet([FromRoute][Required] long channelId, [FromQuery][Required] int page, [FromQuery][Required] int limit) {
+            var result = ChannelService.GetPagedVideosByChannelId(channelId, page, limit);
 
             if (result == null) {
                 return StatusCode(404);
@@ -117,8 +114,7 @@ namespace PodTube.Controllers
         [ValidateModelState]
         [SwaggerOperation("ChannelGet")]
         [SwaggerResponse(statusCode: 200, type: typeof(PagedListDto<ChannelDto>), description: "Successful operation")]
-        public virtual IActionResult ChannelGet([FromQuery][Required()]int page, [FromQuery][Required()]int limit)
-        {
+        public virtual IActionResult ChannelGet([FromQuery][Required()] int page, [FromQuery][Required()] int limit) {
             var result = ChannelService.GetChannelsPaged(page, limit);
 
             if (result == null) {

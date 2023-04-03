@@ -20,19 +20,22 @@ namespace PodTube.BLL.Services {
             this.mapper = mapper;
         }
 
-        public PlaylistWithOwnerDto GetPlaylistById(long id) {
-            var entity = dbContext.Playlists.Include(p => p.Picture).Include(p=>p.Owner).FirstOrDefault(playlist => playlist.Id == id);
-            return mapper.Map<PlaylistWithOwnerDto>(entity);
+        public PlaylistDto? GetPlaylistById(long id) {
+            return dbContext.Playlists.ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).FirstOrDefault(playlist => playlist.Id == id);
         }
 
         public PagedListDto<PlaylistDto> GetAllPlaylists(int page, int limit) {
-            var playlistsPaged = dbContext.Playlists.Include(p => p.Picture).ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).ToPagedList(playlist => playlist.Id, page, limit);
+            var playlistsPaged = dbContext.Playlists.ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).ToPagedList(playlist => playlist.Id, page, limit);
             return mapper.Map<PagedListDto<PlaylistDto>>(playlistsPaged);
         }
 
-        public PlaylistWithVideoDto GetPlaylistWithVideoById(long id) {
-            var entity = dbContext.Playlists.Include(playlist => playlist.Videos).FirstOrDefault(playlist => playlist.Id == id);
-            return mapper.Map<PlaylistWithVideoDto>(entity);
+        public PagedListDto<VideoDto> GetPagedVideosByPlaylistId(long id, int page, int limit) {
+            var playlist = dbContext.Playlists.Include(playlist => playlist.Videos).FirstOrDefault(playlist => playlist.Id == id);
+            var videoDtos = mapper.Map<List<VideoDto>>(playlist.Videos);
+            if(playlist == null) {
+                return mapper.Map<PagedListDto<VideoDto>>(new List<VideoDto>().ToPagedList());
+            }
+            return mapper.Map<PagedListDto<VideoDto>>(videoDtos.ToPagedList(video => video.Id, page, limit));
         }
     }
 }

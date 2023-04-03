@@ -22,7 +22,7 @@ namespace PodTube.BLL.Services {
             return dbContext.Video.ProjectTo<VideoDto>(mapper.ConfigurationProvider).ToList();
         }
 
-        public VideoWithFramesDto? GetVideoById(long id) {
+        public VideoDto? GetVideoById(long id) {
             var video = dbContext.Video
                 .Include(v => v.Thumbnail)
                 .Include(v => v.Frames)
@@ -31,7 +31,7 @@ namespace PodTube.BLL.Services {
                 .ThenInclude(s => s.File)
                 .Where(v => v.Id == id)
                 .FirstOrDefault();
-            return mapper.Map<VideoWithFramesDto>(video);
+            return mapper.Map<VideoDto>(video);
         }
     }
 }

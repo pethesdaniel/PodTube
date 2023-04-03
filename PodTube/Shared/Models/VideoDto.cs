@@ -24,7 +24,7 @@ namespace PodTube.Shared.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class VideoDto : IEquatable<VideoDto>
+    public partial class VideoDto
     { 
         /// <summary>
         /// Gets or Sets Id
@@ -56,6 +56,22 @@ namespace PodTube.Shared.Models
         public string Cover { get; set; }
 
         /// <summary>
+        /// Gets or Sets Frames
+        /// </summary>
+        [Required]
+
+        [DataMember(Name = "frames")]
+        public List<FrameDto> Frames { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Audio
+        /// </summary>
+        [Required]
+
+        [DataMember(Name = "audio")]
+        public List<string> Audio { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -78,73 +94,6 @@ namespace PodTube.Shared.Models
         public string ToJson()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
-
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="obj">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((VideoDto)obj);
-        }
-
-        /// <summary>
-        /// Returns true if VideoInfo instances are equal
-        /// </summary>
-        /// <param name="other">Instance of VideoInfo to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(VideoDto other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return 
-                (
-                    Id == other.Id ||
-                    Id != null &&
-                    Id.Equals(other.Id)
-                ) && 
-                (
-                    Name == other.Name ||
-                    Name != null &&
-                    Name.Equals(other.Name)
-                ) && 
-                (
-                    Description == other.Description ||
-                    Description != null &&
-                    Description.Equals(other.Description)
-                ) && 
-                (
-                    Cover == other.Cover ||
-                    Cover != null &&
-                    Cover.Equals(other.Cover)
-                );
-        }
-
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                var hashCode = 41;
-                // Suitable nullity checks etc, of course :)
-                    if (Id != null)
-                    hashCode = hashCode * 59 + Id.GetHashCode();
-                    if (Name != null)
-                    hashCode = hashCode * 59 + Name.GetHashCode();
-                    if (Description != null)
-                    hashCode = hashCode * 59 + Description.GetHashCode();
-                    if (Cover != null)
-                    hashCode = hashCode * 59 + Cover.GetHashCode();
-                return hashCode;
-            }
         }
     }
 }

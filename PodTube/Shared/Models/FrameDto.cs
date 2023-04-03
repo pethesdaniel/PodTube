@@ -24,7 +24,7 @@ namespace PodTube.Shared.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class FrameDto : IEquatable<FrameDto>
+    public partial class FrameDto
     { 
         [Required]
         [DataMember(Name="url")]
@@ -62,67 +62,5 @@ namespace PodTube.Shared.Models
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
-
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="obj">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((FrameDto)obj);
-        }
-
-        /// <summary>
-        /// Returns true if Frame instances are equal
-        /// </summary>
-        /// <param name="other">Instance of Frame to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(FrameDto other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return 
-                (
-                    Url == other.Url ||
-                    Url != null &&
-                    Url.Equals(other.Url)
-                ) && 
-                (
-                    TimestampStart == other.TimestampStart ||
-                    TimestampStart != null &&
-                    TimestampStart.Equals(other.TimestampStart)
-                ) &&
-                (
-                    TimestampEnd == other.TimestampEnd ||
-                    TimestampEnd != null &&
-                    TimestampEnd.Equals(other.TimestampEnd)
-                )
-                ;
-        }
-
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                var hashCode = 41;
-                // Suitable nullity checks etc, of course :)
-                    if (Url != null)
-                    hashCode = hashCode * 59 + Url.GetHashCode();
-                    if (TimestampStart != null)
-                    hashCode = hashCode * 59 + TimestampStart.GetHashCode();
-                    if (TimestampEnd != null)
-                    hashCode = hashCode * 59 + TimestampEnd.GetHashCode();
-                return hashCode;
-            }
-        }
-
     }
 }

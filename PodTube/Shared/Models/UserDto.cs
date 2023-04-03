@@ -24,7 +24,7 @@ namespace PodTube.Shared.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class UserDto : IEquatable<UserDto>
+    public partial class UserDto
     { 
         /// <summary>
         /// Gets or Sets Id
@@ -69,66 +69,6 @@ namespace PodTube.Shared.Models
         public string ToJson()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
-
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="obj">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((UserDto)obj);
-        }
-
-        /// <summary>
-        /// Returns true if UserInfo instances are equal
-        /// </summary>
-        /// <param name="other">Instance of UserInfo to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(UserDto other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return 
-                (
-                    Id == other.Id ||
-                    Id != null &&
-                    Id.Equals(other.Id)
-                ) && 
-                (
-                    Username == other.Username ||
-                    Username != null &&
-                    Username.Equals(other.Username)
-                ) && 
-                (
-                    ProfilePic == other.ProfilePic ||
-                    ProfilePic != null &&
-                    ProfilePic.Equals(other.ProfilePic)
-                );
-        }
-
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                var hashCode = 41;
-                // Suitable nullity checks etc, of course :)
-                    if (Id != null)
-                    hashCode = hashCode * 59 + Id.GetHashCode();
-                    if (Username != null)
-                    hashCode = hashCode * 59 + Username.GetHashCode();
-                    if (ProfilePic != null)
-                    hashCode = hashCode * 59 + ProfilePic.GetHashCode();
-                return hashCode;
-            }
         }
     }
 }

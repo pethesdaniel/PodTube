@@ -19,24 +19,19 @@ namespace PodTube.BLL.Services {
             this.mapper = mapper;
         }
 
-        public ChannelWithOwnerDto? GetChannelById(long id) {
+        public ChannelDto? GetChannelById(long id) {
             return dbContext.Channels
-                .Include(c => c.Picture)
-                .Where(c => c.Id == id)
-                .ProjectTo<ChannelWithOwnerDto>(mapper.ConfigurationProvider)
-                .FirstOrDefault() 
-                ?? null;
+                .ProjectTo<ChannelDto>(mapper.ConfigurationProvider)
+                .FirstOrDefault(c => c.Id == id);
         }
 
-        public ChannelWithVideoDto? GetFullChannelById(long id) {
-            return dbContext.Channels
-                .Include(c => c.Videos)
-                .Include(c => c.Picture)
-                .Include(c => c.Owner)
-                .Where(c => c.Id == id)
-                .ProjectTo<ChannelWithVideoDto>(mapper.ConfigurationProvider)
-                .FirstOrDefault()
-                ?? null;
+        public PagedListDto<VideoDto> GetPagedVideosByChannelId(long id, int page, int limit) {
+            var channel = dbContext.Channels.Include(channel => channel.Videos).FirstOrDefault(channel => channel.Id == id);
+            var videoDtos = mapper.Map<List<VideoDto>>(channel.Videos);
+            if (channel == null) {
+                return mapper.Map<PagedListDto<VideoDto>>(new List<VideoDto>().ToPagedList());
+            }
+            return mapper.Map<PagedListDto<VideoDto>>(videoDtos.ToPagedList(video => video.Id, page, limit));
         }
 
         public PagedListDto<ChannelDto> GetChannelsPaged(int page, int limit) {

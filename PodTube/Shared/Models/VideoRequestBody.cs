@@ -23,99 +23,99 @@ namespace PodTube.Shared.Models
     /// <summary>
     /// 
     /// </summary>
-    [DataContract]
-    public partial class VideoRequestBody : IEquatable<VideoRequestBody>
-    { 
-        /// <summary>
-        /// Gets or Sets ParentChannel
-        /// </summary>
-        [Required]
+    ///[DataContract]
+    ///public partial class VideoRequestBody : IEquatable<VideoRequestBody>
+    ///{ 
+        ///// <summary>
+        ///// Gets or Sets ParentChannel
+        ///// </summary>
+        //[Required]
 
-        [DataMember(Name="parentChannel")]
-        public long? ParentChannel { get; set; }
+        //[DataMember(Name="parentChannel")]
+        //public long? ParentChannel { get; set; }
 
-        /// <summary>
-        /// Gets or Sets Data
-        /// </summary>
-        [Required]
+        ///// <summary>
+        ///// Gets or Sets Data
+        ///// </summary>
+        //[Required]
 
-        [DataMember(Name="data")]
-        public VideoWithFramesDto Data { get; set; }
+        //[DataMember(Name="data")]
+        //public VideoWithFramesDto Data { get; set; }
 
-        /// <summary>
-        /// Returns the string presentation of the object
-        /// </summary>
-        /// <returns>String presentation of the object</returns>
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-            sb.Append("class VideoRequestBody {\n");
-            sb.Append("  ParentChannel: ").Append(ParentChannel).Append("\n");
-            sb.Append("  Data: ").Append(Data).Append("\n");
-            sb.Append("}\n");
-            return sb.ToString();
-        }
+        ///// <summary>
+        ///// Returns the string presentation of the object
+        ///// </summary>
+        ///// <returns>String presentation of the object</returns>
+        //public override string ToString()
+        //{
+        //    var sb = new StringBuilder();
+        //    sb.Append("class VideoRequestBody {\n");
+        //    sb.Append("  ParentChannel: ").Append(ParentChannel).Append("\n");
+        //    sb.Append("  Data: ").Append(Data).Append("\n");
+        //    sb.Append("}\n");
+        //    return sb.ToString();
+        //}
 
-        /// <summary>
-        /// Returns the JSON string presentation of the object
-        /// </summary>
-        /// <returns>JSON string presentation of the object</returns>
-        public string ToJson()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+        ///// <summary>
+        ///// Returns the JSON string presentation of the object
+        ///// </summary>
+        ///// <returns>JSON string presentation of the object</returns>
+        //public string ToJson()
+        //{
+        //    return JsonConvert.SerializeObject(this, Formatting.Indented);
+        //}
 
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="obj">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((VideoRequestBody)obj);
-        }
+        ///// <summary>
+        ///// Returns true if objects are equal
+        ///// </summary>
+        ///// <param name="obj">Object to be compared</param>
+        ///// <returns>Boolean</returns>
+        //public override bool Equals(object obj)
+        //{
+        //    if (ReferenceEquals(null, obj)) return false;
+        //    if (ReferenceEquals(this, obj)) return true;
+        //    return obj.GetType() == GetType() && Equals((VideoRequestBody)obj);
+        //}
 
-        /// <summary>
-        /// Returns true if VideoRequestBody instances are equal
-        /// </summary>
-        /// <param name="other">Instance of VideoRequestBody to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(VideoRequestBody other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+        ///// <summary>
+        ///// Returns true if VideoRequestBody instances are equal
+        ///// </summary>
+        ///// <param name="other">Instance of VideoRequestBody to be compared</param>
+        ///// <returns>Boolean</returns>
+        //public bool Equals(VideoRequestBody other)
+        //{
+        //    if (ReferenceEquals(null, other)) return false;
+        //    if (ReferenceEquals(this, other)) return true;
 
-            return 
-                (
-                    ParentChannel == other.ParentChannel ||
-                    ParentChannel != null &&
-                    ParentChannel.Equals(other.ParentChannel)
-                ) && 
-                (
-                    Data == other.Data ||
-                    Data != null &&
-                    Data.Equals(other.Data)
-                );
-        }
+        //    return 
+        //        (
+        //            ParentChannel == other.ParentChannel ||
+        //            ParentChannel != null &&
+        //            ParentChannel.Equals(other.ParentChannel)
+        //        ) && 
+        //        (
+        //            Data == other.Data ||
+        //            Data != null &&
+        //            Data.Equals(other.Data)
+        //        );
+        //}
 
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                var hashCode = 41;
-                // Suitable nullity checks etc, of course :)
-                    if (ParentChannel != null)
-                    hashCode = hashCode * 59 + ParentChannel.GetHashCode();
-                    if (Data != null)
-                    hashCode = hashCode * 59 + Data.GetHashCode();
-                return hashCode;
-            }
-        }
-    }
+        ///// <summary>
+        ///// Gets the hash code
+        ///// </summary>
+        ///// <returns>Hash code</returns>
+        //public override int GetHashCode()
+        //{
+        //    unchecked // Overflow is fine, just wrap
+        //    {
+        //        var hashCode = 41;
+        //        // Suitable nullity checks etc, of course :)
+        //            if (ParentChannel != null)
+        //            hashCode = hashCode * 59 + ParentChannel.GetHashCode();
+        //            if (Data != null)
+        //            hashCode = hashCode * 59 + Data.GetHashCode();
+        //        return hashCode;
+        //    }
+        //}
+    ///}
 }

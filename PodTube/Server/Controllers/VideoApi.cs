@@ -37,7 +37,7 @@ namespace PodTube.Controllers
         [Route("/video")]
         [ValidateModelState]
         [SwaggerOperation("VideoGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(VideoDto), description: "Successful operation")]
+        [SwaggerResponse(statusCode: 200, description: "Successful operation")]
         public virtual IActionResult VideoGet() {
             var result = VideoService.GetAllVideos();
             return new ObjectResult(result);
@@ -107,7 +107,7 @@ namespace PodTube.Controllers
         [Route("/video/{videoId}")]
         [ValidateModelState]
         [SwaggerOperation("VideoVideoIdGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(VideoWithFramesDto), description: "Successful operation")]
+        [SwaggerResponse(statusCode: 200, type: typeof(VideoDto), description: "Successful operation")]
         public virtual IActionResult VideoVideoIdGet([FromRoute][Required]long videoId)
         {
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...

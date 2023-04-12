@@ -18,24 +18,23 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace PodTube.Shared.Models
-{ 
+namespace PodTube.Shared.Models.DTO
+{
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
     public partial class FrameDto
-    { 
+    {
         [Required]
-        [DataMember(Name="url")]
+        [DataMember(Name = "url")]
         public string Url { get; set; }
 
         [Required]
-        [DataMember(Name="timestampStart")]
+        [DataMember(Name = "timestampStart")]
         public int TimestampStart { get; set; }
 
         [Required]
-
         [DataMember(Name = "timestampEnd")]
         public int TimestampEnd { get; set; }
 

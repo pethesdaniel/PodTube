@@ -17,11 +17,11 @@ using System.ComponentModel.DataAnnotations;
 using PodTube.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
-using PodTube.Shared.Models;
 using PodTube.BLL.Services;
+using PodTube.Shared.Models.DTO;
 
 namespace PodTube.Controllers
-{ 
+{
     /// <summary>
     /// 
     /// </summary>

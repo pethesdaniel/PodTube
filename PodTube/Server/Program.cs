@@ -18,6 +18,7 @@ builder.Services.SeedDbWithData(builder.Configuration);
 builder.Services.RegisterDbContext(builder.Configuration);
 
 builder.Services.AddAutoMapper(typeof(DbToDtoProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(RequestBodyToDbProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(PagedListProfile).Assembly);
 
 builder.Services.AddSwaggerGen(c => {

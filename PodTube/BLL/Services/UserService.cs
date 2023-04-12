@@ -2,14 +2,15 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using PodTube.DataAccess.Contexts;
-using PodTube.Shared.Models;
+using PodTube.Shared.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PodTube.BLL.Services {
+namespace PodTube.BLL.Services
+{
     public class UserService {
 
         private PodTubeDbContext dbContext;

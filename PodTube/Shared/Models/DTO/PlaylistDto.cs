@@ -18,49 +18,48 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace PodTube.Shared.Models
-{ 
+namespace PodTube.Shared.Models.DTO
+{
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class ChannelDto
-    { 
+    public partial class PlaylistDto
+    {
         /// <summary>
         /// Gets or Sets Id
         /// </summary>
 
-        [DataMember(Name="id")]
+        [DataMember(Name = "id")]
         public long? Id { get; set; }
 
         /// <summary>
         /// Gets or Sets Name
         /// </summary>
-        [Required]
 
-        [DataMember(Name="name")]
+        [DataMember(Name = "name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or Sets Description
         /// </summary>
 
-        [DataMember(Name="description")]
+        [DataMember(Name = "description")]
         public string Description { get; set; }
 
         /// <summary>
         /// Gets or Sets Cover
         /// </summary>
 
-        [DataMember(Name="cover")]
-        public string? Cover { get; set; }
+        [DataMember(Name = "cover")]
+        public string Cover { get; set; }
 
         /// <summary>
-        /// Owner of the channel
+        /// Gets or Sets Owner
         /// </summary>
 
         [DataMember(Name = "owner")]
-        public UserDto? Owner { get; set; }
+        public UserDto Owner { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -69,7 +68,7 @@ namespace PodTube.Shared.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class ChannelInfo {\n");
+            sb.Append("class PlaylistInfo {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");

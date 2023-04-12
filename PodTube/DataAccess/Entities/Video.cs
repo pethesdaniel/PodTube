@@ -19,10 +19,11 @@ namespace PodTube.DataAccess.Entities
         public long ChannelId { get; set; }
 
         public string Name { get; set; } = null!;
+        public DateTime DatePublished { get; set; } = new();
         public string? Description { get; set; }
 
         public virtual File? Thumbnail { get; set; }
 
-        public virtual List<Playlist> Playlists { get; set; } = new();
+        public virtual List<PlaylistVideo> Playlists { get; set; } = new();
     }
 }

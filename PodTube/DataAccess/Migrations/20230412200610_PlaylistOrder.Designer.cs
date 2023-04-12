@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PodTube.DataAccess.Contexts;
 
@@ -11,9 +12,11 @@ using PodTube.DataAccess.Contexts;
 namespace PodTube.DataAccess.Migrations
 {
     [DbContext(typeof(PodTubeDbContext))]
-    partial class PodTubeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230412200610_PlaylistOrder")]
+    partial class PlaylistOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -205,9 +208,6 @@ namespace PodTube.DataAccess.Migrations
 
                     b.Property<long>("ChannelId")
                         .HasColumnType("bigint");
-
-                    b.Property<DateTime>("DatePublished")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");

@@ -7,8 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace PodTube.Shared.Models {
-    public class PagedListDto<T> {
+namespace PodTube.Shared.Models.DTO
+{
+    public class PagedListDto<T>
+    {
         /// <summary>
         /// Gets or Sets Page
         /// </summary>
@@ -41,7 +43,8 @@ namespace PodTube.Shared.Models {
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
-        public override string ToString() {
+        public override string ToString()
+        {
             var sb = new StringBuilder();
             sb.Append("class PagedVideoList {\n");
             sb.Append("  Page: ").Append(Page).Append("\n");
@@ -56,7 +59,8 @@ namespace PodTube.Shared.Models {
         /// Returns the JSON string presentation of the object
         /// </summary>
         /// <returns>JSON string presentation of the object</returns>
-        public string ToJson() {
+        public string ToJson()
+        {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
     }

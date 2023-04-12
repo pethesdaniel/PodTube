@@ -2,7 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using PodTube.DataAccess.Contexts;
-using PodTube.Shared.Models;
+using PodTube.Shared.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using X.PagedList;
 
-namespace PodTube.BLL.Services {
+namespace PodTube.BLL.Services
+{
     public class ChannelService {
         private PodTubeDbContext dbContext;
         private IMapper mapper;
@@ -35,7 +36,9 @@ namespace PodTube.BLL.Services {
         }
 
         public PagedListDto<ChannelDto> GetChannelsPaged(int page, int limit) {
-            IPagedList<ChannelDto> pagedChannels = dbContext.Channels.ProjectTo<ChannelDto>(mapper.ConfigurationProvider).ToPagedList(channel => channel.Id, page, limit);
+            IPagedList<ChannelDto> pagedChannels = dbContext.Channels
+                .ProjectTo<ChannelDto>(mapper.ConfigurationProvider)
+                .ToPagedList(channel => channel.Id, page, limit);
             return mapper.Map<PagedListDto<ChannelDto>>(pagedChannels);
         }
     }

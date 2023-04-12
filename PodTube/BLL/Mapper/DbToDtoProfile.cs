@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using PodTube.DataAccess.Entities;
-using PodTube.Shared.Models;
+using PodTube.Shared.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PodTube.BLL.Mapper {
+namespace PodTube.BLL.Mapper
+{
     public class DbToDtoProfile : Profile {
         public DbToDtoProfile() {
             /*

@@ -18,58 +18,34 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace PodTube.Shared.Models
-{ 
+namespace PodTube.Shared.Models.DTO
+{
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class VideoDto
-    { 
+    public partial class UserDto
+    {
         /// <summary>
         /// Gets or Sets Id
         /// </summary>
 
-        [DataMember(Name="id")]
+        [DataMember(Name = "id")]
         public long? Id { get; set; }
 
         /// <summary>
-        /// Gets or Sets Name
+        /// Gets or Sets Username
         /// </summary>
-        [Required]
 
-        [DataMember(Name="name")]
-        public string Name { get; set; }
+        [DataMember(Name = "username")]
+        public string Username { get; set; }
 
         /// <summary>
-        /// Gets or Sets Description
+        /// Gets or Sets ProfilePic
         /// </summary>
 
-        [DataMember(Name="description")]
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Cover
-        /// </summary>
-
-        [DataMember(Name="cover")]
-        public string Cover { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Frames
-        /// </summary>
-        [Required]
-
-        [DataMember(Name = "frames")]
-        public List<FrameDto> Frames { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Audio
-        /// </summary>
-        [Required]
-
-        [DataMember(Name = "audio")]
-        public List<string> Audio { get; set; }
+        [DataMember(Name = "profilePic")]
+        public string ProfilePic { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -78,11 +54,10 @@ namespace PodTube.Shared.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class VideoInfo {\n");
+            sb.Append("class UserInfo {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  Name: ").Append(Name).Append("\n");
-            sb.Append("  Description: ").Append(Description).Append("\n");
-            sb.Append("  Cover: ").Append(Cover).Append("\n");
+            sb.Append("  Username: ").Append(Username).Append("\n");
+            sb.Append("  ProfilePic: ").Append(ProfilePic).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }

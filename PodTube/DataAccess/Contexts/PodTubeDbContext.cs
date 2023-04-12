@@ -13,7 +13,8 @@ namespace PodTube.DataAccess.Contexts {
         public DbSet<Entities.File> Files { get; set; }
         public DbSet<Entities.Playlist> Playlists { get; set; }
         public DbSet<Entities.User> Users { get; set; }
-        public DbSet<Entities.Video> Video { get; set; }
+        public DbSet<Entities.Video> Videos { get; set; }
+        public DbSet<Entities.PlaylistVideo> PlaylistVideos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<Entities.Channel>().ToTable("Channel");
@@ -23,6 +24,7 @@ namespace PodTube.DataAccess.Contexts {
             modelBuilder.Entity<Entities.Sound>().ToTable("Sound");
             modelBuilder.Entity<Entities.User>().ToTable("User");
             modelBuilder.Entity<Entities.Video>().ToTable("Video");
+            modelBuilder.Entity<Entities.PlaylistVideo>().ToTable("PlaylistVideo");
         }
     }
 }

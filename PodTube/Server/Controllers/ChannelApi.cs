@@ -17,8 +17,8 @@ using System.ComponentModel.DataAnnotations;
 using PodTube.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
-using PodTube.Shared.Models;
 using PodTube.BLL.Services;
+using PodTube.Shared.Models.DTO;
 
 namespace PodTube.Controllers
 {
@@ -124,31 +124,31 @@ namespace PodTube.Controllers
             return new ObjectResult(result.ToJson());
         }
 
-        /*/// <summary>
-        /// Create a new channel
-        /// </summary>
-        /// <param name="body"></param>
-        /// <response code="200">Successful operation</response>
-        /// <response code="405">Invalid input</response>
-        [HttpPost]
-        [Route("/channel")]
-        [ValidateModelState]
-        [SwaggerOperation("ChannelPost")]
-        [SwaggerResponse(statusCode: 200, type: typeof(ChannelInfoWithOwner), description: "Successful operation")]
-        public virtual IActionResult ChannelPost([FromBody]ChannelInfo body)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(ChannelInfoWithOwner));
+        ///// <summary>
+        ///// Create a new channel
+        ///// </summary>
+        ///// <param name="body"></param>
+        ///// <response code="200">Successful operation</response>
+        ///// <response code="405">Invalid input</response>
+        //[HttpPost]
+        //[Route("/channel")]
+        //[ValidateModelState]
+        //[SwaggerOperation("ChannelPost")]
+        //[SwaggerResponse(statusCode: 200, type: typeof(ChannelDto), description: "Successful operation")]
+        //public virtual IActionResult ChannelPost([FromBody]ChannelRequestBody body)
+        //{ 
+        //    //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
+        //    // return StatusCode(200, default(ChannelInfoWithOwner));
 
-            //TODO: Uncomment the next line to return response 405 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(405);
-            string exampleJson = null;
-            exampleJson = "\"\"";
+        //    //TODO: Uncomment the next line to return response 405 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
+        //    // return StatusCode(405);
+        //    string exampleJson = null;
+        //    exampleJson = "\"\"";
             
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<ChannelInfoWithOwner>(exampleJson)
-                        : default(ChannelInfoWithOwner);            //TODO: Change the data returned
-            return new ObjectResult(example);
-        }*/
+        //                var example = exampleJson != null
+        //                ? JsonConvert.DeserializeObject<ChannelInfoWithOwner>(exampleJson)
+        //                : default(ChannelInfoWithOwner);            //TODO: Change the data returned
+        //    return new ObjectResult(example);
+        //}
     }
 }

@@ -17,11 +17,13 @@ using System.ComponentModel.DataAnnotations;
 using PodTube.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
-using PodTube.Shared.Models;
 using PodTube.BLL.Services;
+using PodTube.DataAccess.Entities;
+using PodTube.Shared.Models.DTO;
+using PodTube.Shared.Models.RequestBody;
 
 namespace PodTube.Controllers
-{ 
+{
     /// <summary>
     /// 
     /// </summary>
@@ -44,38 +46,13 @@ namespace PodTube.Controllers
         [HttpGet]
         [Route("/playlist")]
         [ValidateModelState]
-        [SwaggerOperation("PlaylistGet")]
+        [SwaggerOperation("PlaylistsPagedGet")]
         [SwaggerResponse(statusCode: 200, type: typeof(PagedListDto<PlaylistDto>), description: "Successful operation")]
-        public virtual IActionResult PlaylistGet([FromQuery][Required()]int page, [FromQuery][Required()]int limit)
+        public virtual IActionResult PlaylistsPagedGet([FromQuery][Required()]int page, [FromQuery][Required()]int limit)
         {
             var result =  PlaylistService.GetAllPlaylists(page, limit);
             return new ObjectResult(result.ToJson());
         }
-
-        /*/// <summary>
-        /// Deletes a playlist and all of it&#x27;s videos
-        /// </summary>
-        /// <param name="playlistId">ID of playlist to delete</param>
-        /// <response code="200">Successful operation</response>
-        /// <response code="404">Video not found</response>
-        /// <response code="405">Validation exception</response>
-        [HttpDelete]
-        [Route("/playlist/{playlistId}")]
-        [ValidateModelState]
-        [SwaggerOperation("PlaylistPlaylistIdDelete")]
-        public virtual IActionResult PlaylistPlaylistIdDelete([FromRoute][Required]long? playlistId)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200);
-
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404);
-
-            //TODO: Uncomment the next line to return response 405 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(405);
-
-            throw new NotImplementedException();
-        }*/
 
         /// <summary>
         /// Get metadata of a playlist
@@ -88,9 +65,9 @@ namespace PodTube.Controllers
         [HttpGet]
         [Route("/playlist/{playlistId}")]
         [ValidateModelState]
-        [SwaggerOperation("PlaylistPlaylistIdGet")]
+        [SwaggerOperation("PlaylistGet")]
         [SwaggerResponse(statusCode: 200, type: typeof(PlaylistDto), description: "Successful operation")]
-        public virtual IActionResult PlaylistPlaylistIdGet([FromRoute][Required]long playlistId)
+        public virtual IActionResult PlaylistGet([FromRoute][Required]long playlistId)
         {
             var result = PlaylistService.GetPlaylistById(playlistId);
             if(result == null) {
@@ -110,9 +87,9 @@ namespace PodTube.Controllers
         [HttpGet]
         [Route("/playlist/{playlistId}/videos")]
         [ValidateModelState]
-        [SwaggerOperation("PlaylistPlaylistIdVideosGet")]
+        [SwaggerOperation("PlaylistVideosGet")]
         [SwaggerResponse(statusCode: 200, type: typeof(PagedListDto<VideoDto>), description: "Successful operation")]
-        public virtual IActionResult PlaylistPlaylistIdVideosGet([FromRoute][Required]long playlistId, [FromQuery][Required] int page, [FromQuery][Required] int limit)
+        public virtual IActionResult PlaylistVideosGet([FromRoute][Required]long playlistId, [FromQuery][Required] int page, [FromQuery][Required] int limit)
         {
             var result = PlaylistService.GetPagedVideosByPlaylistId(playlistId, page, limit);
             if (result == null) {
@@ -121,7 +98,7 @@ namespace PodTube.Controllers
             return new ObjectResult(result!.ToJson());
         }
 
-        /*/// <summary>
+        /// <summary>
         /// Create a new playlist
         /// </summary>
         /// <param name="body"></param>
@@ -130,22 +107,71 @@ namespace PodTube.Controllers
         [HttpPost]
         [Route("/playlist")]
         [ValidateModelState]
-        [SwaggerOperation("PlaylistPost")]
-        [SwaggerResponse(statusCode: 200, type: typeof(PlaylistInfoWithOwner), description: "Successful operation")]
-        public virtual IActionResult PlaylistPost([FromBody]PlaylistInfo body)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(PlaylistInfoWithOwner));
+        [SwaggerOperation("PlaylistCreatePost")]
+        [SwaggerResponse(statusCode: 200, type: typeof(PlaylistDto), description: "Successful operation")]
+        public virtual IActionResult PlaylistPost([FromBody]PlaylistRequestBody body)
+        {
+            var result = PlaylistService.CreateNewPlaylist(body);
+            if(result == 0) {
+                StatusCode(405);
+            }
+            return new ObjectResult(PlaylistService.GetPlaylistById(result));
+        }
 
-            //TODO: Uncomment the next line to return response 405 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(405);
-            string exampleJson = null;
-            exampleJson = "\"\"";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<PlaylistInfoWithOwner>(exampleJson)
-                        : default(PlaylistInfoWithOwner);            //TODO: Change the data returned
-            return new ObjectResult(example);
-        }*/
+        /// <summary>
+        /// Deletes a playlist and all of it&#x27;s videos
+        /// </summary>
+        /// <param name="playlistId">ID of playlist to delete</param>
+        /// <response code="200">Successful operation</response>
+        /// <response code="400">Unsuccessful operation</response>
+        [HttpDelete]
+        [Route("/playlist/{playlistId}")]
+        [ValidateModelState]
+        [SwaggerOperation("PlaylistDelete")]
+        public virtual IActionResult PlaylistPlaylistIdDelete([FromRoute][Required] long playlistId) {
+            var success = PlaylistService.DeletePlaylistById(playlistId);
+            if (!success) {
+                return StatusCode(400);
+            }
+            return StatusCode(200);
+        }
+
+        /// <summary>
+        /// Add video to playlist
+        /// </summary>
+        /// <param name="body"></param>
+        /// <response code="200">Successful operation</response>
+        /// <response code="400">Invalid input</response>
+        [HttpPost]
+        [Route("/playlist/{playlistId}/videos")]
+        [ValidateModelState]
+        [SwaggerOperation("PlaylistAddVideoPost")]
+        [SwaggerResponse(statusCode: 200, type: typeof(PlaylistDto), description: "Successful operation")]
+        public virtual IActionResult PlaylistAddVideoPost([FromRoute][Required] long playlistId, [FromQuery][Required] long videoId) {
+            var success = PlaylistService.AddVideoToPlaylistByIds(playlistId, videoId);
+            if (!success) {
+                StatusCode(400);
+            }
+            return StatusCode(200);
+        }
+
+        /// <summary>
+        /// Remove video from playlist
+        /// </summary>
+        /// <param name="body"></param>
+        /// <response code="200">Successful operation</response>
+        /// <response code="400">Invalid input</response>
+        [HttpDelete]
+        [Route("/playlist/{playlistId}/videos")]
+        [ValidateModelState]
+        [SwaggerOperation("PlaylistRemoveVideoDelete")]
+        [SwaggerResponse(statusCode: 200, type: typeof(PlaylistDto), description: "Successful operation")]
+        public virtual IActionResult PlaylistRemoveVideoDelete([FromRoute][Required] long playlistId, [FromQuery][Required] long videoId) {
+            var success = PlaylistService.RemoveVideoFromPlaylistByIds(playlistId, videoId);
+            if (!success) {
+                StatusCode(400);
+            }
+            return StatusCode(200);
+        }
     }
 }

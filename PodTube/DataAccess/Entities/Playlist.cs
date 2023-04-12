@@ -16,6 +16,6 @@ namespace PodTube.DataAccess.Entities {
         public virtual File? Picture { get; set; }
         public long? PictureId { get; set; }
 
-        public virtual List<Video> Videos { get; set; } = new();
+        public virtual List<PlaylistVideo> Videos { get; set; } = new();
     }
 }

@@ -12,7 +12,7 @@ namespace PodTube.DataAccess.Seed {
             context.Database.EnsureCreated();
 
             // Look for any students.
-            if (context.Video.Any()) {
+            if (context.Videos.Any()) {
                 return;   // DB has been seeded
             }
 
@@ -60,6 +60,7 @@ namespace PodTube.DataAccess.Seed {
                 new Video {
                    Name = "My Amazing Test Podcast: Episode 4",
                    Description = "This is a test video :)",
+                   DatePublished = DateTime.Now,
                    Frames = new List<Frame> { frames[0], frames[1] },
                    Sound = new List<Sound>{sounds[0]},
                    Thumbnail = files[5],
@@ -68,6 +69,7 @@ namespace PodTube.DataAccess.Seed {
                 new Video {
                    Name = "My Amazing Test Podcast: Episode 5",
                    Description = "This is also a test video :3",
+                   DatePublished = DateTime.Now,
                    Frames = new List<Frame> { frames[2] },
                    Sound = new List<Sound>{sounds[1]},
                    Thumbnail = files[5],
@@ -82,19 +84,37 @@ namespace PodTube.DataAccess.Seed {
                    Name = "This is a playlist",
                    Description = "My favourite videos",
                    Picture = files[5],
-                   Videos = { video[0] },
                    Owner = users[0]
                 },
                 new Playlist {
                    Name = "This is a second playlist",
                    Description = "My favourite videos again",
                    Picture = files[5],
-                   Videos = { video[0], video[1] },
                    Owner = users[1]
                 },
             };
 
             context.AddRange(playlist);
+
+            var playlistVideo = new PlaylistVideo[] {
+                new PlaylistVideo {
+                    Playlist = playlist[0],
+                    Video = video[0],
+                    Index = 1
+                },
+                new PlaylistVideo {
+                    Playlist = playlist[1],
+                    Video = video[0],
+                    Index = 1
+                },
+                new PlaylistVideo {
+                    Playlist = playlist[1],
+                    Video = video[1],
+                    Index = 2
+                }
+            };
+
+            context.AddRange(playlistVideo);
 
             context.SaveChanges();
         }

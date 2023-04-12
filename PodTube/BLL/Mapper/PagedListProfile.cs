@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using PodTube.DataAccess.Entities;
-using PodTube.Shared.Models;
+using PodTube.Shared.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 using X.PagedList;
 using static PodTube.BLL.Mapper.PagedListProfile;
 
-namespace PodTube.BLL.Mapper {
+namespace PodTube.BLL.Mapper
+{
     public class PagedListProfile : Profile {
         public PagedListProfile() {
             CreateMap(typeof(IPagedList<>), typeof(PagedListDto<>)).ConvertUsing(typeof(PagedListConverter<>));

@@ -18,34 +18,61 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace PodTube.Shared.Models
-{ 
+namespace PodTube.Shared.Models.DTO
+{
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class UserDto
-    { 
+    public partial class VideoDto
+    {
         /// <summary>
         /// Gets or Sets Id
         /// </summary>
 
-        [DataMember(Name="id")]
+        [DataMember(Name = "id")]
         public long? Id { get; set; }
 
         /// <summary>
-        /// Gets or Sets Username
+        /// Gets or Sets Name
         /// </summary>
+        [Required]
 
-        [DataMember(Name="username")]
-        public string Username { get; set; }
+        [DataMember(Name = "name")]
+        public string Name { get; set; }
 
         /// <summary>
-        /// Gets or Sets ProfilePic
+        /// Gets or Sets Description
         /// </summary>
 
-        [DataMember(Name="profilePic")]
-        public string ProfilePic { get; set; }
+        [DataMember(Name = "description")]
+        public string Description { get; set; }
+
+        [DataMember(Name = "datepublished")]
+        public string DatePublished { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Cover
+        /// </summary>
+
+        [DataMember(Name = "cover")]
+        public string Cover { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Frames
+        /// </summary>
+        [Required]
+
+        [DataMember(Name = "frames")]
+        public List<FrameDto> Frames { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Audio
+        /// </summary>
+        [Required]
+
+        [DataMember(Name = "audio")]
+        public List<string> Audio { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -54,10 +81,11 @@ namespace PodTube.Shared.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class UserInfo {\n");
+            sb.Append("class VideoInfo {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  Username: ").Append(Username).Append("\n");
-            sb.Append("  ProfilePic: ").Append(ProfilePic).Append("\n");
+            sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  Cover: ").Append(Cover).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }

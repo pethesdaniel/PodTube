@@ -27,18 +27,18 @@ namespace PodTube.BLL.Services
             return dbContext.Playlists.ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).FirstOrDefault(playlist => playlist.Id == id);
         }
 
-        public PagedListDto<PlaylistDto> GetAllPlaylists(int page, int limit) {
+        public PlaylistPagedListDto GetAllPlaylists(int page, int limit) {
             var playlistsPaged = dbContext.Playlists.ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).ToPagedList(playlist => playlist.Id, page, limit);
-            return mapper.Map<PagedListDto<PlaylistDto>>(playlistsPaged);
+            return mapper.Map<PlaylistPagedListDto>(playlistsPaged);
         }
 
-        public PagedListDto<VideoDto> GetPagedVideosByPlaylistId(long id, int page, int limit) {
+        public VideoPagedListDto GetPagedVideosByPlaylistId(long id, int page, int limit) {
             var playlist = dbContext.Playlists.Include(playlist => playlist.Videos).ThenInclude(video => video.Video).FirstOrDefault(playlist => playlist.Id == id);
             var videoDtos = mapper.Map<List<VideoDto>>(playlist.Videos.OrderBy(pv => pv.Index).Select(pv =>pv.Video));
             if(playlist == null) {
-                return mapper.Map<PagedListDto<VideoDto>>(new List<VideoDto>().ToPagedList());
+                return mapper.Map<VideoPagedListDto>(new List<VideoDto>().ToPagedList());
             }
-            return mapper.Map<PagedListDto<VideoDto>>(videoDtos.ToPagedList(video => video.Id, page, limit));
+            return mapper.Map<VideoPagedListDto>(videoDtos.ToPagedList(video => video.Id, page, limit));
         }
 
         public long CreateNewPlaylist(PlaylistRequestBody playlistData) {

@@ -6,6 +6,8 @@ using PodTube.BLL.Services;
 using PodTube.DataAccess.Factory;
 using AutoMapper;
 using PodTube.BLL.Mapper;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Swashbuckle.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,22 +24,27 @@ builder.Services.AddAutoMapper(typeof(RequestBodyToDbProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(PagedListProfile).Assembly);
 
 builder.Services.AddSwaggerGen(c => {
-                    c.SwaggerDoc("1.0.0", new OpenApiInfo {
-                        Version = "1.0.0",
-                        Title = "PodTube - OpenAPI 3.0",
-                        Description = "PodTube - OpenAPI 3.0 (ASP.NET Core 3.1)",
-                    });
-                    c.CustomSchemaIds(type => type.FullName);
+    c.SwaggerDoc("1.0.0", new OpenApiInfo {
+        Version = "1.0.0",
+        Title = "PodTube - OpenAPI 3.0",
+        Description = "PodTube - OpenAPI 3.0 (ASP.NET Core 3.1)",
+    });
+    c.CustomSchemaIds(type => type.FriendlyId().Replace("[", "<").Replace("]", ">"));
 
-                    // Include DataAnnotation attributes on Controller Action parameters as Swagger validation rules (e.g required, pattern, ..)
-                    // Use [ValidateModelState] on Actions to actually validate it in C# as well!
-                    c.OperationFilter<GeneratePathParamsValidationFilter>();
-                });
+    // Include DataAnnotation attributes on Controller Action parameters as Swagger validation rules (e.g required, pattern, ..)
+    // Use [ValidateModelState] on Actions to actually validate it in C# as well!
+    c.OperationFilter<GeneratePathParamsValidationFilter>();
+    c.EnableAnnotations();
+});
 
 builder.Services.AddScoped<VideoService>();
 builder.Services.AddScoped<ChannelService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<PlaylistService>();
+
+builder.Services.Configure<KestrelServerOptions>(options => {
+    options.Limits.MaxRequestBodySize = 1073741824; // 1GB
+});
 
 var app = builder.Build();
 
@@ -59,8 +66,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
+app.UseSwaggerUI(c => {
     c.SwaggerEndpoint("/swagger/1.0.0/swagger.json", "PodTube - OpenAPI 3.0");
 });
 

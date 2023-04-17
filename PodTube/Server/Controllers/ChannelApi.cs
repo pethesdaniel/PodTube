@@ -26,6 +26,7 @@ namespace PodTube.Controllers
     /// 
     /// </summary>
     [ApiController]
+    [Route("api/channel")]
     public class ChannelApiController : ControllerBase {
         private ChannelService ChannelService { get; set; }
         public ChannelApiController(ChannelService channelService) : base() {
@@ -41,7 +42,7 @@ namespace PodTube.Controllers
         [HttpDelete]
         [Route("/channel/{channelId}")]
         [ValidateModelState]
-        [SwaggerOperation("ChannelChannelIdDelete")]
+        [SwaggerOperation(OperationId = "ChannelChannelIdDelete")]
         public virtual IActionResult ChannelChannelIdDelete([FromRoute][Required]long? channelId)
         { 
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
@@ -64,12 +65,11 @@ namespace PodTube.Controllers
         /// <response code="400">Invalid ID supplied</response>
         /// <response code="404">Channel not found</response>
         /// <response code="405">Validation exception</response>
-        [HttpGet]
-        [Route("/channel/{channelId}")]
+        [HttpGet("{channelId}")]
         [ValidateModelState]
-        [SwaggerOperation("ChannelChannelIdGet")]
+        [SwaggerOperation(OperationId = "GetChannelById")]
         [SwaggerResponse(statusCode: 200, type: typeof(ChannelDto), description: "Successful operation")]
-        public virtual IActionResult ChannelChannelIdGet([FromRoute][Required] long channelId) {
+        public virtual IActionResult GetChannelById([FromRoute][Required] long channelId) {
             var result = ChannelService.GetChannelById(channelId);
 
             if (result == null) {
@@ -87,12 +87,11 @@ namespace PodTube.Controllers
         /// <response code="400">Invalid ID supplied</response>
         /// <response code="404">Channel not found</response>
         /// <response code="405">Validation exception</response>
-        [HttpGet]
-        [Route("/channel/{channelId}/videos")]
+        [HttpGet("{channelId}/videos")]
         [ValidateModelState]
-        [SwaggerOperation("ChannelChannelIdVideosGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(PagedListDto<VideoDto>), description: "Successful operation")]
-        public virtual IActionResult ChannelChannelIdVideosGet([FromRoute][Required] long channelId, [FromQuery][Required] int page, [FromQuery][Required] int limit) {
+        [SwaggerOperation(OperationId = "GetChannelVideos")]
+        [SwaggerResponse(statusCode: 200, type: typeof(VideoPagedListDto), description: "Successful operation")]
+        public virtual IActionResult GetChannelVideos([FromRoute][Required] long channelId, [FromQuery][Required] int page, [FromQuery][Required] int limit) {
             var result = ChannelService.GetPagedVideosByChannelId(channelId, page, limit);
 
             if (result == null) {
@@ -110,11 +109,10 @@ namespace PodTube.Controllers
         /// <response code="200">Successful operation</response>
         /// <response code="405">Validation exception</response>
         [HttpGet]
-        [Route("/channel")]
         [ValidateModelState]
-        [SwaggerOperation("ChannelGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(PagedListDto<ChannelDto>), description: "Successful operation")]
-        public virtual IActionResult ChannelGet([FromQuery][Required()] int page, [FromQuery][Required()] int limit) {
+        [SwaggerOperation(OperationId = "GetChannelsPaged")]
+        [SwaggerResponse(statusCode: 200, type: typeof(ChannelPagedListDto), description: "Successful operation")]
+        public virtual IActionResult GetChannelsPaged([FromQuery][Required()] int page, [FromQuery][Required()] int limit) {
             var result = ChannelService.GetChannelsPaged(page, limit);
 
             if (result == null) {
@@ -133,7 +131,7 @@ namespace PodTube.Controllers
         //[HttpPost]
         //[Route("/channel")]
         //[ValidateModelState]
-        //[SwaggerOperation("ChannelPost")]
+        //[SwaggerOperation(OperationId = "ChannelPost")]
         //[SwaggerResponse(statusCode: 200, type: typeof(ChannelDto), description: "Successful operation")]
         //public virtual IActionResult ChannelPost([FromBody]ChannelRequestBody body)
         //{ 

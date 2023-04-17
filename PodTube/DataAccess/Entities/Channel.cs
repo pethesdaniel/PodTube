@@ -16,8 +16,8 @@ namespace PodTube.DataAccess.Entities
         public virtual User? Owner { get; set; }
         public long? OwnerId { get; set; }
 
-        public virtual File? Picture { get; set; }
-        public long? PictureId { get; set; }
+        public virtual File? Thumbnail { get; set; }
+        public long? ThumbnailId { get; set; }
 
         public virtual List<Video> Videos { get; set; } = new();
     }

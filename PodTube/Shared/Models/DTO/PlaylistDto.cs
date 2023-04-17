@@ -51,8 +51,8 @@ namespace PodTube.Shared.Models.DTO
         /// Gets or Sets Cover
         /// </summary>
 
-        [DataMember(Name = "cover")]
-        public string Cover { get; set; }
+        [DataMember(Name = "thumbnail")]
+        public string Thumbnail { get; set; }
 
         /// <summary>
         /// Gets or Sets Owner
@@ -72,7 +72,7 @@ namespace PodTube.Shared.Models.DTO
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
-            sb.Append("  Cover: ").Append(Cover).Append("\n");
+            sb.Append("  Cover: ").Append(Thumbnail).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }

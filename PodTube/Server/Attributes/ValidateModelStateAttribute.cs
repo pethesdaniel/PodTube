@@ -24,8 +24,8 @@ namespace PodTube.Attributes
             {
                 foreach (var parameter in descriptor.MethodInfo.GetParameters())
                 {
-                    object args = null;
-                    if (context.ActionArguments.ContainsKey(parameter.Name))
+                    object? args = null;
+                    if (context.ActionArguments.ContainsKey(parameter.Name!))
                     { 
                         args = context.ActionArguments[parameter.Name];
                     }
@@ -52,7 +52,7 @@ namespace PodTube.Attributes
                     var isValid = validationAttribute.IsValid(args);
                     if (!isValid)
                     {
-                        modelState.AddModelError(parameter.Name, validationAttribute.FormatErrorMessage(parameter.Name));
+                        modelState.AddModelError(parameter.Name!, validationAttribute.FormatErrorMessage(parameter.Name));
                     }
                 }
             }

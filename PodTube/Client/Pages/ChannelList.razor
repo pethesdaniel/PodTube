@@ -1,0 +1,58 @@
+﻿@page "/channels"
+@using PodTube.Shared.Models.DTO;
+@using PodTube.Client.Rest;
+@using PodTube.Client.Components.ChannelGrid;
+@inject HttpClient httpClient
+@inject NavigationManager Navigator
+
+<MudText Typo="Typo.h4" Class="ma-3">Channels</MudText>
+
+@if (Channels == null) {
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+} else {
+    <MudStack>
+        <ChannelsGrid Channels="@Channels" ChannelClicked="OnChannelClicked" />
+        <div class="d-flex flex-grow-1 gap-4 justify-space-between">
+            <MudPaper Width="100px" Elevation="0" />
+            <MudPagination Rectangular="true" SelectedChanged="SelectedPageChanged" Variant="Variant.Text" Count="@Total" Selected="@PageNumber" />
+            <MudPaper Width="100px" Elevation="0">
+                <MudNumericField Class="pa-1" Value="Limit" ValueChanged="@((int e)=>LimitChanged(e))" Label="Limit" Variant="Variant.Text" Min="0" Max="10" />
+            </MudPaper>
+        </div>
+    </MudStack>
+}
+
+@code {
+    private ChannelApiClient? client;
+
+    public List<ChannelDto> Channels { get; set; }
+    public int PageNumber { get; set; } = 1;
+    public int Total { get; set; } = 0;
+    public int Limit { get; set; } = 1;
+
+    protected override async Task OnInitializedAsync() {
+        client = new ChannelApiClient(Navigator.BaseUri, httpClient);
+        await GetChannelsForCurrentPage();
+    }
+
+    private async Task GetChannelsForCurrentPage() {
+        var channels = await client.GetChannelsPagedAsync(PageNumber, Limit);
+        Channels = channels.Content;
+        Total = channels.Total;
+        Console.Write(channels);
+    }
+
+    public async Task SelectedPageChanged(int pageNumber) {
+        PageNumber = pageNumber;
+        await GetChannelsForCurrentPage();
+    }
+
+    public async Task LimitChanged(int limit) {
+        Limit = limit;
+        await GetChannelsForCurrentPage();
+    }
+
+    public void OnChannelClicked(long id) {
+        Navigator.NavigateTo("/channel/" + id);
+    }
+}

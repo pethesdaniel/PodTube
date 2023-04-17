@@ -19,6 +19,7 @@ using PodTube.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using PodTube.BLL.Services;
 using PodTube.Shared.Models.DTO;
+using PodTube.Shared.Models.RequestBody;
 
 namespace PodTube.Controllers
 {
@@ -26,6 +27,7 @@ namespace PodTube.Controllers
     /// 
     /// </summary>
     [ApiController]
+    [Route("api/video")]
     public class VideoApiController : ControllerBase
     { 
         private VideoService VideoService { get; set; }
@@ -34,41 +36,13 @@ namespace PodTube.Controllers
         }
 
         [HttpGet]
-        [Route("/video")]
         [ValidateModelState]
-        [SwaggerOperation("VideoGet")]
+        [SwaggerOperation(OperationId = "GetVideosDebug")]
         [SwaggerResponse(statusCode: 200, description: "Successful operation")]
-        public virtual IActionResult VideoGet() {
+        public virtual IActionResult GetVideosDebug() {
             var result = VideoService.GetAllVideos();
             return new ObjectResult(result);
         }
-
-        ///// <summary>
-        ///// Upload a video
-        ///// </summary>
-        ///// <param name="body"></param>
-        ///// <response code="200">Successful operation</response>
-        ///// <response code="405">Invalid input</response>
-        //[HttpPost]
-        //[Route("/video")]
-        //[ValidateModelState]
-        //[SwaggerOperation("VideoPost")]
-        //[SwaggerResponse(statusCode: 200, type: typeof(VideoInfo), description: "Successful operation")]
-        //public virtual IActionResult VideoPost([FromBody]VideoRequestBody body)
-        //{ 
-        //    //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-        //    // return StatusCode(200, default(VideoInfo));
-
-        //    //TODO: Uncomment the next line to return response 405 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-        //    // return StatusCode(405);
-        //    string exampleJson = null;
-        //    exampleJson = "{\n  \"cover\" : \"https://example.com/podcast/episode1/cover.png\",\n  \"name\" : \"The Podcast: Episode 1\",\n  \"description\" : \"This is the description for the episode.\",\n  \"id\" : 10\n}";
-            
-        //                var example = exampleJson != null
-        //                ? JsonConvert.DeserializeObject<VideoInfo>(exampleJson)
-        //                : default(VideoInfo);            //TODO: Change the data returned
-        //    return new ObjectResult(example);
-        //}
 
         ///// <summary>
         ///// Deletes a video
@@ -80,7 +54,7 @@ namespace PodTube.Controllers
         //[HttpDelete]
         //[Route("/video/{videoId}")]
         //[ValidateModelState]
-        //[SwaggerOperation("VideoVideoIdDelete")]
+        //[SwaggerOperation(OperationId = "VideoVideoIdDelete")]
         //public virtual IActionResult VideoVideoIdDelete([FromRoute][Required]long? videoId)
         //{ 
         //    //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
@@ -103,12 +77,11 @@ namespace PodTube.Controllers
         ///// <response code="400">Invalid ID supplied</response>
         ///// <response code="404">Video not found</response>
         ///// <response code="405">Validation exception</response>
-        [HttpGet]
-        [Route("/video/{videoId}")]
+        [HttpGet("{videoId}")]
         [ValidateModelState]
-        [SwaggerOperation("VideoVideoIdGet")]
+        [SwaggerOperation(OperationId = "GetVideoById")]
         [SwaggerResponse(statusCode: 200, type: typeof(VideoDto), description: "Successful operation")]
-        public virtual IActionResult VideoVideoIdGet([FromRoute][Required]long videoId)
+        public virtual IActionResult GetVideoById([FromRoute][Required]long videoId)
         {
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(FullVideoInfo));
@@ -119,6 +92,18 @@ namespace PodTube.Controllers
             }
 
             return new ObjectResult(result.ToJson());
+        }
+
+        [HttpPost("upload")]
+        [ValidateModelState]
+        [SwaggerOperation(OperationId = "PostUploadVideo")]
+        [SwaggerResponse(statusCode: 200, type: typeof(VideoDto), description: "Successful operation")]
+        public virtual IActionResult PostUploadVideo([FromForm][Required] VideoRequestBody metadata, [FromForm][Required] List<IFormFile> files) {
+            var success = VideoService.UploadVideo(metadata, files);
+            if (!success) {
+                return StatusCode(400);
+            }
+            return StatusCode(200);
         }
     }
 }

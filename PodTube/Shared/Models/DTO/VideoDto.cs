@@ -55,8 +55,8 @@ namespace PodTube.Shared.Models.DTO
         /// Gets or Sets Cover
         /// </summary>
 
-        [DataMember(Name = "cover")]
-        public string Cover { get; set; }
+        [DataMember(Name = "thumbnail")]
+        public string Thumbnail { get; set; }
 
         /// <summary>
         /// Gets or Sets Frames
@@ -72,7 +72,7 @@ namespace PodTube.Shared.Models.DTO
         [Required]
 
         [DataMember(Name = "audio")]
-        public List<string> Audio { get; set; }
+        public string Audio { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -85,7 +85,7 @@ namespace PodTube.Shared.Models.DTO
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
-            sb.Append("  Cover: ").Append(Cover).Append("\n");
+            sb.Append("  Cover: ").Append(Thumbnail).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }

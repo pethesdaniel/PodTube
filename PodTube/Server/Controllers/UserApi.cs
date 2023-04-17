@@ -26,6 +26,7 @@ namespace PodTube.Controllers
     /// 
     /// </summary>
     [ApiController]
+    [Route("api/user")]
     public class UserApiController : ControllerBase
     {
         private UserService UserService { get; set; }
@@ -44,7 +45,7 @@ namespace PodTube.Controllers
         [HttpGet]
         [Route("/user/{userId}/favorites")]
         [ValidateModelState]
-        [SwaggerOperation("UserUserIdFavoritesGet")]
+        [SwaggerOperation(OperationId = "UserUserIdFavoritesGet")]
         [SwaggerResponse(statusCode: 200, type: typeof(PagedChannelList), description: "Successful operation")]
         public virtual IActionResult UserUserIdFavoritesGet([FromRoute][Required]long? userId, [FromQuery][Required()]long? page, [FromQuery][Required()]long? limit)
         { 
@@ -70,12 +71,11 @@ namespace PodTube.Controllers
         /// <response code="400">Invalid ID supplied</response>
         /// <response code="404">Video not found</response>
         /// <response code="405">Validation exception</response>
-        [HttpGet]
-        [Route("/user/{userId}")]
+        [HttpGet("{userId}")]
         [ValidateModelState]
-        [SwaggerOperation("UserUserIdGet")]
+        [SwaggerOperation(OperationId = "GetUserById")]
         [SwaggerResponse(statusCode: 200, type: typeof(UserDto), description: "Successful operation")]
-        public virtual IActionResult UserUserIdGet([FromRoute][Required]long userId)
+        public virtual IActionResult GetUserById([FromRoute][Required]long userId)
         {
             var result = UserService.GetUserById(userId);
 
@@ -97,7 +97,7 @@ namespace PodTube.Controllers
         [HttpGet]
         [Route("/user/{userId}/playlists")]
         [ValidateModelState]
-        [SwaggerOperation("UserUserIdPlaylistsGet")]
+        [SwaggerOperation(OperationId = "UserUserIdPlaylistsGet")]
         [SwaggerResponse(statusCode: 200, type: typeof(PagedPlaylistList), description: "Successful operation")]
         public virtual IActionResult UserUserIdPlaylistsGet([FromRoute][Required]long? userId, [FromQuery][Required()]long? page, [FromQuery][Required()]long? limit)
         { 

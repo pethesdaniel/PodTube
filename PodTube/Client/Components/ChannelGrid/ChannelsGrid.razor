@@ -1,0 +1,14 @@
+﻿@using PodTube.Shared.Models.DTO;
+<MudGrid Justify="Justify.Center">
+    @foreach (var channel in Channels) {
+        <MudItem>
+            <ChannelCard Channel="@channel" ChannelClicked="@ChannelClicked"></ChannelCard>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    [Parameter] public List<ChannelDto> Channels { get; set; }
+
+    [Parameter] public EventCallback<long> ChannelClicked { get; set; }
+}

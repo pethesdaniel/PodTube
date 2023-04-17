@@ -37,15 +37,15 @@ namespace PodTube.Shared.Models.DTO
         /// Gets or Sets Username
         /// </summary>
 
-        [DataMember(Name = "username")]
-        public string Username { get; set; }
+        [DataMember(Name = "name")]
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or Sets ProfilePic
         /// </summary>
 
-        [DataMember(Name = "profilePic")]
-        public string ProfilePic { get; set; }
+        [DataMember(Name = "picture")]
+        public string Picture { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -56,8 +56,8 @@ namespace PodTube.Shared.Models.DTO
             var sb = new StringBuilder();
             sb.Append("class UserInfo {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  Username: ").Append(Username).Append("\n");
-            sb.Append("  ProfilePic: ").Append(ProfilePic).Append("\n");
+            sb.Append("  Username: ").Append(Name).Append("\n");
+            sb.Append("  ProfilePic: ").Append(Picture).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }

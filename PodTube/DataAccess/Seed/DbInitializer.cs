@@ -49,20 +49,13 @@ namespace PodTube.DataAccess.Seed {
 
             context.AddRange(frames);
 
-            var sounds = new Sound[] {
-                new Sound { File = files[3] },
-                new Sound { File = files[4] }
-            };
-
-            context.AddRange(sounds);
-
             var video = new Video[] {
                 new Video {
                    Name = "My Amazing Test Podcast: Episode 4",
                    Description = "This is a test video :)",
                    DatePublished = DateTime.Now,
                    Frames = new List<Frame> { frames[0], frames[1] },
-                   Sound = new List<Sound>{sounds[0]},
+                   Audio = files[3],
                    Thumbnail = files[5],
                    Channel = channels[0]
                 },
@@ -71,7 +64,7 @@ namespace PodTube.DataAccess.Seed {
                    Description = "This is also a test video :3",
                    DatePublished = DateTime.Now,
                    Frames = new List<Frame> { frames[2] },
-                   Sound = new List<Sound>{sounds[1]},
+                   Audio = files[4],
                    Thumbnail = files[5],
                    Channel = channels[0]
                 }
@@ -83,13 +76,13 @@ namespace PodTube.DataAccess.Seed {
                 new Playlist {
                    Name = "This is a playlist",
                    Description = "My favourite videos",
-                   Picture = files[5],
+                   Thumbnail = files[5],
                    Owner = users[0]
                 },
                 new Playlist {
                    Name = "This is a second playlist",
                    Description = "My favourite videos again",
-                   Picture = files[5],
+                   Thumbnail = files[5],
                    Owner = users[1]
                 },
             };

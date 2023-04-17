@@ -1,0 +1,9 @@
+﻿<MudText Typo="Typo.h5" Class="mx-3">PodTube</MudText>
+<MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnChannelsButton">Channels</MudButton>
+<MudSpacer />
+<MudIconButton Icon="@Icons.Material.Filled.Api" Color="Color.Inherit" Edge="Edge.End" OnClick="OnApiButton" />
+
+@code{
+    [Parameter] public EventCallback OnChannelsButton { get; set; }
+    [Parameter] public EventCallback OnApiButton { get; set; }
+}

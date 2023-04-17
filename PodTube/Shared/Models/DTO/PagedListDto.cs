@@ -9,8 +9,15 @@ using System.Xml.Linq;
 
 namespace PodTube.Shared.Models.DTO
 {
-    public class PagedListDto<T>
-    {
+    public class PagedListDto<T> {
+        public PagedListDto(){}
+        public PagedListDto(PagedListDto<T> other){
+            Page = other.Page;
+            Total = other.Total;
+            Limit = other.Limit;
+            Content = other.Content;
+        }
+
         /// <summary>
         /// Gets or Sets Page
         /// </summary>

@@ -40,14 +40,14 @@ namespace PodTube.DataAccess.Migrations
                     b.Property<long?>("OwnerId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("PictureId")
+                    b.Property<long?>("ThumbnailId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
 
-                    b.HasIndex("PictureId");
+                    b.HasIndex("ThumbnailId");
 
                     b.ToTable("Channel", (string)null);
                 });
@@ -120,14 +120,14 @@ namespace PodTube.DataAccess.Migrations
                     b.Property<long?>("OwnerId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("PictureId")
+                    b.Property<long?>("ThumbnailId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
 
-                    b.HasIndex("PictureId");
+                    b.HasIndex("ThumbnailId");
 
                     b.ToTable("Playlist", (string)null);
                 });
@@ -148,29 +148,6 @@ namespace PodTube.DataAccess.Migrations
                     b.HasIndex("VideoId");
 
                     b.ToTable("PlaylistVideo", (string)null);
-                });
-
-            modelBuilder.Entity("PodTube.DataAccess.Entities.Sound", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("FileId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("VideoId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FileId");
-
-                    b.HasIndex("VideoId");
-
-                    b.ToTable("Sound", (string)null);
                 });
 
             modelBuilder.Entity("PodTube.DataAccess.Entities.User", b =>
@@ -203,6 +180,9 @@ namespace PodTube.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<long>("AudioId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("ChannelId")
                         .HasColumnType("bigint");
 
@@ -216,13 +196,12 @@ namespace PodTube.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("SoundId")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("ThumbnailId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AudioId");
 
                     b.HasIndex("ChannelId");
 
@@ -237,13 +216,13 @@ namespace PodTube.DataAccess.Migrations
                         .WithMany("Favorites")
                         .HasForeignKey("OwnerId");
 
-                    b.HasOne("PodTube.DataAccess.Entities.File", "Picture")
+                    b.HasOne("PodTube.DataAccess.Entities.File", "Thumbnail")
                         .WithMany()
-                        .HasForeignKey("PictureId");
+                        .HasForeignKey("ThumbnailId");
 
                     b.Navigation("Owner");
 
-                    b.Navigation("Picture");
+                    b.Navigation("Thumbnail");
                 });
 
             modelBuilder.Entity("PodTube.DataAccess.Entities.Frame", b =>
@@ -267,13 +246,13 @@ namespace PodTube.DataAccess.Migrations
                         .WithMany("Playlists")
                         .HasForeignKey("OwnerId");
 
-                    b.HasOne("PodTube.DataAccess.Entities.File", "Picture")
+                    b.HasOne("PodTube.DataAccess.Entities.File", "Thumbnail")
                         .WithMany()
-                        .HasForeignKey("PictureId");
+                        .HasForeignKey("ThumbnailId");
 
                     b.Navigation("Owner");
 
-                    b.Navigation("Picture");
+                    b.Navigation("Thumbnail");
                 });
 
             modelBuilder.Entity("PodTube.DataAccess.Entities.PlaylistVideo", b =>
@@ -295,21 +274,6 @@ namespace PodTube.DataAccess.Migrations
                     b.Navigation("Video");
                 });
 
-            modelBuilder.Entity("PodTube.DataAccess.Entities.Sound", b =>
-                {
-                    b.HasOne("PodTube.DataAccess.Entities.File", "File")
-                        .WithMany()
-                        .HasForeignKey("FileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PodTube.DataAccess.Entities.Video", null)
-                        .WithMany("Sound")
-                        .HasForeignKey("VideoId");
-
-                    b.Navigation("File");
-                });
-
             modelBuilder.Entity("PodTube.DataAccess.Entities.User", b =>
                 {
                     b.HasOne("PodTube.DataAccess.Entities.File", "ProfilePicture")
@@ -321,6 +285,12 @@ namespace PodTube.DataAccess.Migrations
 
             modelBuilder.Entity("PodTube.DataAccess.Entities.Video", b =>
                 {
+                    b.HasOne("PodTube.DataAccess.Entities.File", "Audio")
+                        .WithMany()
+                        .HasForeignKey("AudioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PodTube.DataAccess.Entities.Channel", "Channel")
                         .WithMany("Videos")
                         .HasForeignKey("ChannelId")
@@ -330,6 +300,8 @@ namespace PodTube.DataAccess.Migrations
                     b.HasOne("PodTube.DataAccess.Entities.File", "Thumbnail")
                         .WithMany()
                         .HasForeignKey("ThumbnailId");
+
+                    b.Navigation("Audio");
 
                     b.Navigation("Channel");
 
@@ -358,8 +330,6 @@ namespace PodTube.DataAccess.Migrations
                     b.Navigation("Frames");
 
                     b.Navigation("Playlists");
-
-                    b.Navigation("Sound");
                 });
 #pragma warning restore 612, 618
         }

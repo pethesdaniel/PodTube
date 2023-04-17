@@ -15,8 +15,12 @@ namespace PodTube.BLL.Mapper
             CreateMap<string, DataAccess.Entities.File>()
                 .ForMember(dest => dest.ResourceURI, opt => opt.MapFrom(file => file))
                 .ForMember(dest => dest.MimeType, opt => opt.MapFrom(file => MimeTypes.GetMimeType(file)));
-            CreateMap<PlaylistRequestBody, Playlist>()
-                .ForMember(dest => dest.Picture, opt => opt.MapFrom(playlist => playlist.Cover));
+            CreateMap<PlaylistRequestBody, Playlist>();
+            CreateMap<VideoRequestBody, Video>()
+                .ForMember(dest => dest.Audio, opt => opt.MapFrom(video => video.AudioFilename));
+            CreateMap<FrameRequestBody, Frame>();
+
+
         }
     }
 }

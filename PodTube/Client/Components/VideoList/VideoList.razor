@@ -1,0 +1,9 @@
+﻿@using PodTube.Shared.Models.DTO;
+<MudStack>
+    @foreach(var video in Videos){
+        <VideoCard Video="video"></VideoCard>
+    }
+</MudStack>
+@code {
+    [Parameter] public List<VideoDto> Videos { get; set; }
+}

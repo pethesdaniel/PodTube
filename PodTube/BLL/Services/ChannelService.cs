@@ -26,20 +26,21 @@ namespace PodTube.BLL.Services
                 .FirstOrDefault(c => c.Id == id);
         }
 
-        public PagedListDto<VideoDto> GetPagedVideosByChannelId(long id, int page, int limit) {
+        public VideoPagedListDto GetPagedVideosByChannelId(long id, int page, int limit) {
             var channel = dbContext.Channels.Include(channel => channel.Videos).FirstOrDefault(channel => channel.Id == id);
             var videoDtos = mapper.Map<List<VideoDto>>(channel.Videos);
             if (channel == null) {
-                return mapper.Map<PagedListDto<VideoDto>>(new List<VideoDto>().ToPagedList());
+                return mapper.Map<VideoPagedListDto>(new List<VideoDto>().ToPagedList());
             }
-            return mapper.Map<PagedListDto<VideoDto>>(videoDtos.ToPagedList(video => video.Id, page, limit));
+            var result = mapper.Map<VideoPagedListDto>(videoDtos.ToPagedList(video => video.Id, page, limit));
+            return result;
         }
 
-        public PagedListDto<ChannelDto> GetChannelsPaged(int page, int limit) {
+        public ChannelPagedListDto GetChannelsPaged(int page, int limit) {
             IPagedList<ChannelDto> pagedChannels = dbContext.Channels
                 .ProjectTo<ChannelDto>(mapper.ConfigurationProvider)
                 .ToPagedList(channel => channel.Id, page, limit);
-            return mapper.Map<PagedListDto<ChannelDto>>(pagedChannels);
+            return mapper.Map<ChannelPagedListDto>(pagedChannels);
         }
     }
 }

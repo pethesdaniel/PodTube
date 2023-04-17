@@ -14,6 +14,24 @@ namespace PodTube.BLL.Mapper
     public class PagedListProfile : Profile {
         public PagedListProfile() {
             CreateMap(typeof(IPagedList<>), typeof(PagedListDto<>)).ConvertUsing(typeof(PagedListConverter<>));
+
+            CreateMap<IPagedList<VideoDto>, VideoPagedListDto>().ConvertUsing(
+                (entity, c, context) => {
+                    var intermediate = context.Mapper.Map<PagedListDto<VideoDto>>(entity); return new VideoPagedListDto(intermediate);
+                }
+            );
+
+            CreateMap<IPagedList<PlaylistDto>, PlaylistPagedListDto>().ConvertUsing(
+                (entity, c, context) => {
+                    var intermediate = context.Mapper.Map<PagedListDto<PlaylistDto>>(entity); return new PlaylistPagedListDto(intermediate);
+                }
+            );
+
+            CreateMap<IPagedList<ChannelDto>, ChannelPagedListDto>().ConvertUsing(
+                (entity, c, context) => {
+                    var intermediate = context.Mapper.Map<PagedListDto<ChannelDto>>(entity); return new ChannelPagedListDto(intermediate);
+                }
+            );
         }
 
         public class PagedListConverter<T> : ITypeConverter<IPagedList<T>, PagedListDto<T>> {

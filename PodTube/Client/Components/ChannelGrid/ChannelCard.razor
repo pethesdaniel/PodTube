@@ -1,0 +1,15 @@
+﻿@using PodTube.Shared.Models.DTO;
+
+    
+<MudPaper Height="250px" Width="250px" onclick="@(() => ChannelClicked.InvokeAsync(Channel.Id ?? 0))">
+    <MudStack AlignItems="AlignItems.Center">
+        <MudImage Width="100" Src="@Channel.Thumbnail" Alt="Thumbnail" Elevation="25" Class="rounded-lg mt-5" />
+        <MudText Typo="Typo.h6" Align="Align.Center">@Channel.Name</MudText>
+    </MudStack>
+</MudPaper>
+
+@code {
+    [Parameter] public ChannelDto Channel { get; set; }
+
+    [Parameter] public EventCallback<long> ChannelClicked { get; set; }
+}

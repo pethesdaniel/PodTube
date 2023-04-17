@@ -12,8 +12,8 @@ namespace PodTube.DataAccess.Entities
 
         public virtual List<Frame> Frames { get; set; } = new();
 
-        public virtual List<Sound> Sound { get; set; } = new ();
-        public long SoundId { get; set; }
+        public virtual File Audio { get; set; } = new ();
+        public long AudioId { get; set; }
 
         public virtual Channel Channel { get; set; } = null!;
         public long ChannelId { get; set; }
@@ -23,6 +23,7 @@ namespace PodTube.DataAccess.Entities
         public string? Description { get; set; }
 
         public virtual File? Thumbnail { get; set; }
+        public virtual long? ThumbnailId { get; set; }
 
         public virtual List<PlaylistVideo> Playlists { get; set; } = new();
     }

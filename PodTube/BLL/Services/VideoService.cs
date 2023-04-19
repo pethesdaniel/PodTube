@@ -40,12 +40,13 @@ namespace PodTube.BLL.Services
         }
 
         public bool UploadVideo(VideoRequestBody metadata, List<IFormFile> files) {
+            ;
             if (
                 (
-                files.Count == metadata.Frames.Count + 1 
+                files.Count == metadata.Frames.Count() + 1 
                 && files.All(
                     file => metadata.Frames.Any(
-                        frameMetadata => frameMetadata.File.Contains(file.FileName) 
+                        frameMetadata => frameMetadata.Contains(file.FileName) 
                         || metadata.AudioFilename.Contains(file.FileName)
                         )
                     )
@@ -53,7 +54,7 @@ namespace PodTube.BLL.Services
                 return false;
             }
 
-            metadata.Frames.ForEach(f => f.File = Path.Combine("uploads", f.File));
+            metadata.GetFrames().ForEach(f => f.File = Path.Combine("uploads", f.File));
             metadata.AudioFilename = Path.Combine("uploads", metadata.AudioFilename);
             var video = mapper.Map<Video>(metadata);
 

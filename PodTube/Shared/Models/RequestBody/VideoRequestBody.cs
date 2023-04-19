@@ -28,23 +28,24 @@ namespace PodTube.Shared.Models.RequestBody {
         /// </summary>
         [Required]
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or Sets Description
         /// </summary>
 
         [DataMember(Name = "description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [DataMember(Name = "frames")]
-        public List<FrameRequestBody> Frames { get; set; }
+        public List<string> Frames { get; set; } = new();
+
 
         [DataMember(Name = "audio")]
-        public string AudioFilename { get; set; }
+        public string AudioFilename { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Returns the JSON string presentation of the object
+        public List<FrameRequestBody> GetFrames() {
+            return Frames.Select(e => System.Text.Json.JsonSerializer.Deserialize<FrameRequestBody>(e)!).ToList() ?? new List<FrameRequestBody>();
         }
     }
 }

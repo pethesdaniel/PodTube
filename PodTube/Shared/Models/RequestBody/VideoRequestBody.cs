@@ -42,9 +42,5 @@ namespace PodTube.Shared.Models.RequestBody {
 
         [DataMember(Name = "audio")]
         public string AudioFilename { get; set; }
-
-        /// <summary>
-        /// Returns the JSON string presentation of the object
-        }
     }
 }

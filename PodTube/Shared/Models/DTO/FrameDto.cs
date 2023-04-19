@@ -16,33 +16,31 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
-namespace PodTube.Shared.Models.DTO
-{
+namespace PodTube.Shared.Models.DTO {
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class FrameDto
-    {
+    public partial class FrameDto {
         [Required]
-        [DataMember(Name = "url")]
+        [JsonPropertyName("url")]
         public string Url { get; set; }
 
         [Required]
-        [DataMember(Name = "timestampStart")]
+        [JsonPropertyName("timestampStart")]
         public int TimestampStart { get; set; }
 
         [Required]
-        [DataMember(Name = "timestampEnd")]
+        [JsonPropertyName("timestampEnd")]
         public int TimestampEnd { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
-        public override string ToString()
-        {
+        public override string ToString() {
             var sb = new StringBuilder();
             sb.Append("class Frame {\n");
             sb.Append("  Url: ").Append(Url).Append("\n");

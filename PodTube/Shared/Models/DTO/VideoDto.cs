@@ -10,19 +10,19 @@
 using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace PodTube.Shared.Models.DTO {
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class VideoDto
-    {
+    public partial class VideoDto {
         /// <summary>
         /// Gets or Sets Id
         /// </summary>
 
-        [DataMember(Name = "id")]
+        [JsonPropertyName("id")]
         public long? Id { get; set; }
 
         /// <summary>
@@ -30,24 +30,24 @@ namespace PodTube.Shared.Models.DTO {
         /// </summary>
         [Required]
 
-        [DataMember(Name = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or Sets Description
         /// </summary>
 
-        [DataMember(Name = "description")]
+        [JsonPropertyName("description")]
         public string Description { get; set; }
 
-        [DataMember(Name = "datepublished")]
+        [JsonPropertyName("datepublished")]
         public string DatePublished { get; set; }
 
         /// <summary>
         /// Gets or Sets Cover
         /// </summary>
 
-        [DataMember(Name = "thumbnail")]
+        [JsonPropertyName("thumbnail")]
         public string Thumbnail { get; set; }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace PodTube.Shared.Models.DTO {
         /// </summary>
         [Required]
 
-        [DataMember(Name = "frames")]
+        [JsonPropertyName("frames")]
         public List<FrameDto> Frames { get; set; }
 
         /// <summary>
@@ -63,15 +63,14 @@ namespace PodTube.Shared.Models.DTO {
         /// </summary>
         [Required]
 
-        [DataMember(Name = "audio")]
+        [JsonPropertyName("audio")]
         public string Audio { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
-        public override string ToString()
-        {
+        public override string ToString() {
             var sb = new StringBuilder();
             sb.Append("class VideoInfo {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");

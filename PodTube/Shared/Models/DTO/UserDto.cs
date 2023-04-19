@@ -9,41 +9,40 @@
  */
 using System.Text;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace PodTube.Shared.Models.DTO {
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class UserDto
-    {
+    public partial class UserDto {
         /// <summary>
         /// Gets or Sets Id
         /// </summary>
 
-        [DataMember(Name = "id")]
+        [JsonPropertyName("id")]
         public long? Id { get; set; }
 
         /// <summary>
         /// Gets or Sets Username
         /// </summary>
 
-        [DataMember(Name = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or Sets ProfilePic
         /// </summary>
 
-        [DataMember(Name = "picture")]
+        [JsonPropertyName("picture")]
         public string Picture { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
-        public override string ToString()
-        {
+        public override string ToString() {
             var sb = new StringBuilder();
             sb.Append("class UserInfo {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");

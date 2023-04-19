@@ -9,55 +9,54 @@
  */
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace PodTube.Shared.Models.DTO {
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class PlaylistDto
-    {
+    public partial class PlaylistDto {
         /// <summary>
         /// Gets or Sets Id
         /// </summary>
 
-        [DataMember(Name = "id")]
+        [JsonPropertyName("id")]
         public long? Id { get; set; }
 
         /// <summary>
         /// Gets or Sets Name
         /// </summary>
 
-        [DataMember(Name = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or Sets Description
         /// </summary>
 
-        [DataMember(Name = "description")]
+        [JsonPropertyName("description")]
         public string Description { get; set; }
 
         /// <summary>
         /// Gets or Sets Cover
         /// </summary>
 
-        [DataMember(Name = "thumbnail")]
+        [JsonPropertyName("thumbnail")]
         public string Thumbnail { get; set; }
 
         /// <summary>
         /// Gets or Sets Owner
         /// </summary>
 
-        [DataMember(Name = "owner")]
+        [JsonPropertyName("owner")]
         public UserDto Owner { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
-        public override string ToString()
-        {
+        public override string ToString() {
             var sb = new StringBuilder();
             sb.Append("class PlaylistInfo {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");

@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using PodTube.Attributes;
 
@@ -20,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using PodTube.BLL.Services;
 using PodTube.Shared.Models.DTO;
 using PodTube.Shared.Models.RequestBody;
+using System.Text.Json;
 
 namespace PodTube.Controllers
 {
@@ -95,11 +95,13 @@ namespace PodTube.Controllers
         }
 
         [HttpPost("upload")]
+        [Consumes("multipart/form-data")]
         [ValidateModelState]
         [SwaggerOperation(OperationId = "PostUploadVideo")]
         [SwaggerResponse(statusCode: 200, type: typeof(VideoDto), description: "Successful operation")]
-        public virtual IActionResult PostUploadVideo([FromForm][Required] VideoRequestBody metadata, [FromForm][Required] List<IFormFile> files) {
-            var success = VideoService.UploadVideo(metadata, files);
+        public virtual IActionResult PostUploadVideo([FromForm][Required] string metadata, [FromForm][Required] List<IFormFile> files) {
+            var metadataDto = JsonSerializer.Deserialize<VideoRequestBody>(metadata);
+            var success = VideoService.UploadVideo(metadataDto!, files);
             if (!success) {
                 return StatusCode(400);
             }

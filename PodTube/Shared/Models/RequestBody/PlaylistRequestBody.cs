@@ -1,12 +1,5 @@
-﻿using Newtonsoft.Json;
-using PodTube.Shared.Models.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace PodTube.Shared.Models.RequestBody {
     public class PlaylistRequestBody {
@@ -42,14 +35,6 @@ namespace PodTube.Shared.Models.RequestBody {
             sb.Append("  Cover: ").Append(Thumbnail).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
-        }
-
-        /// <summary>
-        /// Returns the JSON string presentation of the object
-        /// </summary>
-        /// <returns>JSON string presentation of the object</returns>
-        public string ToJson() {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
     }
 }

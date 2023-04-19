@@ -76,7 +76,7 @@ namespace PodTube.Controllers
                 return StatusCode(404);
             }
 
-            return new ObjectResult(result.ToJson());
+            return new ObjectResult(result);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace PodTube.Controllers
                 return StatusCode(404);
             }
 
-            return new ObjectResult(result.ToJson());
+            return new ObjectResult(result);
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace PodTube.Controllers
                 return StatusCode(404);
             }
 
-            return new ObjectResult(result.ToJson());
+            return new ObjectResult(result);
         }
 
         ///// <summary>

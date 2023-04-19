@@ -10,8 +10,8 @@ using System.Xml.Linq;
 namespace PodTube.Shared.Models.RequestBody {
     public class FrameRequestBody {
         [Required]
-        [DataMember(Name = "filename")]
-        public string File { get; set; }
+        [DataMember(Name = "file")]
+        public string File { get; set; } = string.Empty;
 
         [Required]
         [DataMember(Name = "timestampStart")]

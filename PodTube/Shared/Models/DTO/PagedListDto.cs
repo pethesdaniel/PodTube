@@ -1,14 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
-namespace PodTube.Shared.Models.DTO
-{
+namespace PodTube.Shared.Models.DTO {
     public class PagedListDto<T> {
         public PagedListDto(){}
         public PagedListDto(PagedListDto<T> other){
@@ -60,15 +53,6 @@ namespace PodTube.Shared.Models.DTO
             sb.Append("  Content: ").Append(Content).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
-        }
-
-        /// <summary>
-        /// Returns the JSON string presentation of the object
-        /// </summary>
-        /// <returns>JSON string presentation of the object</returns>
-        public string ToJson()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
     }
 }

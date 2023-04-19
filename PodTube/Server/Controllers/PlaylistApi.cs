@@ -51,7 +51,7 @@ namespace PodTube.Controllers
         public virtual IActionResult GetPlaylistsPaged([FromQuery][Required()]int page, [FromQuery][Required()]int limit)
         {
             var result =  PlaylistService.GetAllPlaylists(page, limit);
-            return new ObjectResult(result.ToJson());
+            return new ObjectResult(result);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace PodTube.Controllers
             if(result == null) {
                 StatusCode(404);
             }
-            return new ObjectResult(result!.ToJson());
+            return new ObjectResult(result);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace PodTube.Controllers
             if (result == null) {
                 StatusCode(404);
             }
-            return new ObjectResult(result!.ToJson());
+            return new ObjectResult(result);
         }
 
         /// <summary>

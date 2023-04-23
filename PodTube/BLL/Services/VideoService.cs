@@ -13,12 +13,16 @@ using Microsoft.AspNetCore.Http;
 using PodTube.DataAccess.Entities;
 using Microsoft.AspNetCore;
 using System.Text.Json;
+using System.Data.Common;
 
 namespace PodTube.BLL.Services
 {
     public class VideoService {
         private PodTubeDbContext dbContext;
         private IMapper mapper;
+
+        private static string WWWROOT = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot");
+
         public VideoService(PodTubeDbContext dbContext, IMapper mapper) {
             this.dbContext = dbContext;
             this.mapper = mapper;
@@ -39,50 +43,43 @@ namespace PodTube.BLL.Services
             return mapper.Map<VideoDto>(video);
         }
 
-        public bool UploadVideo(VideoRequestBody metadata, List<IFormFile> files) {
-            if (
-                (
-                files.Count == metadata.Frames.Count + 1 
-                && files.All(
-                    file => metadata.Frames.Any(
-                        frameMetadata => frameMetadata.File.Contains(file.FileName) 
-                        || metadata.AudioFilename.Contains(file.FileName)
-                        )
-                    )
-                ) == false) {
-                return false;
-            }
-
-            metadata.Frames.ForEach(f => f.File = Path.Combine("uploads", f.File));
-            metadata.AudioFilename = Path.Combine("uploads", metadata.AudioFilename);
+        public bool UploadVideoMetadata(VideoRequestBody metadata) {
             var video = mapper.Map<Video>(metadata);
-
-            var wwwrootDir = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot");
-
-            if (!Directory.Exists(wwwrootDir)) {
-                Directory.CreateDirectory(wwwrootDir);
-            }
-
-            var filesCreated = new List<string>();
             try {
-                foreach (var file in files) {
-                    var relativePath = Path.Combine("uploads", file.FileName);
-                    var absolutePath = Path.Combine(wwwrootDir, relativePath);
-                    using (var fileStream = new FileStream(absolutePath, FileMode.Create)) {
-                        file.CopyTo(fileStream);
-                    }
-                    filesCreated.Add(relativePath);
-                }
                 dbContext.Add(video);
-                dbContext.AddRange(mapper.Map<List<DataAccess.Entities.File>>(filesCreated));
                 dbContext.SaveChanges();
             } catch (Exception e) {
-                foreach(var file in filesCreated) {
-                    System.IO.File.Delete(file);
-                }
                 return false;
             }
             return true;
+        }
+
+        public bool UploadVideoAudio(long videoId, IFormFile file) {
+            var video = dbContext.Videos.FirstOrDefault(video => video.Id == videoId);
+            if(video == null) {
+                throw new ArgumentException("Invalid videoId!");
+            }
+            var dbFile = UploadFile(file);
+            video.Audio = dbFile;
+            dbContext.SaveChanges();
+            return true;
+        }
+
+        private DataAccess.Entities.File UploadFile(IFormFile file) {
+            var relativePath = Path.Combine("uploads", file.FileName);
+            var absolutePath = Path.Combine(WWWROOT, relativePath);
+            try {
+                using (var fileStream = new FileStream(absolutePath, FileMode.Create)) {
+                    file.CopyTo(fileStream);
+                }
+                var dbFile = mapper.Map<DataAccess.Entities.File>(relativePath);
+                dbContext.Add(dbFile);
+                dbContext.SaveChanges();
+                return dbFile;
+            } catch(DbException dbException) {
+                System.IO.File.Delete(absolutePath);
+                throw dbException;
+            }
         }
     }
 }

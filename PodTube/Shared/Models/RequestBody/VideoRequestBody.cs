@@ -35,11 +35,5 @@ namespace PodTube.Shared.Models.RequestBody {
 
         [JsonPropertyName("description")]
         public string Description { get; set; }
-
-        [JsonPropertyName("frames")]
-        public List<FrameRequestBody> Frames { get; set; }
-
-        [JsonPropertyName("audio")]
-        public string AudioFilename { get; set; }
     }
 }

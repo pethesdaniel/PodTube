@@ -60,6 +60,10 @@ if (app.Environment.IsDevelopment()) {
     app.UseHsts();
 }
 
+var wwwRoot = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot");
+if (!Directory.Exists(wwwRoot)) {
+    Directory.CreateDirectory(wwwRoot);
+}
 
 app.UseHttpsRedirection();
 

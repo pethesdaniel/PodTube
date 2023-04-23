@@ -95,13 +95,23 @@ namespace PodTube.Controllers
         }
 
         [HttpPost("upload")]
-        [Consumes("multipart/form-data")]
         [ValidateModelState]
-        [SwaggerOperation(OperationId = "PostUploadVideo")]
+        [SwaggerOperation(OperationId = "PostUploadVideoMetadata")]
         [SwaggerResponse(statusCode: 200, type: typeof(VideoDto), description: "Successful operation")]
-        public virtual IActionResult PostUploadVideo([FromForm][Required] string metadata, [FromForm][Required] List<IFormFile> files) {
-            var metadataDto = JsonSerializer.Deserialize<VideoRequestBody>(metadata);
-            var success = VideoService.UploadVideo(metadataDto!, files);
+        public virtual IActionResult PostUploadVideoMetadata([FromForm][Required] VideoRequestBody metadata) {
+            var success = VideoService.UploadVideoMetadata(metadata);
+            if (!success) {
+                return StatusCode(400);
+            }
+            return StatusCode(200);
+        }
+
+        [HttpPost("upload/{videoId}/audio")]
+        [ValidateModelState]
+        [SwaggerOperation(OperationId = "PostUploadVideoMetadata")]
+        [SwaggerResponse(statusCode: 200, type: typeof(VideoDto), description: "Successful operation")]
+        public virtual IActionResult PostUploadVideoAudio([FromRoute][Required] long videoId, [FromForm][Required] IFormFile audio) {
+            var success = VideoService.UploadVideoAudio(videoId, audio);
             if (!success) {
                 return StatusCode(400);
             }

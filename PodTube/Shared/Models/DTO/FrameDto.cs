@@ -25,14 +25,17 @@ namespace PodTube.Shared.Models.DTO {
     [DataContract]
     public partial class FrameDto {
         [Required]
+        [DataMember(Name = "url")]
         [JsonPropertyName("url")]
         public string Url { get; set; }
 
         [Required]
+        [DataMember(Name = "timestampStart")]
         [JsonPropertyName("timestampStart")]
         public int TimestampStart { get; set; }
 
         [Required]
+        [DataMember(Name = "timestampEnd")]
         [JsonPropertyName("timestampEnd")]
         public int TimestampEnd { get; set; }
 

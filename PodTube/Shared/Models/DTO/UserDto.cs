@@ -20,21 +20,21 @@ namespace PodTube.Shared.Models.DTO {
         /// <summary>
         /// Gets or Sets Id
         /// </summary>
-
+        [DataMember(Name = "id")]
         [JsonPropertyName("id")]
         public long? Id { get; set; }
 
         /// <summary>
         /// Gets or Sets Username
         /// </summary>
-
+        [DataMember(Name = "name")]
         [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or Sets ProfilePic
         /// </summary>
-
+        [DataMember(Name = "picture")]
         [JsonPropertyName("picture")]
         public string Picture { get; set; }
 

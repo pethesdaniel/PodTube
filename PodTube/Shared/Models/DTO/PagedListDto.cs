@@ -15,28 +15,28 @@ namespace PodTube.Shared.Models.DTO {
         /// <summary>
         /// Gets or Sets Page
         /// </summary>
-
+        [DataMember(Name = "page")]
         [JsonPropertyName("page")]
         public int Page { get; set; } = 0;
 
         /// <summary>
         /// Gets or Sets Total
         /// </summary>
-
+        [DataMember(Name = "total")]
         [JsonPropertyName("total")]
         public int Total { get; set; } = 0;
 
         /// <summary>
         /// Gets or Sets Limit
         /// </summary>
-
+        [DataMember(Name = "limit")]
         [JsonPropertyName("limit")]
         public int Limit { get; set; } = 0;
 
         /// <summary>
         /// Gets or Sets Videos
         /// </summary>
-
+        [DataMember(Name = "content")]
         [JsonPropertyName("content")]
         public List<T> Content { get; set; } = new();
 

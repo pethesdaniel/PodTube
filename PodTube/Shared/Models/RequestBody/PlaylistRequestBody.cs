@@ -7,21 +7,21 @@ namespace PodTube.Shared.Models.RequestBody {
         /// <summary>
         /// Gets or Sets Name
         /// </summary>
-
+        [DataMember(Name = "name")]
         [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or Sets Description
         /// </summary>
-
+        [DataMember(Name = "description")]
         [JsonPropertyName("description")]
         public string Description { get; set; }
 
         /// <summary>
         /// Gets or Sets Cover
         /// </summary>
-
+        [DataMember(Name = "thumbnail")]
         [JsonPropertyName("thumbnail")]
         public string Thumbnail { get; set; }
 

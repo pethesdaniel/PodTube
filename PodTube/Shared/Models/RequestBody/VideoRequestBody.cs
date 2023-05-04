@@ -19,6 +19,7 @@ namespace PodTube.Shared.Models.RequestBody {
         /// Gets or Sets ParentChannel
         /// </summary>
         [Required]
+        [DataMember(Name = "parentChannel")]
         [JsonPropertyName("parentChannel")]
         public long ChannelId { get; set; }
 
@@ -26,19 +27,22 @@ namespace PodTube.Shared.Models.RequestBody {
         /// Gets or Sets Name
         /// </summary>
         [Required]
+        [DataMember(Name = "name")]
         [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or Sets Description
         /// </summary>
-
+        [DataMember(Name = "description")]
         [JsonPropertyName("description")]
         public string Description { get; set; }
 
+        [DataMember(Name = "frames")]
         [JsonPropertyName("frames")]
         public List<FrameRequestBody> Frames { get; set; }
 
+        [DataMember(Name = "audio")]
         [JsonPropertyName("audio")]
         public string AudioFilename { get; set; }
     }

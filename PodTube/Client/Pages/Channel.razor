@@ -8,17 +8,35 @@
 @if (channel == null) {
     <MudProgressCircular Color="Color.Default" Indeterminate="true" />
 } else {
-    <MudText Typo="Typo.h4">@channel.Name</MudText>
-    <MudStack>
-        <VideoList Videos="Videos" />
-        <div class="d-flex flex-grow-1 gap-4 justify-space-between">
-            <MudPaper Width="100px" Elevation="0" />
-            <MudPagination Rectangular="true" SelectedChanged="SelectedPageChanged" Variant="Variant.Text" Count="@Total" Selected="@PageNumber" />
-            <MudPaper Width="100px" Elevation="0">
-                <MudNumericField Class="pa-1" Value="Limit" ValueChanged="@((int e)=>LimitChanged(e))" Label="Limit" Variant="Variant.Text" Min="0" Max="10" />
-            </MudPaper>
-        </div>
-    </MudStack>
+    <MudCard Outlined="true">
+        <MudCardHeader>
+            <MudStack Row=true AlignItems="AlignItems.Center">
+                <MudImage Width="500" Src="@channel.Thumbnail"></MudImage>
+                <MudStack>
+                    <MudText Typo="Typo.h4">@channel.Name</MudText>
+                    <MudText Typo="Typo.h5">@channel.Description</MudText>
+                    <MudStack Row=true AlignItems="AlignItems.Center">
+                        <MudAvatar>
+                            <MudImage Src="@channel.Owner.Picture"></MudImage>
+                        </MudAvatar>
+                        <MudText Typo="Typo.body2">@channel.Owner.Name</MudText>
+                    </MudStack>
+                </MudStack>
+            </MudStack>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudStack>
+                <VideoList Videos="Videos" />
+                <div class="d-flex flex-grow-1 gap-4 justify-space-between">
+                    <MudPaper Width="100px" Elevation="0" />
+                    <MudPagination Rectangular="true" SelectedChanged="SelectedPageChanged" Variant="Variant.Text" Count="@Total" Selected="@PageNumber" />
+                    <MudPaper Width="100px" Elevation="0">
+                        <MudNumericField Class="pa-1" Value="Limit" ValueChanged="@((int e)=>LimitChanged(e))" Label="Limit" Variant="Variant.Text" Min="0" Max="10" />
+                    </MudPaper>
+                </div>
+            </MudStack>
+        </MudCardContent>
+    </MudCard>
 }
 
 

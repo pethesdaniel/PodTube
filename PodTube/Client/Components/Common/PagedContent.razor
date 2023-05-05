@@ -1,0 +1,80 @@
+﻿@using PodTube.Shared.Models.DTO;
+@using PodTube.Client.Rest;
+@using PodTube.Client.Components.ChannelGrid;
+@inject HttpClient httpClient
+@inject NavigationManager Navigator
+
+@if (ContentReady == false) {
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+} else {
+    <MudStack>
+        @ChildContent
+        <div class="d-flex flex-grow-1 gap-4 justify-space-between">
+            <MudPaper Width="100px" Elevation="0" />
+            <MudPagination Rectangular="true" Variant="Variant.Text" @bind-Count="@Total" @bind-Selected="@PageNumber" />
+            <MudPaper Width="100px" Elevation="0">
+                <MudNumericField Class="pa-1" @bind-Value="Limit" Label="Limit" Variant="Variant.Text" Min="0" Max="10" />
+            </MudPaper>
+        </div>
+    </MudStack>
+}
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    public int _pageNumber = 1;
+    public int _total = 0;
+    public int _limit = 1;
+    public bool _contentReady = false;
+
+    [Parameter]
+    public int PageNumber {
+        get { return _pageNumber; }
+        set {
+            if(_pageNumber != value) {
+                _pageNumber = value;
+                PageNumberChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public int Total {
+        get { return _total; }
+        set {
+            if (_total != value) {
+                _total = value;
+                TotalChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public int Limit {
+        get { return _limit; }
+        set {
+            if (_limit != value) {
+                _limit = value;
+                LimitChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public bool ContentReady {
+        get { return _contentReady; }
+        set {
+            if (_contentReady != value) {
+                _contentReady = value;
+                ContentReadyChanged.InvokeAsync(value);
+            }
+        }
+    }
+
+    [Parameter]
+    public EventCallback<int> PageNumberChanged { get; set; }
+    [Parameter]
+    public EventCallback<int> TotalChanged { get; set; }
+    [Parameter]
+    public EventCallback<int> LimitChanged { get; set; }
+    [Parameter]
+    public EventCallback<bool> ContentReadyChanged { get; set; }
+}

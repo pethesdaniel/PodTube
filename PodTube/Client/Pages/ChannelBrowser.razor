@@ -1,0 +1,44 @@
+﻿@page "/channels"
+@using PodTube.Shared.Models.DTO;
+@using PodTube.Client.Rest;
+@using PodTube.Client.Components.ChannelGrid;
+@using PodTube.Client.Components.Common
+@inject HttpClient httpClient
+@inject NavigationManager Navigator
+
+<MudText Typo="Typo.h4" Class="ma-3">Channels</MudText>
+
+<PagedContent @bind-Limit="limit" @bind-PageNumber="pageNumber" Total="total" ContentReady="contentReady"
+              @bind-Limit:after="GetChannelsForCurrentPage" @bind-PageNumber:after="GetChannelsForCurrentPage">
+    <ChannelGrid Channels="channels" ChannelClicked="OnChannelClicked" />
+</PagedContent>
+
+@code {
+    private ChannelApiClient? client;
+
+    public List<ChannelDto> channels = new();
+    public int pageNumber = 1;
+    public int total = 0;
+    public int limit = 1;
+    public bool contentReady = false;
+
+    protected override async Task OnInitializedAsync() {
+        client = new ChannelApiClient(Navigator.BaseUri, httpClient);
+        await GetChannelsForCurrentPage();
+        contentReady = true;
+    }
+
+    private async Task GetChannelsForCurrentPage() {
+        if(client == null) {
+            return;
+        }
+        var channels = await client.GetChannelsPagedAsync(pageNumber, limit);
+        this.channels = channels.Content;
+        total = channels.Total;
+        Console.Write(channels);
+    }
+
+    public void OnChannelClicked(long id) {
+        Navigator.NavigateTo("/channel/" + id);
+    }
+}

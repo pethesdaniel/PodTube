@@ -1,6 +1,7 @@
 ﻿@page "/channel/{channelId}"
 @using PodTube.Shared.Models.DTO;
 @using PodTube.Client.Components.VideoList
+@using PodTube.Client.Components.Common
 @using PodTube.Client.Rest;
 @inject NavigationManager Navigator
 @inject HttpClient httpClient
@@ -26,14 +27,10 @@
         </MudCardHeader>
         <MudCardContent>
             <MudStack>
-                <VideoList Videos="Videos" />
-                <div class="d-flex flex-grow-1 gap-4 justify-space-between">
-                    <MudPaper Width="100px" Elevation="0" />
-                    <MudPagination Rectangular="true" SelectedChanged="SelectedPageChanged" Variant="Variant.Text" Count="@Total" Selected="@PageNumber" />
-                    <MudPaper Width="100px" Elevation="0">
-                        <MudNumericField Class="pa-1" Value="Limit" ValueChanged="@((int e)=>LimitChanged(e))" Label="Limit" Variant="Variant.Text" Min="0" Max="10" />
-                    </MudPaper>
-                </div>
+                <PagedContent @bind-PageNumber="pageNumber" @bind-Limit="limit" Total="total" ContentReady="contentReady"
+                          @bind-PageNumber:after="GetVideosForCurrentPage" @bind-Limit:after="GetVideosForCurrentPage">
+                    <VideoList Videos="videos" />
+                </PagedContent>
             </MudStack>
         </MudCardContent>
     </MudCard>
@@ -42,36 +39,32 @@
 
 @code {
     [Parameter]
-    public string channelId { get; set; }
+    public string channelId { get; set; } = "";
     private ChannelApiClient? client;
 
     private ChannelDto? channel;
-    private List<VideoDto> Videos;
+    private List<VideoDto> videos = new();
 
-    public int PageNumber { get; set; } = 1;
-    public int Total { get; set; } = 0;
-    public int Limit { get; set; } = 1;
+    public int pageNumber = 1;
+    public int total = 0;
+    public int limit = 1;
+    public bool contentReady = false;
 
     protected override async Task OnInitializedAsync() {
         client = new ChannelApiClient(Navigator.BaseUri, httpClient);
         channel = await client.GetChannelByIdAsync(Convert.ToInt64(channelId));
         await GetVideosForCurrentPage();
+
+        contentReady = true;
     }
 
     public async Task GetVideosForCurrentPage() {
-        var pagedVideo = await client.GetChannelVideosAsync(channel.Id ?? 0, PageNumber, Limit);
-        Videos = pagedVideo.Content;
-        Total = pagedVideo.Total;
-    }
-
-    public async Task SelectedPageChanged(int pageNumber) {
-        PageNumber = pageNumber;
-        await GetVideosForCurrentPage();
-    }
-
-    public async Task LimitChanged(int limit) {
-        Limit = limit;
-        await GetVideosForCurrentPage();
+        if(client == null) {
+            return;
+        }
+        var pagedVideo = await client.GetChannelVideosAsync(channel?.Id ?? 0, pageNumber, limit);
+        videos = pagedVideo.Content;
+        total = pagedVideo.Total;
     }
 }
 

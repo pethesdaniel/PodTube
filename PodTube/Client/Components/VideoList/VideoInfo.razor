@@ -1,0 +1,12 @@
+﻿@using PodTube.Shared.Models.DTO;
+<MudStack Row="true">
+    <MudImage Src="@Video.Thumbnail" Height="200"></MudImage>
+    <MudStack Justify="Justify.Center">
+        <MudText Typo="Typo.h5">@Video.Name</MudText>
+        <MudText Typo="Typo.body2">@Video.Description</MudText>
+        <MudText Typo="Typo.body2">@Video.DatePublished</MudText>
+    </MudStack>
+</MudStack>
+@code {
+    [Parameter] public VideoDto Video { get; set; }
+}

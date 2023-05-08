@@ -8,8 +8,9 @@
 <MudLayout>
     <MudAppBar Elevation="1">
         <MenuBar 
+            OnHomeButton="@(()=>Navigator.NavigateTo("/"))"
             OnChannelsButton="@(()=>Navigator.NavigateTo("/channels"))"
-                 OnApiButton="@(()=>Navigator.NavigateTo("/swagger/index.html", forceLoad: true))"></MenuBar>
+            OnApiButton="@(()=>Navigator.NavigateTo("/swagger/index.html", forceLoad: true))"></MenuBar>
     </MudAppBar>
     <MudMainContent>
         @Body

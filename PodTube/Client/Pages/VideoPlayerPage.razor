@@ -1,0 +1,28 @@
+﻿@page "/video/{videoId}"
+@using PodTube.Shared.Models.DTO;
+@using PodTube.Client.Components.Common
+@using PodTube.Client.Components.VideoPlayer
+@using PodTube.Client.Components.VideoList
+@using PodTube.Client.Rest;
+@inject NavigationManager Navigator
+@inject HttpClient httpClient
+<MudPaper Class="pa-2 my-2">
+    <PodTubeVideoPlayer Video="video" Placeholder="@video.Thumbnail"></PodTubeVideoPlayer>
+</MudPaper>
+<MudPaper Class="pa-2">
+    <VideoInfo Video="video"></VideoInfo>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public string videoId { get; set; } = "";
+
+    private VideoDto video = new();
+
+    private VideoApiClient? client;
+
+    protected override async Task OnInitializedAsync() {
+        client = new VideoApiClient(Navigator.BaseUri, httpClient);
+        video = await client.GetVideoByIdAsync(Int64.Parse(videoId));
+    }
+}

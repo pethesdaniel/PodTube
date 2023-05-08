@@ -1,0 +1,119 @@
+﻿@using PodTube.Shared.Models.DTO;
+@inject IJSRuntime js;
+
+<MudStack>
+    <MudImage Src="@CurrentFrame" ObjectFit="ObjectFit.Contain" Height="250" Elevation="25" Class="rounded-lg ma-4" />
+    <MudStack Row AlignItems="AlignItems.Center">
+        <MudToggleIconButton Toggled="@IsPaused"
+                             Icon="@Icons.Material.Filled.Pause" Title="Pause"
+                             ToggledIcon="@Icons.Material.Filled.PlayArrow" ToggledTitle="Play" @onclick="OnPlay" />
+        <MudSlider Class="pa-3" Variant="Variant.Filled" @bind-Value="SliderPosition"></MudSlider>
+    </MudStack>
+
+    </MudStack>
+
+    @if (Video.Audio != string.Empty) {
+    <audio preload="metadata" hidden @ref="audioElement" @ontimeupdate="OnTimeUpdate" @onloadedmetadata="OnTimeUpdate">
+        <source src="@Video.Audio">
+        Your browser does not support the audio element.
+    </audio>
+}
+
+
+@code {
+    [Parameter] public VideoDto Video { get; set; } = new();
+
+    [Parameter] public string Placeholder { get; set; } = string.Empty;
+
+    private string CurrentFrame = string.Empty;
+
+    public double CurrentTime = 0;
+
+    public double Duration = 0;
+
+    public bool IsPaused = true;
+
+    public double Progress { 
+        get {
+            return CurrentTime / Duration * 100f;
+        }
+        set {
+            SetCurrentTime(value / 100f * Duration).RunSynchronously();
+        }
+    }
+    private double _sliderPosition = 0;
+    public double SliderPosition {
+        get {
+            return _sliderPosition;
+        }    
+        set {
+            if(_sliderPosition != value) {
+                _sliderPosition = value;
+                Progress = value;
+            }
+        }
+    }
+
+    private IJSObjectReference componentJs = null!;
+
+    private ElementReference audioElement;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        componentJs = await js.InvokeAsync<IJSObjectReference>("import", "./Components/VideoPlayer/PodTubeVideoPlayer.razor.js");
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    protected override async Task OnInitializedAsync() {
+        await base.OnInitializedAsync();
+    }
+
+    public async Task OnTimeUpdate() {
+        CurrentTime = await GetCurrentTime();
+        Duration = await GetDuration();
+        IsPaused = await GetIsPaused();
+        UpdateFrame();
+        _sliderPosition = Progress;
+    }
+
+    public async Task OnPlay() {
+        if (IsPaused) {
+            await PlayAudio();
+        } else {
+            await PauseAudio();
+        }
+    }
+
+    public async Task<double> GetCurrentTime() {
+        return await componentJs.InvokeAsync<double>("getCurrentTime", audioElement);
+    }
+
+    public async Task<double> GetDuration() {
+        return await componentJs.InvokeAsync<double>("getDuration", audioElement);
+    }
+
+    public async Task<bool> GetIsPaused() {
+        return await componentJs.InvokeAsync<bool>("getIsPaused", audioElement);
+    }
+
+    public async Task PlayAudio() {
+        await componentJs.InvokeVoidAsync("play", audioElement);
+    }
+
+    public async Task PauseAudio() {
+        await componentJs.InvokeVoidAsync("pause", audioElement);
+    }
+
+    public async Task SetCurrentTime(double time) {
+        Console.WriteLine(time);
+        await componentJs.InvokeVoidAsync("setCurrentTime", audioElement, time);
+    }
+
+    public void UpdateFrame() {
+        var frameCandidate = Video.Frames.FirstOrDefault(f => f.TimestampStart <= CurrentTime && f.TimestampEnd > CurrentTime)?.Url;
+        if(frameCandidate != null) {
+            CurrentFrame = CurrentFrame != frameCandidate ? frameCandidate : CurrentFrame;
+        } else {
+            CurrentFrame = Placeholder;
+        }
+        Console.WriteLine(CurrentFrame);
+    }
+}

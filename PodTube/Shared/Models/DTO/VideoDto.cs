@@ -31,25 +31,25 @@ namespace PodTube.Shared.Models.DTO {
         [Required]
         [DataMember(Name = "name")]
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or Sets Description
         /// </summary>
         [DataMember(Name = "description")]
         [JsonPropertyName("description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [DataMember(Name = "datepublished")]
         [JsonPropertyName("datepublished")]
-        public string DatePublished { get; set; }
+        public string DatePublished { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or Sets Cover
         /// </summary>
         [DataMember(Name = "thumbnail")]
         [JsonPropertyName("thumbnail")]
-        public string Thumbnail { get; set; }
+        public string Thumbnail { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or Sets Frames
@@ -57,7 +57,7 @@ namespace PodTube.Shared.Models.DTO {
         [Required]
         [DataMember(Name = "frames")]
         [JsonPropertyName("frames")]
-        public List<FrameDto> Frames { get; set; }
+        public List<FrameDto> Frames { get; set; } = new();
 
         /// <summary>
         /// Gets or Sets Audio
@@ -65,7 +65,7 @@ namespace PodTube.Shared.Models.DTO {
         [Required]
         [DataMember(Name = "audio")]
         [JsonPropertyName("audio")]
-        public string Audio { get; set; }
+        public string Audio { get; set; } = string.Empty;
 
         /// <summary>
         /// Returns the string presentation of the object

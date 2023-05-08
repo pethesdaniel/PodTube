@@ -1,20 +1,15 @@
 ﻿@using PodTube.Shared.Models.DTO;
 <MudCard>
     <MudCardContent>
-        <MudStack Row="true">
-            <MudImage Src="@Video.Thumbnail" Height="200"></MudImage>
-            <MudStack Justify="Justify.Center">
-                <MudText Typo="Typo.h5">@Video.Name</MudText>
-                <MudText Typo="Typo.body2">@Video.Description</MudText>
-                <MudText Typo="Typo.body2">@Video.DatePublished</MudText>
-            </MudStack>
-        </MudStack>
+        <VideoInfo Video="Video"></VideoInfo>
     </MudCardContent>
     <MudCardActions>
-        <MudButton Variant="Variant.Text" Color="Color.Primary">Play</MudButton>
-        <MudButton Variant="Variant.Text" Color="Color.Primary">Save</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="async () => await PlayPressed.InvokeAsync(Video.Id ?? 0)">Play</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="async () => await SavePressed.InvokeAsync(Video.Id ?? 0)">Save</MudButton>
     </MudCardActions>
 </MudCard>
 @code {
     [Parameter] public VideoDto Video { get; set; }
+    [Parameter] public EventCallback<long> PlayPressed { get; set; }
+    [Parameter] public EventCallback<long> SavePressed { get; set; }
 }

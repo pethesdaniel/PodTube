@@ -25,7 +25,7 @@ namespace PodTube.BLL.Services
         }
 
         public List<VideoDto> GetAllVideos() {
-            return dbContext.Videos.ProjectTo<VideoDto>(mapper.ConfigurationProvider).ToList();
+            return dbContext.Videos.Include(v => v.Thumbnail).ProjectTo<VideoDto>(mapper.ConfigurationProvider).ToList();
         }
 
         public VideoDto? GetVideoById(long id) {

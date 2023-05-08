@@ -27,7 +27,7 @@ namespace PodTube.BLL.Services
         }
 
         public VideoPagedListDto GetPagedVideosByChannelId(long id, int page, int limit) {
-            var channel = dbContext.Channels.Include(channel => channel.Videos).FirstOrDefault(channel => channel.Id == id);
+            var channel = dbContext.Channels.Include(channel => channel.Videos).ThenInclude(v=>v.Thumbnail).FirstOrDefault(channel => channel.Id == id);
             var videoDtos = mapper.Map<List<VideoDto>>(channel.Videos);
             if (channel == null) {
                 return mapper.Map<VideoPagedListDto>(new List<VideoDto>().ToPagedList());

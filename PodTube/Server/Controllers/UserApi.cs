@@ -19,6 +19,8 @@ using PodTube.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using PodTube.BLL.Services;
 using PodTube.Shared.Models.DTO;
+using Microsoft.AspNetCore.Identity;
+using PodTube.DataAccess.Entities;
 
 namespace PodTube.Controllers
 {
@@ -29,9 +31,11 @@ namespace PodTube.Controllers
     [Route("api/user")]
     public class UserApiController : ControllerBase
     {
-        private UserService UserService { get; set; }
-        public UserApiController(UserService userService) : base() {
-            this.UserService = userService;
+        private UserService _userService;
+        private UserManager<User> _userManager;
+        public UserApiController(UserService userService, UserManager<User> userManager) : base() {
+            _userService = userService;
+            _userManager = userManager;
         }
 
         /*/// <summary>
@@ -77,7 +81,7 @@ namespace PodTube.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(UserDto), description: "Successful operation")]
         public virtual IActionResult GetUserById([FromRoute][Required]long userId)
         {
-            var result = UserService.GetUserById(userId);
+            var result = _userService.GetUserById(userId);
 
             if (result == null) {
                 return StatusCode(404);
@@ -86,33 +90,57 @@ namespace PodTube.Controllers
             return new ObjectResult(result);
         }
 
-       /*/// <summary>
-        /// Get a paged list of the users playlists
+        /// <summary>
+        /// Get information of logged in user
         /// </summary>
         /// <param name="userId">ID of User to return</param>
-        /// <param name="page">Number of the currentpage</param>
-        /// <param name="limit">Number of playlists on a page</param>
         /// <response code="200">Successful operation</response>
+        /// <response code="400">Invalid ID supplied</response>
+        /// <response code="404">Video not found</response>
         /// <response code="405">Validation exception</response>
-        [HttpGet]
-        [Route("/user/{userId}/playlists")]
+        [Authorize]
+        [HttpGet("me")]
         [ValidateModelState]
-        [SwaggerOperation(OperationId = "UserUserIdPlaylistsGet")]
-        [SwaggerResponse(statusCode: 200, type: typeof(PagedPlaylistList), description: "Successful operation")]
-        public virtual IActionResult UserUserIdPlaylistsGet([FromRoute][Required]long? userId, [FromQuery][Required()]long? page, [FromQuery][Required()]long? limit)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(PagedPlaylistList));
+        [SwaggerOperation(OperationId = "GetUserSelf")]
+        [SwaggerResponse(statusCode: 200, type: typeof(UserDto), description: "Successful operation")]
+        public virtual async Task<IActionResult> GetUserSelf() {
+            var user = await _userManager.GetUserAsync(User);
+            var result = _userService.GetUserById(user.Id);
 
-            //TODO: Uncomment the next line to return response 405 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(405);
-            string exampleJson = null;
-            exampleJson = "{\n  \"total\" : 50,\n  \"limit\" : 1,\n  \"playlists\" : [ {\n    \"cover\" : \"https://example.com/playlists/100/cover.png\",\n    \"name\" : \"My Playlist vol.1\",\n    \"description\" : \"This is the description for the playlist.\",\n    \"id\" : 100\n  }, {\n    \"cover\" : \"https://example.com/playlists/100/cover.png\",\n    \"name\" : \"My Playlist vol.1\",\n    \"description\" : \"This is the description for the playlist.\",\n    \"id\" : 100\n  } ],\n  \"page\" : 1\n}";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<PagedPlaylistList>(exampleJson)
-                        : default(PagedPlaylistList);            //TODO: Change the data returned
-            return new ObjectResult(example);
-        }*/
+            if (result == null) {
+                return StatusCode(404);
+            }
+
+            return new ObjectResult(result);
+        }
+
+        /*/// <summary>
+         /// Get a paged list of the users playlists
+         /// </summary>
+         /// <param name="userId">ID of User to return</param>
+         /// <param name="page">Number of the currentpage</param>
+         /// <param name="limit">Number of playlists on a page</param>
+         /// <response code="200">Successful operation</response>
+         /// <response code="405">Validation exception</response>
+         [HttpGet]
+         [Route("/user/{userId}/playlists")]
+         [ValidateModelState]
+         [SwaggerOperation(OperationId = "UserUserIdPlaylistsGet")]
+         [SwaggerResponse(statusCode: 200, type: typeof(PagedPlaylistList), description: "Successful operation")]
+         public virtual IActionResult UserUserIdPlaylistsGet([FromRoute][Required]long? userId, [FromQuery][Required()]long? page, [FromQuery][Required()]long? limit)
+         { 
+             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
+             // return StatusCode(200, default(PagedPlaylistList));
+
+             //TODO: Uncomment the next line to return response 405 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
+             // return StatusCode(405);
+             string exampleJson = null;
+             exampleJson = "{\n  \"total\" : 50,\n  \"limit\" : 1,\n  \"playlists\" : [ {\n    \"cover\" : \"https://example.com/playlists/100/cover.png\",\n    \"name\" : \"My Playlist vol.1\",\n    \"description\" : \"This is the description for the playlist.\",\n    \"id\" : 100\n  }, {\n    \"cover\" : \"https://example.com/playlists/100/cover.png\",\n    \"name\" : \"My Playlist vol.1\",\n    \"description\" : \"This is the description for the playlist.\",\n    \"id\" : 100\n  } ],\n  \"page\" : 1\n}";
+
+                         var example = exampleJson != null
+                         ? JsonConvert.DeserializeObject<PagedPlaylistList>(exampleJson)
+                         : default(PagedPlaylistList);            //TODO: Change the data returned
+             return new ObjectResult(example);
+         }*/
     }
 }

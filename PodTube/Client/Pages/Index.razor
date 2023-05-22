@@ -1,7 +1,13 @@
 ﻿@page "/"
+@using PodTube.Client.Components.Login
+@inject PodTube.Client.Services.UserService userService;
+@inject NavigationManager Navigator
 
-<PageTitle>Index</PageTitle>
+<LoginComponent OnLoginEvent="OnLoginEvent"></LoginComponent>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+@code{
+    private async Task OnLoginEvent(LoginComponent.LoginData loginData) {
+        await userService.Login(loginData.Email, loginData.Password);
+        Navigator.NavigateTo(Navigator.BaseUri + "channels", forceLoad: true);
+    }
+}

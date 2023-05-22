@@ -10,6 +10,12 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Swashbuckle.Swagger;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using PodTube.Shared.Models.RequestBody;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using PodTube.DataAccess.Entities;
+using PodTube.DataAccess.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,16 +44,68 @@ builder.Services.AddSwaggerGen(c => {
     c.OperationFilter<GeneratePathParamsValidationFilter>();
     c.MapType<VideoRequestBody>(() => new OpenApiSchema { Type = "string" });
     c.EnableAnnotations();
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
 });
 
 builder.Services.AddScoped<VideoService>();
 builder.Services.AddScoped<ChannelService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<PlaylistService>();
+builder.Services.AddScoped<TokenService>();
 
 builder.Services.Configure<KestrelServerOptions>(options => {
     options.Limits.MaxRequestBodySize = 1073741824; // 1GB
 });
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options => {
+        options.TokenValidationParameters = new TokenValidationParameters() {
+            ClockSkew = TimeSpan.Zero,
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration.GetValue<string>("Security:ValidIssuer"),
+            ValidAudience = builder.Configuration.GetValue<string>("Security:ValidAudience"),
+            IssuerSigningKey = new SymmetricSecurityKey(
+               System.IO.File.ReadAllBytes(builder.Configuration.GetValue<string>("Security:IssuerSigningKey") ?? "")
+            ),
+        };
+    });
+
+builder.Services
+    .AddIdentityCore<User>(options => {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.User.RequireUniqueEmail = true;
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+    })
+    .AddEntityFrameworkStores<PodTubeDbContext>();
 
 var app = builder.Build();
 
@@ -72,6 +130,9 @@ app.UseSwagger();
 app.UseSwaggerUI(c => {
     c.SwaggerEndpoint("/swagger/1.0.0/swagger.json", "PodTube - OpenAPI 3.0");
 });
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();

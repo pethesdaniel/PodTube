@@ -1,5 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using PodTube.Client.Services;
+@using PodTube.Shared.Models.DTO;
+@inherits LayoutComponentBase
 @inject NavigationManager Navigator
+@inject UserService userService
 
 <MudThemeProvider/>
 <MudDialogProvider/>
@@ -7,10 +10,11 @@
 
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MenuBar 
-            OnHomeButton="@(()=>Navigator.NavigateTo("/"))"
+        <MenuBar OnHomeButton="@(()=>Navigator.NavigateTo("/"))"
             OnChannelsButton="@(()=>Navigator.NavigateTo("/channels"))"
-            OnApiButton="@(()=>Navigator.NavigateTo("/swagger/index.html", forceLoad: true))"></MenuBar>
+            OnApiButton="@(()=>Navigator.NavigateTo("/swagger/index.html", forceLoad: true))"
+            User="user"
+        ></MenuBar>
     </MudAppBar>
     <MudMainContent>
         @Body
@@ -18,5 +22,10 @@
 </MudLayout>
 
 @code {
-    
+    private UserDto? user = null;
+
+    protected override async Task OnInitializedAsync() {
+        await base.OnInitializedAsync();
+        user = await userService.GetUser();
+    }
 }

@@ -1,0 +1,12 @@
+﻿@using PodTube.Shared.Models.DTO;
+@if(User != null){
+<MudStack Row=true AlignItems="AlignItems.Center">
+    <MudAvatar>
+        <MudImage Src="@User.Picture"></MudImage>
+    </MudAvatar>
+    <MudText Typo="Typo.body2">@User.Name</MudText>
+</MudStack>
+}
+@code {
+    [Parameter] public UserDto? User { get; set; }
+}

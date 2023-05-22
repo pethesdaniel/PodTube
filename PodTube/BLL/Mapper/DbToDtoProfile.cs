@@ -34,7 +34,8 @@ namespace PodTube.BLL.Mapper
                 Username = user.Name,
                 ProfilePic = user.ProfilePicture?.ResourceURI ?? string.Empty
              */
-            CreateMap<User, UserDto>().ForMember(dest => dest.Picture, opt => opt.MapFrom(user => user.ProfilePicture.ResourceURI));
+            CreateMap<User, UserDto>().ForMember(dest => dest.Name, opt => opt.MapFrom(user => user.UserName))
+                .ForMember(dest => dest.Picture, opt => opt.MapFrom(user => user.ProfilePicture.ResourceURI));
 
             /*
                 Id = video.Id,

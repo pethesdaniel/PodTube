@@ -1,0 +1,40 @@
+﻿<MudStack>
+    <MudTextField @bind-Value="Email" Label="Email" Variant="Variant.Text"></MudTextField>
+    <MudTextField @bind-Value="Password" Label="Password" Variant="Variant.Text" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ShowHidePassword" AdornmentAriaLabel="Show Password" />
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="OnLoginClick">Login</MudButton>
+</MudStack>
+
+
+@code {
+    [Parameter] public string Email { get; set; } = "";
+    [Parameter] public string Password { get; set; } = "";
+    [Parameter] public EventCallback<LoginData> OnLoginEvent { get; set; }
+
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    void ShowHidePassword() {
+        @if (isShow) {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        } else {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+
+    private void OnLoginClick() {
+        OnLoginEvent.InvokeAsync(new LoginData {
+            Email = this.Email,
+            Password = this.Password
+        });
+    }
+
+    public class LoginData {
+        public string Email { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+}

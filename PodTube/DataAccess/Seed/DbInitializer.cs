@@ -36,9 +36,9 @@ namespace PodTube.DataAccess.Seed {
 
 
             var users = new User[] {
-                new User { Name = "TestUser1", ProfilePicture = files[0] },
-                new User { Name = "TestUser2", ProfilePicture = files[1] },
-                new User { Name = "TestUser3", ProfilePicture = files[2] },
+                new User { UserName = "TestUser1", ProfilePicture = files[0] },
+                new User { UserName = "TestUser2", ProfilePicture = files[1] },
+                new User { UserName = "TestUser3", ProfilePicture = files[2] },
             };
             context.AddRange(users);
 

@@ -33,7 +33,7 @@ namespace PodTube.BLL.Services
         }
 
         public VideoPagedListDto GetPagedVideosByPlaylistId(long id, int page, int limit) {
-            var playlist = dbContext.Playlists.Include(playlist => playlist.Videos).ThenInclude(video => video.Video).FirstOrDefault(playlist => playlist.Id == id);
+            var playlist = dbContext.Playlists.Include(playlist => playlist.Videos).ThenInclude(video => video.Video).ThenInclude(video => video.Thumbnail).FirstOrDefault(playlist => playlist.Id == id);
             var videoDtos = mapper.Map<List<VideoDto>>(playlist.Videos.OrderBy(pv => pv.Index).Select(pv =>pv.Video));
             if(playlist == null) {
                 return mapper.Map<VideoPagedListDto>(new List<VideoDto>().ToPagedList());

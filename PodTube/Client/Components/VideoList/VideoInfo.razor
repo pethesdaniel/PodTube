@@ -1,6 +1,6 @@
 ﻿@using PodTube.Shared.Models.DTO;
 <MudStack Row="true">
-    <MudImage Src="@Video.Thumbnail" Height="200"></MudImage>
+    <MudImage Src="@Video.Thumbnail" Height="200" Width="400" ObjectFit="ObjectFit.Cover"></MudImage>
     <MudStack Justify="Justify.Center">
         <MudText Typo="Typo.h5">@Video.Name</MudText>
         <MudText Typo="Typo.body2">@Video.Description</MudText>

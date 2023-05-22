@@ -1,7 +1,10 @@
-﻿<MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnHomeButton">
+﻿@using PodTube.Shared.Models.DTO;
+<MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnHomeButton">
     <MudText Typo="Typo.h5" Class="mx-3">PodTube</MudText>
 </MudButton>
 <MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnChannelsButton">Channels</MudButton>
+<MudSpacer />
+<PodTube.Client.Components.UserDisplay.UserDisplay User="User"></PodTube.Client.Components.UserDisplay.UserDisplay>
 <MudSpacer />
 <MudIconButton Icon="@Icons.Material.Filled.Api" Color="Color.Inherit" Edge="Edge.End" OnClick="OnApiButton" />
 
@@ -9,4 +12,5 @@
     [Parameter] public EventCallback OnHomeButton { get; set; }
     [Parameter] public EventCallback OnChannelsButton { get; set; }
     [Parameter] public EventCallback OnApiButton { get; set; }
+    [Parameter] public UserDto? User { get; set; } = null;
 }

@@ -28,7 +28,7 @@ export function pause(element) {
 }
 
 export function setCurrentTime(element, value) {
-    if (!element || !value) {
+    if (!element || value === undefined || value === null) {
         return;
     }
     element.currentTime = value;

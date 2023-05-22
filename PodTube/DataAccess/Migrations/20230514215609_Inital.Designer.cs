@@ -12,18 +12,151 @@ using PodTube.DataAccess.Contexts;
 namespace PodTube.DataAccess.Migrations
 {
     [DbContext(typeof(PodTubeDbContext))]
-    [Migration("20230412230250_AddVideoDate")]
-    partial class AddVideoDate
+    [Migration("20230514215609_Inital")]
+    partial class Inital
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.4")
+                .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<long>", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
+                {
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
+                {
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
 
             modelBuilder.Entity("PodTube.DataAccess.Entities.Channel", b =>
                 {
@@ -43,14 +176,14 @@ namespace PodTube.DataAccess.Migrations
                     b.Property<long?>("OwnerId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("PictureId")
+                    b.Property<long?>("ThumbnailId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
 
-                    b.HasIndex("PictureId");
+                    b.HasIndex("ThumbnailId");
 
                     b.ToTable("Channel", (string)null);
                 });
@@ -123,14 +256,14 @@ namespace PodTube.DataAccess.Migrations
                     b.Property<long?>("OwnerId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("PictureId")
+                    b.Property<long?>("ThumbnailId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
 
-                    b.HasIndex("PictureId");
+                    b.HasIndex("ThumbnailId");
 
                     b.ToTable("Playlist", (string)null);
                 });
@@ -153,29 +286,6 @@ namespace PodTube.DataAccess.Migrations
                     b.ToTable("PlaylistVideo", (string)null);
                 });
 
-            modelBuilder.Entity("PodTube.DataAccess.Entities.Sound", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("FileId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("VideoId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FileId");
-
-                    b.HasIndex("VideoId");
-
-                    b.ToTable("Sound", (string)null);
-                });
-
             modelBuilder.Entity("PodTube.DataAccess.Entities.User", b =>
                 {
                     b.Property<long>("Id")
@@ -184,18 +294,69 @@ namespace PodTube.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<long?>("ProfilePictureId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.HasIndex("ProfilePictureId");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("PodTube.DataAccess.Entities.Video", b =>
@@ -205,6 +366,9 @@ namespace PodTube.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("AudioId")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("ChannelId")
                         .HasColumnType("bigint");
@@ -219,13 +383,12 @@ namespace PodTube.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("SoundId")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("ThumbnailId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AudioId");
 
                     b.HasIndex("ChannelId");
 
@@ -234,19 +397,70 @@ namespace PodTube.DataAccess.Migrations
                     b.ToTable("Video", (string)null);
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<long>", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
+                {
+                    b.HasOne("PodTube.DataAccess.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
+                {
+                    b.HasOne("PodTube.DataAccess.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<long>", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PodTube.DataAccess.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
+                {
+                    b.HasOne("PodTube.DataAccess.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PodTube.DataAccess.Entities.Channel", b =>
                 {
                     b.HasOne("PodTube.DataAccess.Entities.User", "Owner")
                         .WithMany("Favorites")
                         .HasForeignKey("OwnerId");
 
-                    b.HasOne("PodTube.DataAccess.Entities.File", "Picture")
+                    b.HasOne("PodTube.DataAccess.Entities.File", "Thumbnail")
                         .WithMany()
-                        .HasForeignKey("PictureId");
+                        .HasForeignKey("ThumbnailId");
 
                     b.Navigation("Owner");
 
-                    b.Navigation("Picture");
+                    b.Navigation("Thumbnail");
                 });
 
             modelBuilder.Entity("PodTube.DataAccess.Entities.Frame", b =>
@@ -270,13 +484,13 @@ namespace PodTube.DataAccess.Migrations
                         .WithMany("Playlists")
                         .HasForeignKey("OwnerId");
 
-                    b.HasOne("PodTube.DataAccess.Entities.File", "Picture")
+                    b.HasOne("PodTube.DataAccess.Entities.File", "Thumbnail")
                         .WithMany()
-                        .HasForeignKey("PictureId");
+                        .HasForeignKey("ThumbnailId");
 
                     b.Navigation("Owner");
 
-                    b.Navigation("Picture");
+                    b.Navigation("Thumbnail");
                 });
 
             modelBuilder.Entity("PodTube.DataAccess.Entities.PlaylistVideo", b =>
@@ -298,21 +512,6 @@ namespace PodTube.DataAccess.Migrations
                     b.Navigation("Video");
                 });
 
-            modelBuilder.Entity("PodTube.DataAccess.Entities.Sound", b =>
-                {
-                    b.HasOne("PodTube.DataAccess.Entities.File", "File")
-                        .WithMany()
-                        .HasForeignKey("FileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PodTube.DataAccess.Entities.Video", null)
-                        .WithMany("Sound")
-                        .HasForeignKey("VideoId");
-
-                    b.Navigation("File");
-                });
-
             modelBuilder.Entity("PodTube.DataAccess.Entities.User", b =>
                 {
                     b.HasOne("PodTube.DataAccess.Entities.File", "ProfilePicture")
@@ -324,6 +523,12 @@ namespace PodTube.DataAccess.Migrations
 
             modelBuilder.Entity("PodTube.DataAccess.Entities.Video", b =>
                 {
+                    b.HasOne("PodTube.DataAccess.Entities.File", "Audio")
+                        .WithMany()
+                        .HasForeignKey("AudioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PodTube.DataAccess.Entities.Channel", "Channel")
                         .WithMany("Videos")
                         .HasForeignKey("ChannelId")
@@ -333,6 +538,8 @@ namespace PodTube.DataAccess.Migrations
                     b.HasOne("PodTube.DataAccess.Entities.File", "Thumbnail")
                         .WithMany()
                         .HasForeignKey("ThumbnailId");
+
+                    b.Navigation("Audio");
 
                     b.Navigation("Channel");
 
@@ -361,8 +568,6 @@ namespace PodTube.DataAccess.Migrations
                     b.Navigation("Frames");
 
                     b.Navigation("Playlists");
-
-                    b.Navigation("Sound");
                 });
 #pragma warning restore 612, 618
         }

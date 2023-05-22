@@ -3,6 +3,7 @@
 @using PodTube.Client.Components.VideoList
 @using PodTube.Client.Components.Common
 @using PodTube.Client.Rest;
+@using PodTube.Client.Components.UserDisplay
 @inject NavigationManager Navigator
 @inject HttpClient httpClient
 
@@ -16,12 +17,7 @@
                 <MudStack>
                     <MudText Typo="Typo.h4">@channel.Name</MudText>
                     <MudText Typo="Typo.h5">@channel.Description</MudText>
-                    <MudStack Row=true AlignItems="AlignItems.Center">
-                        <MudAvatar>
-                            <MudImage Src="@channel.Owner.Picture"></MudImage>
-                        </MudAvatar>
-                        <MudText Typo="Typo.body2">@channel.Owner.Name</MudText>
-                    </MudStack>
+                    <UserDisplay User="@channel.Owner"></UserDisplay>
                 </MudStack>
             </MudStack>
         </MudCardHeader>

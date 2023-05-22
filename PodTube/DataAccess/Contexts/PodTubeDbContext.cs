@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using PodTube.DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace PodTube.DataAccess.Contexts {
-    public class PodTubeDbContext : DbContext {
+    public class PodTubeDbContext : IdentityDbContext<User, IdentityRole<long>, long> {
         public PodTubeDbContext(DbContextOptions<PodTubeDbContext> options) : base(options) { }
 
         public DbSet<Entities.Channel> Channels { get; set; }
@@ -24,6 +27,7 @@ namespace PodTube.DataAccess.Contexts {
             modelBuilder.Entity<Entities.User>().ToTable("User");
             modelBuilder.Entity<Entities.Video>().ToTable("Video");
             modelBuilder.Entity<Entities.PlaylistVideo>().ToTable("PlaylistVideo");
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

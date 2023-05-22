@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,12 +7,8 @@ using System.Threading.Tasks;
 
 namespace PodTube.DataAccess.Entities
 {
-    public class User
+    public class User : IdentityUser<long>
     {
-        public long Id { get; set; }
-
-        public string Name { get; set; } = null!;
-
         public virtual File? ProfilePicture { get; set; }
         public long? ProfilePictureId { get; set; }
 

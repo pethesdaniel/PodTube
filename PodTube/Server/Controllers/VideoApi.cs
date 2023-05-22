@@ -29,10 +29,10 @@ namespace PodTube.Controllers
     [ApiController]
     [Route("api/video")]
     public class VideoApiController : ControllerBase
-    { 
-        private VideoService VideoService { get; set; }
+    {
+        private VideoService _videoService;
         public VideoApiController(VideoService videoService) : base() {
-            this.VideoService = videoService;
+            this._videoService = videoService;
         }
 
         [HttpGet]
@@ -40,7 +40,7 @@ namespace PodTube.Controllers
         [SwaggerOperation(OperationId = "GetVideosDebug")]
         [SwaggerResponse(statusCode: 200, description: "Successful operation")]
         public virtual IActionResult GetVideosDebug() {
-            var result = VideoService.GetAllVideos();
+            var result = _videoService.GetAllVideos();
             return new ObjectResult(result);
         }
 
@@ -85,7 +85,7 @@ namespace PodTube.Controllers
         {
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(FullVideoInfo));
-            var result = VideoService.GetVideoById(videoId);
+            var result = _videoService.GetVideoById(videoId);
 
             if(result == null) {
                 return StatusCode(404);
@@ -101,7 +101,7 @@ namespace PodTube.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(VideoDto), description: "Successful operation")]
         public virtual IActionResult PostUploadVideo([FromForm][Required] string metadata, [FromForm][Required] List<IFormFile> files) {
             var metadataDto = JsonSerializer.Deserialize<VideoRequestBody>(metadata);
-            var success = VideoService.UploadVideo(metadataDto!, files);
+            var success = _videoService.UploadVideo(metadataDto!, files);
             if (!success) {
                 return StatusCode(400);
             }

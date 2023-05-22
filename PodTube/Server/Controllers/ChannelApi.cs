@@ -28,9 +28,9 @@ namespace PodTube.Controllers
     [ApiController]
     [Route("api/channel")]
     public class ChannelApiController : ControllerBase {
-        private ChannelService ChannelService { get; set; }
+        private ChannelService _channelService;
         public ChannelApiController(ChannelService channelService) : base() {
-            this.ChannelService = channelService;
+            this._channelService = channelService;
         }
         /*/// <summary>
         /// Deletes a channel and all of it&#x27;s videos
@@ -70,7 +70,7 @@ namespace PodTube.Controllers
         [SwaggerOperation(OperationId = "GetChannelById")]
         [SwaggerResponse(statusCode: 200, type: typeof(ChannelDto), description: "Successful operation")]
         public virtual IActionResult GetChannelById([FromRoute][Required] long channelId) {
-            var result = ChannelService.GetChannelById(channelId);
+            var result = _channelService.GetChannelById(channelId);
 
             if (result == null) {
                 return StatusCode(404);
@@ -92,7 +92,7 @@ namespace PodTube.Controllers
         [SwaggerOperation(OperationId = "GetChannelVideos")]
         [SwaggerResponse(statusCode: 200, type: typeof(VideoPagedListDto), description: "Successful operation")]
         public virtual IActionResult GetChannelVideos([FromRoute][Required] long channelId, [FromQuery][Required] int page, [FromQuery][Required] int limit) {
-            var result = ChannelService.GetPagedVideosByChannelId(channelId, page, limit);
+            var result = _channelService.GetPagedVideosByChannelId(channelId, page, limit);
 
             if (result == null) {
                 return StatusCode(404);
@@ -113,7 +113,7 @@ namespace PodTube.Controllers
         [SwaggerOperation(OperationId = "GetChannelsPaged")]
         [SwaggerResponse(statusCode: 200, type: typeof(ChannelPagedListDto), description: "Successful operation")]
         public virtual IActionResult GetChannelsPaged([FromQuery][Required()] int page, [FromQuery][Required()] int limit) {
-            var result = ChannelService.GetChannelsPaged(page, limit);
+            var result = _channelService.GetChannelsPaged(page, limit);
 
             if (result == null) {
                 return StatusCode(404);

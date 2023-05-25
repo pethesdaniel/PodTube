@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using PodTube.DataAccess.Entities;
 using PodTube.Shared.Models.DTO;
 using PodTube.Shared.Models.RequestBody;
+using DelegateDecompiler;
 
 namespace PodTube.BLL.Services
 {
@@ -32,13 +33,13 @@ namespace PodTube.BLL.Services
             return mapper.Map<PlaylistPagedListDto>(playlistsPaged);
         }
 
-        public VideoPagedListDto GetPagedVideosByPlaylistId(long id, int page, int limit) {
+        public VideoDto[] GetVideosByPlaylistId(long id) {
             var playlist = dbContext.Playlists.Include(playlist => playlist.Videos).ThenInclude(video => video.Video).ThenInclude(video => video.Thumbnail).FirstOrDefault(playlist => playlist.Id == id);
             var videoDtos = mapper.Map<List<VideoDto>>(playlist.Videos.OrderBy(pv => pv.Index).Select(pv =>pv.Video));
             if(playlist == null) {
-                return mapper.Map<VideoPagedListDto>(new List<VideoDto>().ToPagedList());
+                return default!;
             }
-            return mapper.Map<VideoPagedListDto>(videoDtos.ToPagedList(video => video.Id, page, limit));
+            return videoDtos.ToArray();
         }
 
         public long CreateNewPlaylist(PlaylistRequestBody playlistData) {
@@ -76,12 +77,68 @@ namespace PodTube.BLL.Services
             return true;
         }
 
+        public bool ReorderVideoById(long playlistId, long videoId, long index) {
+            try {
+                using (var dbContextTransaction = dbContext.Database.BeginTransaction()) {
+                    var playlist = dbContext.Playlists.Include(playlist => playlist.Videos).FirstOrDefault(playlist => playlist.Id == playlistId);
+
+                    if (playlist == null) {
+                        throw new ArgumentException("Invalid playlistId");
+                    }
+
+
+                    var playlistVideo = playlist.Videos.FirstOrDefault(e => e.VideoId == videoId);
+                    if (playlistVideo == null) {
+                        throw new ArgumentException("Invalid playlistId");
+                    }
+                    if(playlistVideo.Index < index) {
+                        dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.Index <= index).ExecuteUpdate(s => s.SetProperty(pv => pv.Index, pv => pv.Index - 1));
+                    } else {
+                        dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.Index >= index).ExecuteUpdate(s => s.SetProperty(pv => pv.Index, pv => pv.Index + 1));
+                    }
+                    
+                    playlistVideo.Index = index;
+                    dbContext.SaveChanges();
+                    dbContextTransaction.Commit();
+                }
+            } catch (Exception e) {
+                return false;
+            }
+            return true;
+        }
+
+        public bool ReorderPlaylistById(long playlistId, long[] reordered) {
+            var playlist = dbContext.Playlists.Include(playlist => playlist.Videos).FirstOrDefault(playlist => playlist.Id == playlistId);
+
+            if(playlist == null) {
+                throw new ArgumentException("Invalid playlistId");
+            }
+
+            if (playlist.Videos.All(pv => reordered.Contains(pv.VideoId)) == false) {
+                throw new ArgumentException("Missing videos in order");
+            }
+
+            for(int i = 0; i < reordered.Length; ++i) {
+                var videoId = reordered[i];
+                playlist.Videos.FirstOrDefault(pv => pv.VideoId == videoId)!.Index = i;
+            }
+            try {
+                dbContext.SaveChanges();
+            } catch (Exception e) {
+                return false;
+            }
+            return true;
+        }
+
         public bool RemoveVideoFromPlaylistByIds(long playlistId, long videoId) {
             var playlistVideo = dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.VideoId == videoId).FirstOrDefault();
             try {
-                dbContext.PlaylistVideos.Remove(playlistVideo);
-                dbContext.SaveChanges();
-                dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.Index > playlistVideo.Index).ExecuteUpdate(s => s.SetProperty(pv => pv.Index, pv => pv.Index - 1));
+                using (var dbContextTransaction = dbContext.Database.BeginTransaction()) {
+                    dbContext.PlaylistVideos.Remove(playlistVideo);
+                    dbContext.SaveChanges();
+                    dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.Index > playlistVideo.Index).ExecuteUpdate(s => s.SetProperty(pv => pv.Index, pv => pv.Index - 1));
+                    dbContextTransaction.Commit();
+                }
             } catch (Exception e) {
                 return false;
             }

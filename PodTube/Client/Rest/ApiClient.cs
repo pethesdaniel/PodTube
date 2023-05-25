@@ -853,29 +853,20 @@ namespace PodTube.Client.Rest {
 
         /// <returns>Successful operation</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<VideoPagedListDto> GetPlaylistVideosAsync(long playlistId, int page, int limit) {
-            return GetPlaylistVideosAsync(playlistId, page, limit, System.Threading.CancellationToken.None);
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<VideoDto>> GetPlaylistVideosAsync(long playlistId) {
+            return GetPlaylistVideosAsync(playlistId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Successful operation</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<VideoPagedListDto> GetPlaylistVideosAsync(long playlistId, int page, int limit, System.Threading.CancellationToken cancellationToken) {
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<VideoDto>> GetPlaylistVideosAsync(long playlistId, System.Threading.CancellationToken cancellationToken) {
             if (playlistId == null)
                 throw new System.ArgumentNullException("playlistId");
 
-            if (page == null)
-                throw new System.ArgumentNullException("page");
-
-            if (limit == null)
-                throw new System.ArgumentNullException("limit");
-
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/playlist/{playlistId}/videos?");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/playlist/{playlistId}/videos");
             urlBuilder_.Replace("{playlistId}", System.Uri.EscapeDataString(ConvertToString(playlistId, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Append(System.Uri.EscapeDataString("page") + "=").Append(System.Uri.EscapeDataString(ConvertToString(page, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            urlBuilder_.Append(System.Uri.EscapeDataString("limit") + "=").Append(System.Uri.EscapeDataString(ConvertToString(limit, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            urlBuilder_.Length--;
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -904,7 +895,7 @@ namespace PodTube.Client.Rest {
 
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200) {
-                            var objectResponse_ = await ReadObjectResponseAsync<VideoPagedListDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<VideoDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
@@ -1021,6 +1012,80 @@ namespace PodTube.Client.Rest {
             try {
                 using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     request_.Method = new System.Net.Http.HttpMethod("DELETE");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null) {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200) {
+                            var objectResponse_ = await ReadObjectResponseAsync<PlaylistDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null) {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        } else {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    } finally {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            } finally {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>Successful operation</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<PlaylistDto> PostReorderVideoByIdAsync(long playlistId, long videoId, long index) {
+            return PostReorderVideoByIdAsync(playlistId, videoId, index, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Successful operation</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PlaylistDto> PostReorderVideoByIdAsync(long playlistId, long videoId, long index, System.Threading.CancellationToken cancellationToken) {
+            if (playlistId == null)
+                throw new System.ArgumentNullException("playlistId");
+
+            if (videoId == null)
+                throw new System.ArgumentNullException("videoId");
+
+            if (index == null)
+                throw new System.ArgumentNullException("index");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/playlist/{playlistId}/reorder/{videoId}?");
+            urlBuilder_.Replace("{playlistId}", System.Uri.EscapeDataString(ConvertToString(playlistId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{videoId}", System.Uri.EscapeDataString(ConvertToString(videoId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(System.Uri.EscapeDataString("index") + "=").Append(System.Uri.EscapeDataString(ConvertToString(index, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            urlBuilder_.Length--;
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "text/plain");
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);

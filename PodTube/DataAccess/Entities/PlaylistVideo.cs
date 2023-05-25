@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace PodTube.DataAccess.Entities {
-    [PrimaryKey(nameof(PlaylistId), nameof(VideoId), nameof(Index))]
+    [Index(nameof(PlaylistId), nameof(Index), IsUnique = true)]
+    [PrimaryKey(nameof(PlaylistId), nameof(VideoId))]
     public class PlaylistVideo {
         public virtual Playlist Playlist { get; set; } = new();
         public virtual Video Video { get; set; } = new();

@@ -6,11 +6,14 @@
 @using PodTube.Client.Rest;
 @inject NavigationManager Navigator
 @inject HttpClient httpClient
-<MudPaper Class="pa-2 my-2">
-    <PodTubeVideoPlayer Video="video" Placeholder="@video.Thumbnail"></PodTubeVideoPlayer>
+<MudPaper Class="pa-2  d-flex flex-grow-1 flex-column video-container">
+    <MudPaper Class="pa-2 my-2 flex-grow-1">
+        <PodTubeVideoPlayer Video="video" Placeholder="@video.Thumbnail"></PodTubeVideoPlayer>
+    </MudPaper>
+    <MudPaper Class="pa-2 flex-grow-0">
+        <VideoInfo Video="video"></VideoInfo>
 </MudPaper>
-<MudPaper Class="pa-2">
-    <VideoInfo Video="video"></VideoInfo>
+
 </MudPaper>
 
 @code {

@@ -2,7 +2,7 @@
 @inject IJSRuntime js;
 
 <MudStack>
-    <MudImage Src="@CurrentFrame" ObjectFit="ObjectFit.Contain" Height="250" Elevation="25" Class="rounded-lg ma-4" />
+    <MudImage Src="@CurrentFrame" ObjectFit="ObjectFit.Contain" Fluid="true" Elevation="25" Class="video-image rounded-lg ma-4" />
     <MudStack Row AlignItems="AlignItems.Center">
         <MudToggleIconButton Toggled="@IsPaused"
                              Icon="@Icons.Material.Filled.Pause" Title="Pause"

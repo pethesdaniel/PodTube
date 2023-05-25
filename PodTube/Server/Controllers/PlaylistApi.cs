@@ -86,10 +86,10 @@ namespace PodTube.Controllers
         [HttpGet("{playlistId}/videos")]
         [ValidateModelState]
         [SwaggerOperation(OperationId = "GetPlaylistVideos")]
-        [SwaggerResponse(statusCode: 200, type: typeof(VideoPagedListDto), description: "Successful operation")]
-        public virtual IActionResult GetPlaylistVideos([FromRoute][Required]long playlistId, [FromQuery][Required] int page, [FromQuery][Required] int limit)
+        [SwaggerResponse(statusCode: 200, type: typeof(VideoDto[]), description: "Successful operation")]
+        public virtual IActionResult GetPlaylistVideos([FromRoute][Required]long playlistId)
         {
-            var result = _playlistService.GetPagedVideosByPlaylistId(playlistId, page, limit);
+            var result = _playlistService.GetVideosByPlaylistId(playlistId);
             if (result == null) {
                 StatusCode(404);
             }
@@ -144,6 +144,24 @@ namespace PodTube.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(PlaylistDto), description: "Successful operation")]
         public virtual IActionResult PostAddVideoToPlaylistById([FromRoute][Required] long playlistId, [FromQuery][Required] long videoId) {
             var success = _playlistService.AddVideoToPlaylistByIds(playlistId, videoId);
+            if (!success) {
+                StatusCode(400);
+            }
+            return StatusCode(200);
+        }
+
+        /// <summary>
+        /// Add video to playlist
+        /// </summary>
+        /// <param name="body"></param>
+        /// <response code="200">Successful operation</response>
+        /// <response code="400">Invalid input</response>
+        [HttpPost("{playlistId}/reorder/{videoId}")]
+        [ValidateModelState]
+        [SwaggerOperation(OperationId = "PostReorderVideoById")]
+        [SwaggerResponse(statusCode: 200, type: typeof(PlaylistDto), description: "Successful operation")]
+        public virtual IActionResult PostReorderVideoById([FromRoute][Required] long playlistId, [FromRoute][Required] long videoId, [FromQuery][Required] long index) {
+            var success = _playlistService.ReorderVideoById(playlistId, videoId, index + 1);
             if (!success) {
                 StatusCode(400);
             }

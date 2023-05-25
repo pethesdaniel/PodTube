@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PodTube.DataAccess.Contexts;
 
@@ -11,9 +12,11 @@ using PodTube.DataAccess.Contexts;
 namespace PodTube.DataAccess.Migrations
 {
     [DbContext(typeof(PodTubeDbContext))]
-    partial class PodTubeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230525183419_FixPlaylistVideoPK")]
+    partial class FixPlaylistVideoPK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -270,18 +273,15 @@ namespace PodTube.DataAccess.Migrations
                     b.Property<long>("PlaylistId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("VideoId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("Index")
                         .HasColumnType("bigint");
 
-                    b.HasKey("PlaylistId", "VideoId");
+                    b.Property<long>("VideoId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("PlaylistId", "Index");
 
                     b.HasIndex("VideoId");
-
-                    b.HasIndex("PlaylistId", "Index")
-                        .IsUnique();
 
                     b.ToTable("PlaylistVideo", (string)null);
                 });

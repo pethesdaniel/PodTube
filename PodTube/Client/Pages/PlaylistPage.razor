@@ -1,0 +1,53 @@
+﻿@page "/playlist/{playlistId}"
+@using PodTube.Client.Components.PlaylistDisplay
+@using PodTube.Shared.Models.DTO;
+@inject NavigationManager Navigator
+@inject HttpClient httpClient
+
+<MudCard Outlined="true">
+    <MudCardHeader>
+        @if (playlist != null) {
+            <MudStack Row=true AlignItems="AlignItems.Center">
+                <MudImage Width="500" Src="@playlist.Thumbnail"></MudImage>
+                <MudStack>
+                    <MudText Typo="Typo.h4">@playlist.Name</MudText>
+                    <MudText Typo="Typo.h5">@playlist.Description</MudText>
+                </MudStack>
+            </MudStack>
+        }
+    </MudCardHeader>
+    <MudCardContent>
+        <MudStack>
+            <PlaylistDisplay Videos="videos" VideoReordered="OnVideoReordered"></PlaylistDisplay>
+        </MudStack>
+    </MudCardContent>
+</MudCard>
+
+
+
+@code {
+    [Parameter]
+    public string playlistId { get; set; } = "";
+
+    private PlaylistDto? playlist;
+    private List<VideoDto> videos = new();
+
+    private PlaylistApiClient client;
+
+    protected override async Task OnInitializedAsync() {
+        client = new PlaylistApiClient(Navigator.BaseUri, httpClient);
+
+        long id = Convert.ToInt64(playlistId);
+        playlist = await client.GetPlaylistByIdAsync(id);
+        var videosPaged = await client.GetPlaylistVideosAsync(id);
+
+        videos.AddRange(videosPaged);
+    }
+
+    private void OnVideoReordered(PlaylistDisplay.ReorderEvent reorderEvent) {
+        if(playlist != null) {
+            client.PostReorderVideoByIdAsync(playlist.Id ?? 0, reorderEvent.VideoId, reorderEvent.Index);
+        }
+        
+    }
+}

@@ -1,0 +1,34 @@
+﻿@using PodTube.Shared.Models.DTO;
+@if(Videos != null && Videos.Count > 0) {
+    <MudDropContainer T="VideoDto" ItemsSelector="@((item,dropzone) => true)" Items="Videos" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+        <ChildContent>
+            <MudPaper Class="ma-4 flex-grow-1">
+                <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
+                    <MudDropZone T="VideoDto" Class="flex-grow-1" AllowReorder="true" />
+                </MudList>
+            </MudPaper>
+        </ChildContent>
+        <ItemRenderer>
+            <MudPaper Class="ma-2">
+                <PodTube.Client.Components.VideoList.VideoInfo Video="@context"></PodTube.Client.Components.VideoList.VideoInfo>
+            </MudPaper>
+        </ItemRenderer>
+    </MudDropContainer>
+}
+
+@code {
+    [Parameter] public EventCallback<ReorderEvent> VideoReordered { get; set; }
+    [Parameter] public List<VideoDto> Videos { get; set; } = new();
+
+    private void ItemUpdated(MudItemDropInfo<VideoDto> dropItem) {
+        VideoReordered.InvokeAsync(new ReorderEvent {
+            Index = dropItem.IndexInZone,
+            VideoId = dropItem.Item?.Id ?? 0
+        });
+    }
+
+    public class ReorderEvent {
+        public long Index { get; set; } = 0;
+        public long VideoId { get; set; } = 0;
+    }
+}

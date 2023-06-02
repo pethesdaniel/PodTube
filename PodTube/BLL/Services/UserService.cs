@@ -20,10 +20,10 @@ namespace PodTube.BLL.Services
             this.mapper = mapper;
         }
 
-        public UserDto? GetUserById(long id) {
-            return dbContext.Users
+        public async Task<UserDto?> GetUserById(long id) {
+            return await dbContext.Users
                 .ProjectTo<UserDto>(mapper.ConfigurationProvider)
-                .FirstOrDefault(u => u.Id == id);
+                .FirstOrDefaultAsync(u => u.Id == id);
         }
     }
 }

@@ -24,18 +24,14 @@ namespace PodTube.BLL.Services
             this.mapper = mapper;
         }
 
-        public List<VideoDto> GetAllVideos() {
-            return dbContext.Videos.Include(v => v.Thumbnail).ProjectTo<VideoDto>(mapper.ConfigurationProvider).ToList();
-        }
-
-        public VideoDto? GetVideoById(long id) {
-            var video = dbContext.Videos
+        public async Task<VideoDto?> GetVideoById(long id) {
+            var video = await dbContext.Videos
                 .Include(v => v.Thumbnail)
                 .Include(v => v.Frames)
                 .ThenInclude(f => f.File)
                 .Include(v => v.Audio)
                 .Where(v => v.Id == id)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
             return mapper.Map<VideoDto>(video);
         }
 

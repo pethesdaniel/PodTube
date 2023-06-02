@@ -46,7 +46,7 @@
 
     private void OnVideoReordered(PlaylistDisplay.ReorderEvent reorderEvent) {
         if(playlist != null) {
-            client.PostReorderVideoByIdAsync(playlist.Id ?? 0, reorderEvent.VideoId, reorderEvent.Index);
+            client.PostReorderVideoByIdAsync(playlist.Id ?? 0, reorderEvent.VideoId, reorderEvent.Index + 1);
         }
         
     }

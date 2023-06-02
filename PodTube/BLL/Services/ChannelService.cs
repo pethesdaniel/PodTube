@@ -20,26 +20,31 @@ namespace PodTube.BLL.Services
             this.mapper = mapper;
         }
 
-        public ChannelDto? GetChannelById(long id) {
-            return dbContext.Channels
+        public async Task<ChannelDto?> GetChannelById(long id) {
+            var channel = await dbContext.Channels
                 .ProjectTo<ChannelDto>(mapper.ConfigurationProvider)
-                .FirstOrDefault(c => c.Id == id);
+                .FirstOrDefaultAsync(c => c.Id == id);
+            return channel;
         }
 
-        public VideoPagedListDto GetPagedVideosByChannelId(long id, int page, int limit) {
-            var channel = dbContext.Channels.Include(channel => channel.Videos).ThenInclude(v=>v.Thumbnail).FirstOrDefault(channel => channel.Id == id);
-            var videoDtos = mapper.Map<List<VideoDto>>(channel.Videos);
-            if (channel == null) {
-                return mapper.Map<VideoPagedListDto>(new List<VideoDto>().ToPagedList());
+        public async Task<VideoPagedListDto?> GetPagedVideosByChannelId(long id, int page, int limit) {
+            if (page < 0 || limit < 0) {
+                throw new ArgumentException("One or more paging parameters are invalid");
             }
+            var channel = await dbContext.Channels.Include(channel => channel.Videos).ThenInclude(v=>v.Thumbnail).FirstOrDefaultAsync(channel => channel.Id == id);
+            if (channel == null) {
+                return null;
+            }
+
+            var videoDtos = mapper.Map<List<VideoDto>>(channel.Videos);
             var result = mapper.Map<VideoPagedListDto>(videoDtos.ToPagedList(video => video.Id, page, limit));
             return result;
         }
 
-        public ChannelPagedListDto GetChannelsPaged(int page, int limit) {
-            IPagedList<ChannelDto> pagedChannels = dbContext.Channels
+        public async Task<ChannelPagedListDto> GetChannelsPaged(int page, int limit) {
+            IPagedList<ChannelDto> pagedChannels = await dbContext.Channels
                 .ProjectTo<ChannelDto>(mapper.ConfigurationProvider)
-                .ToPagedList(channel => channel.Id, page, limit);
+                .ToPagedListAsync(page, limit);
             return mapper.Map<ChannelPagedListDto>(pagedChannels);
         }
     }

@@ -12,6 +12,7 @@ using PodTube.DataAccess.Entities;
 using PodTube.Shared.Models.DTO;
 using PodTube.Shared.Models.RequestBody;
 using DelegateDecompiler;
+using System.Data.Common;
 
 namespace PodTube.BLL.Services
 {
@@ -24,125 +25,101 @@ namespace PodTube.BLL.Services
             this.mapper = mapper;
         }
 
-        public PlaylistDto? GetPlaylistById(long id) {
-            return dbContext.Playlists.ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).FirstOrDefault(playlist => playlist.Id == id);
+        public async Task<PlaylistDto?> GetPlaylistById(long id) {
+            return await dbContext.Playlists.ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).FirstOrDefaultAsync(playlist => playlist.Id == id);
         }
 
-        public PlaylistPagedListDto GetAllPlaylists(int page, int limit) {
-            var playlistsPaged = dbContext.Playlists.ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).ToPagedList(playlist => playlist.Id, page, limit);
+        public async Task<PlaylistPagedListDto> GetAllPlaylists(int page, int limit) {
+            if (page < 0 || limit < 0) {
+                throw new ArgumentException("One or more paging parameters are invalid");
+            }
+
+            var playlistsPaged = await dbContext.Playlists.ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).ToPagedListAsync(page, limit);
             return mapper.Map<PlaylistPagedListDto>(playlistsPaged);
         }
 
-        public VideoDto[] GetVideosByPlaylistId(long id) {
-            var playlist = dbContext.Playlists.Include(playlist => playlist.Videos).ThenInclude(video => video.Video).ThenInclude(video => video.Thumbnail).FirstOrDefault(playlist => playlist.Id == id);
-            var videoDtos = mapper.Map<List<VideoDto>>(playlist.Videos.OrderBy(pv => pv.Index).Select(pv =>pv.Video));
-            if(playlist == null) {
-                return default!;
+        public async Task<VideoDto[]?> GetVideosByPlaylistId(long id) {
+            var playlist = await dbContext.Playlists.Include(playlist => playlist.Videos).ThenInclude(video => video.Video).ThenInclude(video => video.Thumbnail).FirstOrDefaultAsync(playlist => playlist.Id == id);
+            if (playlist == null) {
+                return null;
             }
+            var videoDtos = mapper.Map<List<VideoDto>>(playlist.Videos.OrderBy(pv => pv.Index).Select(pv =>pv.Video));
             return videoDtos.ToArray();
         }
 
-        public long CreateNewPlaylist(PlaylistRequestBody playlistData) {
+        public async Task<long> CreateNewPlaylist(PlaylistRequestBody playlistData) {
             var dbEntity = mapper.Map<Playlist>(playlistData);
-            try {
-                dbContext.Add(dbEntity);
-                dbContext.SaveChanges();
-            } catch (Exception e) {
-                return 0;
-            }
+            dbContext.Add(dbEntity);
+            await dbContext.SaveChangesAsync();
             return dbEntity.Id;
         }
 
-        public bool DeletePlaylistById(long id) {
-            var playlist = dbContext.Playlists.FirstOrDefault(playlist => playlist.Id == id);
-            try {
-                dbContext.Remove(playlist);
-                dbContext.SaveChanges();
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
-        }
-
-        public bool AddVideoToPlaylistByIds(long playlistId, long videoId) {
-            var playlist = dbContext.Playlists.FirstOrDefault(playlist => playlist.Id == playlistId);
-            var video = dbContext.Videos.FirstOrDefault(video => video.Id == videoId);
-            var index = dbContext.PlaylistVideos.Max(pv => pv.Index) + 1;
-            try {
-                dbContext.PlaylistVideos.Add(new PlaylistVideo { Playlist = playlist, Video = video, Index = index});
-                dbContext.SaveChanges();
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
-        }
-
-        public bool ReorderVideoById(long playlistId, long videoId, long index) {
-            try {
-                using (var dbContextTransaction = dbContext.Database.BeginTransaction()) {
-                    var playlist = dbContext.Playlists.Include(playlist => playlist.Videos).FirstOrDefault(playlist => playlist.Id == playlistId);
-
-                    if (playlist == null) {
-                        throw new ArgumentException("Invalid playlistId");
-                    }
-
-
-                    var playlistVideo = playlist.Videos.FirstOrDefault(e => e.VideoId == videoId);
-                    if (playlistVideo == null) {
-                        throw new ArgumentException("Invalid playlistId");
-                    }
-                    if(playlistVideo.Index < index) {
-                        dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.Index <= index).ExecuteUpdate(s => s.SetProperty(pv => pv.Index, pv => pv.Index - 1));
-                    } else {
-                        dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.Index >= index).ExecuteUpdate(s => s.SetProperty(pv => pv.Index, pv => pv.Index + 1));
-                    }
-                    
-                    playlistVideo.Index = index;
-                    dbContext.SaveChanges();
-                    dbContextTransaction.Commit();
-                }
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
-        }
-
-        public bool ReorderPlaylistById(long playlistId, long[] reordered) {
-            var playlist = dbContext.Playlists.Include(playlist => playlist.Videos).FirstOrDefault(playlist => playlist.Id == playlistId);
+        public async Task DeletePlaylistById(long id) {
+            var playlist = await dbContext.Playlists.FirstOrDefaultAsync(playlist => playlist.Id == id);
 
             if(playlist == null) {
-                throw new ArgumentException("Invalid playlistId");
+                throw new ArgumentException("Invalid playlist id");
             }
+            dbContext.Remove(playlist);
+            await dbContext.SaveChangesAsync();
 
-            if (playlist.Videos.All(pv => reordered.Contains(pv.VideoId)) == false) {
-                throw new ArgumentException("Missing videos in order");
-            }
-
-            for(int i = 0; i < reordered.Length; ++i) {
-                var videoId = reordered[i];
-                playlist.Videos.FirstOrDefault(pv => pv.VideoId == videoId)!.Index = i;
-            }
-            try {
-                dbContext.SaveChanges();
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
+            return;
         }
 
-        public bool RemoveVideoFromPlaylistByIds(long playlistId, long videoId) {
-            var playlistVideo = dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.VideoId == videoId).FirstOrDefault();
-            try {
-                using (var dbContextTransaction = dbContext.Database.BeginTransaction()) {
-                    dbContext.PlaylistVideos.Remove(playlistVideo);
-                    dbContext.SaveChanges();
-                    dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.Index > playlistVideo.Index).ExecuteUpdate(s => s.SetProperty(pv => pv.Index, pv => pv.Index - 1));
-                    dbContextTransaction.Commit();
-                }
-            } catch (Exception e) {
-                return false;
+        public async Task AddVideoToPlaylistByIds(long playlistId, long videoId) {
+            var playlist = await dbContext.Playlists.FirstOrDefaultAsync(playlist => playlist.Id == playlistId);
+            if(playlist == null) {
+                throw new ArgumentException("Invalid playlist id");
             }
-            return true;
+            var video = await dbContext.Videos.FirstOrDefaultAsync(video => video.Id == videoId);
+            if(video == null) {
+                throw new ArgumentException("Invalid video id");
+            }
+            var index = dbContext.PlaylistVideos.Max(pv => pv.Index) + 1;
+            dbContext.PlaylistVideos.Add(new PlaylistVideo { Playlist = playlist, Video = video, Index = index });
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task ReorderVideoById(long playlistId, long videoId, long index) {
+            using (var dbContextTransaction = dbContext.Database.BeginTransaction()) {
+                var playlist = await dbContext.Playlists.Include(playlist => playlist.Videos).FirstOrDefaultAsync(playlist => playlist.Id == playlistId);
+
+                if (playlist == null) {
+                    throw new ArgumentException("Invalid playlist id");
+                }
+
+                var playlistVideo = playlist.Videos.FirstOrDefault(e => e.VideoId == videoId);
+                if (playlistVideo == null) {
+                    throw new ArgumentException("Invalid video id");
+                }
+
+                if(index <= 0 || index > playlist.Videos.Max(pv => pv.Index)) {
+                    throw new ArgumentException("Invalid index");
+                }
+
+                if (playlistVideo.Index < index) {
+                    await dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.Index <= index).ExecuteUpdateAsync(s => s.SetProperty(pv => pv.Index, pv => pv.Index - 1));
+                } else {
+                    await dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.Index >= index).ExecuteUpdateAsync(s => s.SetProperty(pv => pv.Index, pv => pv.Index + 1));
+                }
+
+                playlistVideo.Index = index;
+                await dbContext.SaveChangesAsync();
+                await dbContextTransaction.CommitAsync();
+            }
+        }
+
+        public async Task RemoveVideoFromPlaylistByIds(long playlistId, long videoId) {
+            var playlistVideo = await dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.VideoId == videoId).FirstOrDefaultAsync();
+            if (playlistVideo == null) {
+                throw new ArgumentException("Invalid playlist or video id");
+            }
+            using (var dbContextTransaction = dbContext.Database.BeginTransaction()) {
+                dbContext.PlaylistVideos.Remove(playlistVideo);
+                await dbContext.SaveChangesAsync();
+                await dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.Index > playlistVideo.Index).ExecuteUpdateAsync(s => s.SetProperty(pv => pv.Index, pv => pv.Index - 1));
+                await dbContextTransaction.CommitAsync();
+            }
         }
     }
 }

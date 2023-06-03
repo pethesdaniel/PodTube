@@ -13,6 +13,7 @@ using PodTube.Shared.Models.DTO;
 using PodTube.Shared.Models.RequestBody;
 using DelegateDecompiler;
 using System.Data.Common;
+using static System.Collections.Specialized.BitVector32;
 
 namespace PodTube.BLL.Services
 {
@@ -25,16 +26,20 @@ namespace PodTube.BLL.Services
             this.mapper = mapper;
         }
 
-        public async Task<PlaylistDto?> GetPlaylistById(long id) {
-            return await dbContext.Playlists.ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).FirstOrDefaultAsync(playlist => playlist.Id == id);
+        public async Task<bool> DoesUserOwnPlaylist(long playlistId, long userId) {
+            return await dbContext.Playlists.Where(playlist => playlist.Id == playlistId && playlist.OwnerId == userId).AnyAsync();
         }
 
-        public async Task<PlaylistPagedListDto> GetAllPlaylists(int page, int limit) {
+        public async Task<PlaylistDto?> GetPlaylistById(long id) {
+            return await dbContext.Playlists.Where(playlist => playlist.Id == id).ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).FirstOrDefaultAsync();
+        }
+
+        public async Task<PlaylistPagedListDto> GetAllPlaylistsForUser(long ownerId, int page, int limit) {
             if (page < 0 || limit < 0) {
                 throw new ArgumentException("One or more paging parameters are invalid");
             }
 
-            var playlistsPaged = await dbContext.Playlists.ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).ToPagedListAsync(page, limit);
+            var playlistsPaged = await dbContext.Playlists.Where(playlist => playlist.OwnerId == ownerId).ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).ToPagedListAsync(page, limit);
             return mapper.Map<PlaylistPagedListDto>(playlistsPaged);
         }
 
@@ -47,8 +52,13 @@ namespace PodTube.BLL.Services
             return videoDtos.ToArray();
         }
 
-        public async Task<long> CreateNewPlaylist(PlaylistRequestBody playlistData) {
+        public async Task<long> CreateNewPlaylist(PlaylistRequestBody playlistData, long ownerId) {
+            if (dbContext.Users.Count(user => user.Id == ownerId) == 0) {
+                throw new ArgumentException("Invalid ownerId!");
+            }
+
             var dbEntity = mapper.Map<Playlist>(playlistData);
+            dbEntity.OwnerId = ownerId;
             dbContext.Add(dbEntity);
             await dbContext.SaveChangesAsync();
             return dbEntity.Id;
@@ -120,6 +130,48 @@ namespace PodTube.BLL.Services
                 await dbContext.PlaylistVideos.Where(pv => pv.PlaylistId == playlistId && pv.Index > playlistVideo.Index).ExecuteUpdateAsync(s => s.SetProperty(pv => pv.Index, pv => pv.Index - 1));
                 await dbContextTransaction.CommitAsync();
             }
+        }
+
+        public async Task<PlaylistDto?> AuthorizeAndGetPlaylistById(long userId, long playlistId) {
+            if (await DoesUserOwnPlaylist(userId, playlistId)) {
+                return await GetPlaylistById(playlistId);
+            }
+            throw new ArgumentException("User doesn't own playlist!");
+        }
+
+        public async Task<VideoDto[]?> AuthorizeAndGetVideosByPlaylistId(long userId, long playlistId) {
+            if (await DoesUserOwnPlaylist(userId, playlistId)) {
+                return await GetVideosByPlaylistId(playlistId);
+            }
+            throw new ArgumentException("User doesn't own playlist!");
+        }
+
+        public async Task AuthorizeAndDeletePlaylistById(long userId, long playlistId) {
+            if (await DoesUserOwnPlaylist(userId, playlistId)) {
+                await DeletePlaylistById(playlistId);
+            }
+            throw new ArgumentException("User doesn't own playlist!");
+        }
+
+        public async Task AuthorizeAndAddVideoToPlaylistByIds(long userId, long playlistId, long videoId) {
+            if (await DoesUserOwnPlaylist(userId, playlistId)) {
+                await AddVideoToPlaylistByIds(playlistId, videoId);
+            }
+            throw new ArgumentException("User doesn't own playlist!");
+        }
+
+        public async Task AuthorizeAndReorderVideoById(long userId, long playlistId, long videoId, long index) {
+            if (await DoesUserOwnPlaylist(userId, playlistId)) {
+                await ReorderVideoById(playlistId, videoId, index);
+            }
+            throw new ArgumentException("User doesn't own playlist!");
+        }
+
+        public async Task AuthorizeAndRemoveVideoFromPlaylistByIds(long userId, long playlistId, long videoId) {
+            if (await DoesUserOwnPlaylist(userId, playlistId)) {
+                await RemoveVideoFromPlaylistByIds(playlistId, videoId);
+            }
+            throw new ArgumentException("User doesn't own playlist!");
         }
     }
 }

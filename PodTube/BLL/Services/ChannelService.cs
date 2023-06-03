@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using PodTube.DataAccess.Contexts;
 using PodTube.Shared.Models.DTO;
+using PodTube.Shared.Models.RequestBody;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,28 @@ namespace PodTube.BLL.Services
                 .ProjectTo<ChannelDto>(mapper.ConfigurationProvider)
                 .ToPagedListAsync(page, limit);
             return mapper.Map<ChannelPagedListDto>(pagedChannels);
+        }
+
+        public async Task<ChannelDto> CreateChannel(ChannelRequestBody channelRequest, long ownerId) {
+            if(dbContext.Users.Count(user=> user.Id == ownerId) == 0) {
+                throw new ArgumentException("Invalid ownerId!");
+            }
+
+            if(channelRequest.Name.Length == 0) {
+                throw new ArgumentException("Invalid channel name!");
+            }
+
+            var channel = new DataAccess.Entities.Channel {
+                Name = channelRequest.Name,
+                Description = channelRequest.Description,
+                OwnerId = ownerId
+            };
+
+            dbContext.Channels.Add(channel);
+
+            await dbContext.SaveChangesAsync();
+
+            return mapper.Map<ChannelDto>(channel);
         }
     }
 }

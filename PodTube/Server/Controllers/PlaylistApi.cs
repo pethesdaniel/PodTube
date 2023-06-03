@@ -18,14 +18,17 @@ namespace PodTube.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/playlist")]
     public class PlaylistApiController : ControllerBase
     {
         private PlaylistService _playlistService;
+        private UserService _userService;
 
-        public PlaylistApiController(PlaylistService playlistService) {
+        public PlaylistApiController(PlaylistService playlistService, UserService userService) {
             _playlistService = playlistService;
+            _userService = userService;
         }
 
         /// <summary>
@@ -39,13 +42,15 @@ namespace PodTube.Controllers
         [ValidateModelState]
         [SwaggerOperation(OperationId = "GetPlaylistsPaged")]
         [SwaggerResponse(statusCode: 200, description: "Successful operation")]
-        public async Task<ActionResult<PlaylistPagedListDto>> GetPlaylistsPaged([FromQuery][Required()]int page, [FromQuery][Required()]int limit)
+        public async Task<ActionResult<PlaylistPagedListDto>> GetPlaylistsPaged([FromQuery][Required]int page, [FromQuery][Required]int limit)
         {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
 
-            var result = await _playlistService.GetAllPlaylists(page, limit);
+            var ownerId = await _userService.GetAuthorizedUserId(User);
+
+            var result = await _playlistService.GetAllPlaylistsForUser(ownerId, page, limit);
             return new ObjectResult(result);
         }
 
@@ -67,12 +72,17 @@ namespace PodTube.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _playlistService.GetPlaylistById(playlistId);
-            if(result == null) {
-                return StatusCode(404);
-            }
+            var ownerId = await _userService.GetAuthorizedUserId(User);
 
-            return new ObjectResult(result);
+            try {
+                var result = await _playlistService.AuthorizeAndGetPlaylistById(ownerId, playlistId);
+                if (result == null) {
+                    return StatusCode(404);
+                }
+                return Ok(result);
+            } catch(ArgumentException e) {
+                return BadRequest(e.Message);
+            }
         }
 
         /// <summary>
@@ -91,14 +101,18 @@ namespace PodTube.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _playlistService.GetVideosByPlaylistId(playlistId);
-            if (result == null) {
-                return StatusCode(404);
-            }
+            var ownerId = await _userService.GetAuthorizedUserId(User);
 
-            return new ObjectResult(result);
+            try {
+                var result = await _playlistService.AuthorizeAndGetVideosByPlaylistId(ownerId, playlistId);
+                if (result == null) {
+                    return StatusCode(404);
+                }
+                return Ok(result);
+            } catch (ArgumentException e) {
+                return BadRequest(e.Message);
+            }
         }
-        //TODO: ADD USER AUTH
         /// <summary>
         /// Create a new playlist
         /// </summary>
@@ -109,15 +123,23 @@ namespace PodTube.Controllers
         [ValidateModelState]
         [SwaggerOperation(OperationId = "PostCreatePlaylist")]
         [SwaggerResponse(statusCode: 200, description: "Successful operation")]
-        public async Task<ActionResult<PlaylistDto>> PostCreatePlaylist([FromBody]PlaylistRequestBody body)
+        public async Task<ActionResult<PlaylistDto>> PostCreatePlaylist([FromBody][Required]PlaylistRequestBody body)
         {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
 
-            var result = await _playlistService.CreateNewPlaylist(body);
+            var ownerId = await _userService.GetAuthorizedUserId(User);
 
-            return new ObjectResult(await _playlistService.GetPlaylistById(result));
+            try {
+                var result = await _playlistService.CreateNewPlaylist(body, ownerId);
+                if (result == 0) {
+                    return StatusCode(500);
+                }
+                return Ok(await _playlistService.GetPlaylistById(result));
+            } catch (ArgumentException e) {
+                return BadRequest(e.Message);
+            }
         }
 
         /// <summary>
@@ -126,6 +148,7 @@ namespace PodTube.Controllers
         /// <param name="playlistId">ID of playlist to delete</param>
         /// <response code="200">Successful operation</response>
         /// <response code="400">Unsuccessful operation</response>
+        [Authorize]
         [HttpDelete("{playlistId}")]
         [ValidateModelState]
         [SwaggerOperation(OperationId = "DeletePlaylistById")]
@@ -134,8 +157,10 @@ namespace PodTube.Controllers
                 return BadRequest(ModelState);
             }
 
+            var ownerId = await _userService.GetAuthorizedUserId(User);
+
             try {
-                await _playlistService.DeletePlaylistById(playlistId);
+                await _playlistService.AuthorizeAndDeletePlaylistById(ownerId, playlistId);
             } catch(ArgumentException e) {
                 return BadRequest(e.Message);
             }
@@ -157,8 +182,10 @@ namespace PodTube.Controllers
                 return BadRequest(ModelState);
             }
 
+            var ownerId = await _userService.GetAuthorizedUserId(User);
+
             try {
-                await _playlistService.AddVideoToPlaylistByIds(playlistId, videoId);
+                await _playlistService.AuthorizeAndAddVideoToPlaylistByIds(ownerId, playlistId, videoId);
             } catch (ArgumentException e) {
                 return BadRequest(e.Message);
             }
@@ -180,8 +207,10 @@ namespace PodTube.Controllers
                 return BadRequest(ModelState);
             }
 
+            var ownerId = await _userService.GetAuthorizedUserId(User);
+
             try {
-                await _playlistService.ReorderVideoById(playlistId, videoId, index);
+                await _playlistService.AuthorizeAndReorderVideoById(ownerId, playlistId, videoId, index);
             } catch (ArgumentException e) {
                 return BadRequest(e.Message);
             }
@@ -203,8 +232,10 @@ namespace PodTube.Controllers
                 return BadRequest(ModelState);
             }
 
+            var ownerId = await _userService.GetAuthorizedUserId(User);
+
             try {
-                await _playlistService.RemoveVideoFromPlaylistByIds(playlistId, videoId);
+                await _playlistService.AuthorizeAndRemoveVideoFromPlaylistByIds(ownerId, playlistId, videoId);
             } catch (ArgumentException e) {
                 return BadRequest(e.Message);
             }

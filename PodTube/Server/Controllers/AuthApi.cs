@@ -10,14 +10,12 @@ namespace PodTube.Server.Controllers {
     [ApiController]
     [Route("api/auth")]
     public class AuthApi : ControllerBase {
-        private UserManager<User> _userManager;
-        private PodTubeDbContext _context;
-        private TokenService _tokenService;
 
-        public AuthApi(UserManager<User> userManager, PodTubeDbContext context, TokenService tokenService) {
-            _userManager = userManager;
-            _context = context;
-            _tokenService = tokenService;
+
+        private UserService _userService;
+
+        public AuthApi(UserService userService) {
+            _userService = userService;
         }
 
         [HttpPost]
@@ -26,16 +24,15 @@ namespace PodTube.Server.Controllers {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
-            var result = await _userManager.CreateAsync(
-                new User { UserName = request.Username, Email = request.Email },
-                request.Password
-            );
-            if (result.Succeeded) {
+            var result = await _userService.Register(request.Username, request.Email, request.Password);
+            if (result != null && result.Succeeded) {
                 request.Password = "";
                 return CreatedAtAction(nameof(Register), new { email = request.Email }, request);
             }
-            foreach (var error in result.Errors) {
-                ModelState.AddModelError(error.Code, error.Description);
+            if(result != null) {
+                foreach (var error in result.Errors) {
+                    ModelState.AddModelError(error.Code, error.Description);
+                }
             }
             return BadRequest(ModelState);
         }
@@ -47,25 +44,15 @@ namespace PodTube.Server.Controllers {
                 return BadRequest(ModelState);
             }
 
-            var managedUser = await _userManager.FindByEmailAsync(request.Email);
-            if (managedUser == null) {
+            try {
+                var accessToken = await _userService.Authorize(request.Email, request.Password);
+                return Ok(new AuthResponseDTO {
+                    Email = request.Email,
+                    Token = accessToken,
+                });
+            } catch (ArgumentException) {
                 return BadRequest("Bad credentials");
             }
-            var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, request.Password);
-            if (!isPasswordValid) {
-                return BadRequest("Bad credentials");
-            }
-            var userInDb = _context.Users.FirstOrDefault(u => u.Email == request.Email);
-            if (userInDb is null)
-                return Unauthorized();
-            var accessToken = _tokenService.CreateToken(userInDb);
-            await _context.SaveChangesAsync();
-            return Ok(new AuthResponseDTO {
-                Id = userInDb.Id,
-                Username = userInDb.UserName,
-                Email = userInDb.Email,
-                Token = accessToken,
-            });
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿@using PodTube.Shared.Models.DTO;
+﻿@using PodTube.Client.Components.Videos.VideoList
+@using PodTube.Shared.Models.DTO;
 @if(Videos != null && Videos.Count > 0) {
-    <MudDropContainer T="VideoDto" ItemsSelector="@((item,dropzone) => true)" Items="Videos" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+    <MudDropContainer @ref="_container" T="VideoDto" ItemsSelector="@((item,dropzone) => true)" Items="Videos" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
         <ChildContent>
-            <MudPaper Class="ma-4 flex-grow-1">
+            <MudPaper Class="flex-grow-1" Elevation="0" Outlined="true">
                 <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
                     <MudDropZone T="VideoDto" Class="flex-grow-1" AllowReorder="true" />
                 </MudList>
@@ -10,7 +11,7 @@
         </ChildContent>
         <ItemRenderer>
             <MudPaper Class="ma-2">
-                <PodTube.Client.Components.VideoList.VideoInfo Video="@context"></PodTube.Client.Components.VideoList.VideoInfo>
+                <VideoInfo Video="@context"></VideoInfo>
             </MudPaper>
         </ItemRenderer>
     </MudDropContainer>
@@ -19,6 +20,9 @@
 @code {
     [Parameter] public EventCallback<ReorderEvent> VideoReordered { get; set; }
     [Parameter] public List<VideoDto> Videos { get; set; } = new();
+
+    private MudDropContainer<VideoDto> _container = null!;
+    private bool initialized = false; 
 
     private void ItemUpdated(MudItemDropInfo<VideoDto> dropItem) {
         VideoReordered.InvokeAsync(new ReorderEvent {
@@ -30,5 +34,18 @@
     public class ReorderEvent {
         public long Index { get; set; } = 0;
         public long VideoId { get; set; } = 0;
+    }
+
+    protected override void OnParametersSet() {
+        RefreshContainer();
+        base.OnParametersSet();
+    }
+
+    private void RefreshContainer() {
+        if(_container != null) {
+            StateHasChanged();
+            _container.Refresh();
+        }
+        
     }
 }

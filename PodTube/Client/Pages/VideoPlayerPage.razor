@@ -1,20 +1,26 @@
 ﻿@page "/video/{videoId}"
 @using PodTube.Shared.Models.DTO;
-@using PodTube.Client.Components.Common
-@using PodTube.Client.Components.VideoPlayer
-@using PodTube.Client.Components.VideoList
+@using PodTube.Client.Components.Shared
+@using PodTube.Client.Components.Videos.VideoPlayer
+@using PodTube.Client.Components.Videos.VideoList
 @using PodTube.Client.Rest;
 @inject NavigationManager Navigator
 @inject HttpClient httpClient
-<MudPaper Class="pa-2  d-flex flex-grow-1 flex-column video-container">
-    <MudPaper Class="pa-2 my-2 flex-grow-1">
-        <PodTubeVideoPlayer Video="video" Placeholder="@video.Thumbnail"></PodTubeVideoPlayer>
+<div class="container">
+    <MudPaper Class="pa-2">
+        <div class="video">
+            <MudPaper Height="111" Class="pa-2 my-2">
+                <PodTubeVideoPlayer Video="video" Placeholder="@video.Thumbnail"></PodTubeVideoPlayer>
+            </MudPaper>
+        </div>
+        <div class="info">
+            <MudPaper Class="pa-2 ">
+                <VideoInfo Video="video"></VideoInfo>
+            </MudPaper>
+        </div>
     </MudPaper>
-    <MudPaper Class="pa-2 flex-grow-0">
-        <VideoInfo Video="video"></VideoInfo>
-</MudPaper>
+</div>
 
-</MudPaper>
 
 @code {
     [Parameter]

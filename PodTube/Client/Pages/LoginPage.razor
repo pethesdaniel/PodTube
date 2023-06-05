@@ -1,0 +1,18 @@
+﻿@page "/login"
+@using PodTube.Client.Components.Login
+@inject PodTube.Client.Services.LoginService userService;
+@inject NavigationManager Navigator
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="12" sm=6 md=4 lg=3 Class="mx-2">
+        <LoginComponent OnLoginEvent="OnLoginEvent"></LoginComponent>
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    private async Task OnLoginEvent(LoginComponent.LoginData loginData) {
+        await userService.Login(loginData.Email, loginData.Password);
+        Navigator.NavigateTo(Navigator.BaseUri + "channels", forceLoad: true);
+    }
+}

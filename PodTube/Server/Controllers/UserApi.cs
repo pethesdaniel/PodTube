@@ -46,10 +46,10 @@ namespace PodTube.Controllers
             var result = await _userService.GetUserById(userId);
 
             if (result == null) {
-                return StatusCode(404);
+                return NotFound();
             }
 
-            return new ObjectResult(result);
+            return Ok(result);
         }
 
         /// <summary>
@@ -65,15 +65,9 @@ namespace PodTube.Controllers
         [ValidateModelState]
         [SwaggerOperation(OperationId = "GetUserSelf")]
         [SwaggerResponse(statusCode: 200, type: typeof(UserDto), description: "Successful operation")]
-        public async Task<IActionResult> GetUserSelf() {
+        public async Task<ActionResult<UserDto>> GetUserSelf() {
             var user = await _userManager.GetUserAsync(User);
-            var result = _userService.GetUserById(user.Id);
-
-            if (result == null) {
-                return StatusCode(404);
-            }
-
-            return new ObjectResult(result);
+            return await GetUserById(user?.Id ?? 0);
         }
     }
 }

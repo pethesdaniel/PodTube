@@ -2,7 +2,7 @@
 @inject IJSRuntime js;
 
 <MudStack>
-    <MudImage Src="@CurrentFrame" ObjectFit="ObjectFit.Contain" Fluid="true" Elevation="25" Class="video-image rounded-lg ma-4" />
+    <MudImage Src="@CurrentFrame" ObjectFit="ObjectFit.Contain" Fluid="true" Elevation="25" Class="video-image rounded-lg ma-4" Style="max-height: 75vh;" />
     <MudStack Row AlignItems="AlignItems.Center">
         <MudToggleIconButton Toggled="@IsPaused"
                              Icon="@Icons.Material.Filled.Pause" Title="Pause"
@@ -59,7 +59,7 @@
     private ElementReference audioElement;
 
     protected override async Task OnAfterRenderAsync(bool firstRender) {
-        componentJs = await js.InvokeAsync<IJSObjectReference>("import", "./Components/VideoPlayer/PodTubeVideoPlayer.razor.js");
+        componentJs = await js.InvokeAsync<IJSObjectReference>("import", "./Components/Videos/VideoPlayer/PodTubeVideoPlayer.razor.js");
         await base.OnAfterRenderAsync(firstRender);
     }
     protected override async Task OnInitializedAsync() {

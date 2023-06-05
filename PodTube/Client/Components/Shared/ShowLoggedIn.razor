@@ -1,0 +1,11 @@
+﻿@using PodTube.Client.Services;
+@inject LoginService LoginService
+
+@if (LoginService.IsLoggedIn) {
+    @ChildContent
+}
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

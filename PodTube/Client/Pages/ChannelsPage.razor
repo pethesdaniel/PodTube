@@ -1,0 +1,81 @@
+﻿@page "/channels"
+@using PodTube.Client.Components.Channels.CreateChannelDialog;
+@using PodTube.Client.Services;
+@using PodTube.Shared.Models.DTO;
+@using PodTube.Client.Rest;
+@using PodTube.Client.Components.Channels.ChannelGrid;
+@using PodTube.Client.Components.Shared
+@using PodTube.Shared.Models.RequestBody;
+@inject HttpClient httpClient
+@inject LoginService LoginService
+@inject NavigationManager Navigator
+@inject IDialogService DialogService
+@inject RestHelper RestHelper
+
+<MudStack Row Justify="Justify.SpaceBetween">
+    <MudText Typo="Typo.h4" Class="ma-3">Channels</MudText>
+    @if (LoginService.IsLoggedIn) {
+        <MudStack Justify="Justify.Center" Class="mx-2">
+            <MudButton OnClick="OnCreateChannel" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" Size="Size.Medium">Create</MudButton>
+        </MudStack>
+    }
+</MudStack>
+
+
+
+<PagedContent @bind-Limit="limit" @bind-PageNumber="pageNumber" Total="total" ContentReady="contentReady"
+              @bind-Limit:after="GetChannelsForCurrentPage" @bind-PageNumber:after="GetChannelsForCurrentPage">
+    <ChannelGrid Channels="channels" ChannelClicked="OnChannelClicked" />
+</PagedContent>
+
+@code {
+    private ChannelApiClient? client;
+
+    private List<ChannelDto> channels = new();
+    private int pageNumber = 1;
+    private int total = 0;
+    private int limit = 2;
+    private bool contentReady = false;
+
+    protected override async Task OnInitializedAsync() {
+        client = new ChannelApiClient(Navigator.BaseUri, httpClient);
+        await GetChannelsForCurrentPage();
+        contentReady = true;
+    }
+
+    private async Task GetChannelsForCurrentPage() {
+        if(client == null) {
+            return;
+        }
+        var channels = await client.GetChannelsPagedAsync(pageNumber, limit);
+        this.channels = channels.Content;
+        total = channels.Total;
+        Console.Write(channels);
+    }
+
+    private void OnChannelClicked(long id) {
+        Navigator.NavigateTo("/channel/" + id);
+    }
+
+    private async Task OnCreateChannel() {
+        var options = new DialogOptions {
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+        };
+        var dialogRef = await DialogService.ShowAsync<CreateChannelDialog>("Create channel", options);
+        var result = await dialogRef.Result;
+        if (!result.Canceled) {
+            await MakeChannelCreateRequest(result.Data as ChannelRequestBody);
+        }
+        await GetChannelsForCurrentPage();
+    }
+
+    private async Task MakeChannelCreateRequest(ChannelRequestBody channelRequestBody) {
+        await RestHelper.MakeSafeRestCall(
+            async () =>
+            {
+                await client!.CreateChannelPostAsync(channelRequestBody);
+            },
+            "Channel created!");
+    }
+}

@@ -1,0 +1,59 @@
+﻿@using PodTube.Shared.Models.DTO;
+@using PodTube.Client.Components.Playlists.CreatePlaylistDialog;
+@using PodTube.Shared.Models.RequestBody;
+@inject NavigationManager Navigator
+@inject HttpClient httpClient
+@inject RestHelper RestHelper
+@inject IDialogService DialogService
+
+<MudNavMenu>
+    <MudText Typo="Typo.h6" Class="px-4">Your library</MudText>
+    <MudDivider Class="my-2" />
+    @foreach (var playlist in playlists) {
+        <MudNavLink Href=@GenerateHref(playlist.Id)>@playlist.Name</MudNavLink>
+    }
+    <MudNavLink OnClick="OnCreatePlaylist" Icon="@Icons.Material.Filled.PlaylistAdd">Create</MudNavLink>
+</MudNavMenu>
+
+@code {
+    private PlaylistApiClient client;
+    private IEnumerable<PlaylistBasicDto> playlists = new List<PlaylistBasicDto>();
+
+    protected override async Task OnInitializedAsync() {
+        client = new PlaylistApiClient(Navigator.BaseUri, httpClient);
+        await GetPlaylistsForCurrentPage();
+    }
+
+    private async Task GetPlaylistsForCurrentPage() {
+        if (client == null) {
+            return;
+        }
+        var playlists = await client.GetPlaylistsBasicAsync();
+        this.playlists = playlists;
+    }
+
+    private string GenerateHref(long id) {
+        return "/playlist/" + id.ToString();
+    }
+
+    private async Task OnCreatePlaylist() {
+        var options = new DialogOptions {
+                CloseOnEscapeKey = true,
+                FullWidth = true,
+            };
+        var dialogRef = await DialogService.ShowAsync<CreatePlaylistDialog>("Create playlist", options);
+        var result = await dialogRef.Result;
+        if (!result.Canceled) {
+            await MakeChannelCreateRequest(result.Data as PlaylistRequestBody);
+        }
+        await GetPlaylistsForCurrentPage();
+    }
+
+    private async Task MakeChannelCreateRequest(PlaylistRequestBody channelRequestBody) {
+        await RestHelper.MakeSafeRestCall(
+            async () => {
+                await client!.PostCreatePlaylistAsync(channelRequestBody);
+            },
+            "Playlist created!");
+    }
+}

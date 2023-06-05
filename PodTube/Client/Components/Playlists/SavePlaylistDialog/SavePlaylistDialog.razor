@@ -1,0 +1,48 @@
+﻿@using PodTube.Shared.Models.DTO;
+@inject NavigationManager Navigator
+@inject HttpClient httpClient
+
+<MudDialog>
+    <DialogContent>
+        <MudList SelectedValueChanged="async (id)=>await OnListItemClick(id)" Clickable="true">
+            @foreach (var playlist in playlists) {
+                <MudListItem Text="@playlist.Name" Value="@playlist.Id"/>
+            }
+        </MudList>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public long videoId { get; set; }
+
+    private PlaylistApiClient client;
+    private IEnumerable<PlaylistBasicDto> playlists = new List<PlaylistBasicDto>();
+
+    protected override async Task OnInitializedAsync() {
+        client = new PlaylistApiClient(Navigator.BaseUri, httpClient);
+        await GetPlaylistsForCurrentPage();
+    }
+
+    private async Task OnListItemClick(object playlistId) {
+        if(!(playlistId is long)) {
+            return;
+        }
+        await client.PostAddVideoToPlaylistByIdAsync((long)playlistId, videoId);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+    void Cancel() => MudDialog.Cancel();
+
+    private async Task GetPlaylistsForCurrentPage() {
+        if (client == null) {
+            return;
+        }
+        var playlists = await client.GetPlaylistsBasicAsync();
+        this.playlists = playlists;
+    }
+}

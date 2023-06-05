@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace PodTube.BLL.Services {
     public class TokenService {
-        private const int ExpirationMinutes = 30;
+        private const int ExpirationMinutes = 120;
         private IConfiguration _configuration;
 
         public TokenService(IConfiguration configuration) {

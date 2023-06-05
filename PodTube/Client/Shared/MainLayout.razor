@@ -1,8 +1,9 @@
-﻿@using PodTube.Client.Services;
+﻿@using PodTube.Client.Components.Shared
+@using PodTube.Client.Services;
 @using PodTube.Shared.Models.DTO;
+@inject LoginService LoginService;
+@inject TokenService TokenService;
 @inherits LayoutComponentBase
-@inject NavigationManager Navigator
-@inject UserService userService
 
 <MudThemeProvider/>
 <MudDialogProvider/>
@@ -10,22 +11,31 @@
 
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MenuBar OnHomeButton="@(()=>Navigator.NavigateTo("/"))"
-            OnChannelsButton="@(()=>Navigator.NavigateTo("/channels"))"
-            OnApiButton="@(()=>Navigator.NavigateTo("/swagger/index.html", forceLoad: true))"
-            User="user"
-        ></MenuBar>
+        <ShowLoggedIn>
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        </ShowLoggedIn>
+        <MenuBar></MenuBar>
     </MudAppBar>
-    <MudMainContent>
+    <ShowLoggedIn>
+        <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+            <NavMenu></NavMenu>
+        </MudDrawer>
+    </ShowLoggedIn>
+    
+    <MudMainContent Style="height: 99vh;">
         @Body
     </MudMainContent>
 </MudLayout>
 
 @code {
-    private UserDto? user = null;
+    bool _drawerOpen = true;
 
     protected override async Task OnInitializedAsync() {
+        await TokenService.LoadTokenFromPersistentStorage();
         await base.OnInitializedAsync();
-        user = await userService.GetUser();
+    }
+
+    void DrawerToggle() {
+        _drawerOpen = !_drawerOpen;
     }
 }

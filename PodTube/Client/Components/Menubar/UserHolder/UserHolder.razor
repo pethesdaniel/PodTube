@@ -1,0 +1,47 @@
+﻿@using PodTube.Client.Components.Users.UserDisplay
+@using PodTube.Shared.Models.DTO;
+@inject HttpClient httpClient
+@inject NavigationManager Navigator
+
+@if(User == null) {
+    <MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnLogin">Login</MudButton>
+} else {
+    <MudStack Row>
+        <UserDisplay User="User"></UserDisplay>
+        <MudIconButton Color="Color.Inherit" Icon="@Icons.Material.Filled.Logout" OnClick="OnLogout" aria-label="logout"></MudIconButton>
+    </MudStack>
+@*    <MudMenu>
+        <ActivatorContent>
+            <UserDisplay User="User"></UserDisplay>
+        </ActivatorContent>
+        <ChildContent>
+            <MudMenuItem OnClick="OnLogout" OnTouch="OnLogout">Sign Out</MudMenuItem>
+        </ChildContent>
+    </MudMenu>*@
+}
+
+
+@code {
+    [Parameter] public UserDto? User { get; set; } = null;
+
+    protected override async Task OnInitializedAsync() {
+        var client = new UserApiClient(httpClient.BaseAddress.AbsolutePath, httpClient);
+        try {
+            User = await client.GetUserSelfAsync();
+        } catch (ApiException _){}
+        
+        await base.OnInitializedAsync();
+    }
+
+    private void OnPlaylists() {
+        Navigator.NavigateTo("/playlists");
+    }
+
+    private void OnLogin() {
+        Navigator.NavigateTo("/login");
+    }
+
+    private void OnLogout() {
+        Navigator.NavigateTo("/logout");
+    }
+}

@@ -1,11 +1,12 @@
 ﻿@using PodTube.Shared.Models.DTO;
 <MudStack>
     @foreach(var video in Videos){
-        <VideoCard Video="video" PlayPressed="PlayPressed" SavePressed="SavePressed"></VideoCard>
+        <VideoCard Video="video" PlayPressed="PlayPressed" SavePressed="SavePressed" ShowSaveButton="ShowSaveButton"></VideoCard>
     }
 </MudStack>
 @code {
     [Parameter] public List<VideoDto> Videos { get; set; }
     [Parameter] public EventCallback<long> PlayPressed { get; set; }
     [Parameter] public EventCallback<long> SavePressed { get; set; }
+    [Parameter] public bool ShowSaveButton { get; set; } = true;
 }

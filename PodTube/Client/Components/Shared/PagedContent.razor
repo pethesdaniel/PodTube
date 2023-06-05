@@ -1,11 +1,15 @@
 ﻿@using PodTube.Shared.Models.DTO;
 @using PodTube.Client.Rest;
-@using PodTube.Client.Components.ChannelGrid;
+@using PodTube.Client.Components.Channels.ChannelGrid;
 @inject HttpClient httpClient
 @inject NavigationManager Navigator
 
 @if (ContentReady == false) {
-    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Style="height: 100%">
+        <MudSpacer />
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        <MudSpacer />
+    </MudStack>
 } else {
     <MudStack>
         @ChildContent
@@ -21,7 +25,7 @@
 
 @code {
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment ChildContent { get; set; } = null!;
 
     public int _pageNumber = 1;
     public int _total = 0;

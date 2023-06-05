@@ -51,7 +51,21 @@ namespace PodTube.Controllers
             var ownerId = await _userService.GetAuthorizedUserId(User);
 
             var result = await _playlistService.GetAllPlaylistsForUser(ownerId, page, limit);
-            return new ObjectResult(result);
+            return Ok(result);
+        }
+
+        [HttpGet("all")]
+        [ValidateModelState]
+        [SwaggerOperation(OperationId = "GetPlaylistsBasic")]
+        [SwaggerResponse(statusCode: 200, description: "Successful operation")]
+        public async Task<ActionResult<List<PlaylistBasicDto>>> GetPlaylistsBasic() {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
+            var ownerId = await _userService.GetAuthorizedUserId(User);
+
+            var result = await _playlistService.GetAllBasicPlaylistsForUser(ownerId);
+            return Ok(result);
         }
 
         /// <summary>

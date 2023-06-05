@@ -1,31 +1,53 @@
 ﻿@page "/channel/{channelId}"
+@using PodTube.Client.Components.Playlists.SavePlaylistDialog;
+@using PodTube.Client.Services;
 @using PodTube.Shared.Models.DTO;
-@using PodTube.Client.Components.VideoList
-@using PodTube.Client.Components.Common
+@using PodTube.Client.Components.Videos.VideoList
+@using PodTube.Client.Components.Shared
 @using PodTube.Client.Rest;
-@using PodTube.Client.Components.UserDisplay
+@using PodTube.Client.Components.Users.UserDisplay
 @inject NavigationManager Navigator
+@inject LoginService LoginService
+@inject RestHelper RestHelper
 @inject HttpClient httpClient
+@inject IDialogService DialogService
 
 @if (channel == null) {
-    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Style="height: 100%">
+        <MudSpacer />
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        <MudSpacer />
+    </MudStack>
 } else {
     <MudCard Outlined="true">
         <MudCardHeader>
-            <MudStack Row=true AlignItems="AlignItems.Center">
-                <MudImage Width="500" Src="@channel.Thumbnail"></MudImage>
-                <MudStack>
-                    <MudText Typo="Typo.h4">@channel.Name</MudText>
-                    <MudText Typo="Typo.h5">@channel.Description</MudText>
-                    <UserDisplay User="@channel.Owner"></UserDisplay>
-                </MudStack>
-            </MudStack>
+            <MudGrid>
+                <MudItem lg=3 md=5 xs=12>
+                    <MudStack Justify="Justify.Center" Style="height: 100%">
+                        @if (channel.Thumbnail != null) {
+                            <MudImage Fluid=true ObjectFit="ObjectFit.Cover" Src="@channel.Thumbnail" Class="rounded-lg"></MudImage>
+                        } else {
+                            <IconHolder Height="250px">
+                                <MudIcon Icon="@Icons.Material.Filled.VideoLibrary" Style="font-size: 4rem;"></MudIcon>
+                            </IconHolder>
+                        }
+                    </MudStack>
+                    
+                </MudItem>
+                <MudItem lg=9 md=7>
+                    <MudStack>
+                        <MudText Typo="Typo.h4">@channel.Name</MudText>
+                        <MudText Typo="Typo.h5">@channel.Description</MudText>
+                        <UserDisplay User="@channel.Owner"></UserDisplay>
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
         </MudCardHeader>
         <MudCardContent>
             <MudStack>
                 <PagedContent @bind-PageNumber="pageNumber" @bind-Limit="limit" Total="total" ContentReady="contentReady"
                           @bind-PageNumber:after="GetVideosForCurrentPage" @bind-Limit:after="GetVideosForCurrentPage">
-                    <VideoList Videos="videos" PlayPressed="OnVideoPlayClicked"/>
+                    <VideoList Videos="videos" PlayPressed="OnVideoPlayClicked" SavePressed="OnVideoSaveClicked" ShowSaveButton="LoginService.IsLoggedIn"/>
                 </PagedContent>
             </MudStack>
         </MudCardContent>
@@ -65,6 +87,15 @@
 
     public void OnVideoPlayClicked(long id) {
         Navigator.NavigateTo("/video/" + id);
+    }
+
+    public async Task OnVideoSaveClicked(long id) {
+        var options = new DialogOptions {
+                CloseOnEscapeKey = true,
+                FullWidth = true,
+            };
+        var parameters = new DialogParameters { ["videoId"] = id };
+        var dialogRef = await DialogService.ShowAsync<SavePlaylistDialog>("Save video to playlist...", parameters, options);
     }
 }
 

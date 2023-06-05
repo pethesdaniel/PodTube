@@ -1,5 +1,6 @@
 ﻿@page "/playlist/{playlistId}"
-@using PodTube.Client.Components.PlaylistDisplay
+@using PodTube.Client.Components.Playlists.PlaylistDisplay
+@using PodTube.Client.Components.Shared
 @using PodTube.Shared.Models.DTO;
 @inject NavigationManager Navigator
 @inject HttpClient httpClient
@@ -8,7 +9,13 @@
     <MudCardHeader>
         @if (playlist != null) {
             <MudStack Row=true AlignItems="AlignItems.Center">
-                <MudImage Width="500" Src="@playlist.Thumbnail"></MudImage>
+                @if (playlist.Thumbnail != null) {
+                    <MudImage Width="250" Height=250 ObjectFit=ObjectFit.Cover Src="@playlist.Thumbnail" Class="rounded-lg"></MudImage>
+                } else {
+                    <IconHolder Width="250px" Height="250px">
+                        <MudIcon Icon="@Icons.Material.Filled.PlaylistPlay" Style="font-size: 4rem;"></MudIcon>
+                    </IconHolder>
+                }
                 <MudStack>
                     <MudText Typo="Typo.h4">@playlist.Name</MudText>
                     <MudText Typo="Typo.h5">@playlist.Description</MudText>
@@ -35,19 +42,28 @@
     private PlaylistApiClient client;
 
     protected override async Task OnInitializedAsync() {
-        client = new PlaylistApiClient(Navigator.BaseUri, httpClient);
-
-        long id = Convert.ToInt64(playlistId);
-        playlist = await client.GetPlaylistByIdAsync(id);
-        var videosPaged = await client.GetPlaylistVideosAsync(id);
-
-        videos.AddRange(videosPaged);
+        await GetPlaylist();
     }
 
     private void OnVideoReordered(PlaylistDisplay.ReorderEvent reorderEvent) {
         if(playlist != null) {
             client.PostReorderVideoByIdAsync(playlist.Id ?? 0, reorderEvent.VideoId, reorderEvent.Index + 1);
         }
-        
+
+    }
+
+    protected override async Task OnParametersSetAsync() {
+        await GetPlaylist();
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task GetPlaylist() {
+        client = new PlaylistApiClient(Navigator.BaseUri, httpClient);
+
+        long id = Convert.ToInt64(playlistId);
+        playlist = await client.GetPlaylistByIdAsync(id);
+        var videosPaged = await client.GetPlaylistVideosAsync(id);
+        videos.Clear();
+        videos.AddRange(videosPaged);
     }
 }

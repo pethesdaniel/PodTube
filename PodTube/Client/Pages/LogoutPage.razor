@@ -1,0 +1,12 @@
+﻿@page "/logout"
+@using PodTube.Client.Services;
+@inject NavigationManager Navigator
+@inject LoginService LoginService
+
+@code {
+    protected override async Task OnInitializedAsync() {
+        await base.OnInitializedAsync();
+        await LoginService.Logout();
+        Navigator.NavigateTo("/", forceLoad: true);
+    }
+}

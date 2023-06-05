@@ -1,4 +1,3 @@
-using PodTube.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.OpenApi.Models;
@@ -41,7 +40,6 @@ builder.Services.AddSwaggerGen(c => {
 
     // Include DataAnnotation attributes on Controller Action parameters as Swagger validation rules (e.g required, pattern, ..)
     // Use [ValidateModelState] on Actions to actually validate it in C# as well!
-    c.OperationFilter<GeneratePathParamsValidationFilter>();
     c.MapType<VideoRequestBody>(() => new OpenApiSchema { Type = "string" });
     c.EnableAnnotations();
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {

@@ -5,11 +5,14 @@
     </MudCardContent>
     <MudCardActions>
         <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="async () => await PlayPressed.InvokeAsync(Video.Id ?? 0)">Play</MudButton>
-        <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="async () => await SavePressed.InvokeAsync(Video.Id ?? 0)">Save</MudButton>
+        @if (ShowSaveButton) {
+            <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="async () => await SavePressed.InvokeAsync(Video.Id ?? 0)">Save</MudButton>
+        }
     </MudCardActions>
 </MudCard>
 @code {
     [Parameter] public VideoDto Video { get; set; }
     [Parameter] public EventCallback<long> PlayPressed { get; set; }
     [Parameter] public EventCallback<long> SavePressed { get; set; }
+    [Parameter] public bool ShowSaveButton { get; set; } = true;
 }

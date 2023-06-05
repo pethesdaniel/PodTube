@@ -1,0 +1,37 @@
+﻿@using PodTube.Shared.Models.RequestBody;
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudTextField @ref="nameTextField" T="string" Label="Playlist name" Required="true" RequiredError="Playlist name is required!" />
+            <MudTextField @ref="descriptionTextField" T="string" Label="Description" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Create</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    MudForm form;
+    MudTextField<string> nameTextField;
+    MudTextField<string> descriptionTextField;
+    bool success;
+    string[] errors = { };
+
+    async void Submit() {
+        await form.Validate();
+        if (success) {
+            var result = new PlaylistRequestBody {
+                    Name = nameTextField.Text,
+                    Description = descriptionTextField.Text,
+
+                };
+            MudDialog.Close(DialogResult.Ok(result));
+        }
+
+    }
+    void Cancel() => MudDialog.Cancel();
+}
+

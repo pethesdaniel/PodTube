@@ -1,16 +1,19 @@
 ﻿@using PodTube.Shared.Models.DTO;
-<MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnHomeButton">
+@inject NavigationManager Navigator
+<MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnHome">
     <MudText Typo="Typo.h5" Class="mx-3">PodTube</MudText>
 </MudButton>
-<MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnChannelsButton">Channels</MudButton>
+<MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnChannels">Channels</MudButton>
 <MudSpacer />
-<PodTube.Client.Components.UserDisplay.UserDisplay User="User"></PodTube.Client.Components.UserDisplay.UserDisplay>
-<MudSpacer />
-<MudIconButton Icon="@Icons.Material.Filled.Api" Color="Color.Inherit" Edge="Edge.End" OnClick="OnApiButton" />
+<PodTube.Client.Components.Menubar.UserHolder.UserHolder></PodTube.Client.Components.Menubar.UserHolder.UserHolder>
 
 @code{
-    [Parameter] public EventCallback OnHomeButton { get; set; }
-    [Parameter] public EventCallback OnChannelsButton { get; set; }
-    [Parameter] public EventCallback OnApiButton { get; set; }
-    [Parameter] public UserDto? User { get; set; } = null;
+    public void OnHome() {
+        Navigator.NavigateTo("/");
+    }
+
+    public void OnChannels() {
+        Navigator.NavigateTo("/channels");
+    }
+
 }

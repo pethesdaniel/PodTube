@@ -34,6 +34,10 @@ namespace PodTube.BLL.Services
             return await dbContext.Playlists.Where(playlist => playlist.Id == id).ProjectTo<PlaylistDto>(mapper.ConfigurationProvider).FirstOrDefaultAsync();
         }
 
+        public async Task<List<PlaylistBasicDto>> GetAllBasicPlaylistsForUser(long ownerId) {
+            return await dbContext.Playlists.Where(playlist => playlist.OwnerId == ownerId).ProjectTo<PlaylistBasicDto>(mapper.ConfigurationProvider).ToListAsync();
+        }
+
         public async Task<PlaylistPagedListDto> GetAllPlaylistsForUser(long ownerId, int page, int limit) {
             if (page < 0 || limit < 0) {
                 throw new ArgumentException("One or more paging parameters are invalid");
@@ -77,6 +81,9 @@ namespace PodTube.BLL.Services
         }
 
         public async Task AddVideoToPlaylistByIds(long playlistId, long videoId) {
+            if(dbContext.PlaylistVideos.Any(pv=>pv.PlaylistId == playlistId && pv.VideoId == videoId)) {
+                return;
+            }
             var playlist = await dbContext.Playlists.FirstOrDefaultAsync(playlist => playlist.Id == playlistId);
             if(playlist == null) {
                 throw new ArgumentException("Invalid playlist id");
@@ -85,7 +92,7 @@ namespace PodTube.BLL.Services
             if(video == null) {
                 throw new ArgumentException("Invalid video id");
             }
-            var index = dbContext.PlaylistVideos.Max(pv => pv.Index) + 1;
+            var index = (dbContext.PlaylistVideos.Where(playlist=>playlist.PlaylistId == playlistId).Max(pv => (int?)pv.Index) ?? 0) + 1;
             dbContext.PlaylistVideos.Add(new PlaylistVideo { Playlist = playlist, Video = video, Index = index });
             await dbContext.SaveChangesAsync();
         }
@@ -133,45 +140,43 @@ namespace PodTube.BLL.Services
         }
 
         public async Task<PlaylistDto?> AuthorizeAndGetPlaylistById(long userId, long playlistId) {
-            if (await DoesUserOwnPlaylist(userId, playlistId)) {
-                return await GetPlaylistById(playlistId);
-            }
-            throw new ArgumentException("User doesn't own playlist!");
+            return await AuthorizeAndExecute(userId, playlistId, async () => await GetPlaylistById(playlistId));
         }
 
         public async Task<VideoDto[]?> AuthorizeAndGetVideosByPlaylistId(long userId, long playlistId) {
-            if (await DoesUserOwnPlaylist(userId, playlistId)) {
-                return await GetVideosByPlaylistId(playlistId);
-            }
-            throw new ArgumentException("User doesn't own playlist!");
+            return await AuthorizeAndExecute(userId, playlistId, async () => await GetVideosByPlaylistId(playlistId));
         }
 
         public async Task AuthorizeAndDeletePlaylistById(long userId, long playlistId) {
-            if (await DoesUserOwnPlaylist(userId, playlistId)) {
-                await DeletePlaylistById(playlistId);
-            }
-            throw new ArgumentException("User doesn't own playlist!");
+            await AuthorizeAndExecute(userId, playlistId, async () => await DeletePlaylistById(playlistId));
         }
 
         public async Task AuthorizeAndAddVideoToPlaylistByIds(long userId, long playlistId, long videoId) {
-            if (await DoesUserOwnPlaylist(userId, playlistId)) {
-                await AddVideoToPlaylistByIds(playlistId, videoId);
-            }
-            throw new ArgumentException("User doesn't own playlist!");
+            await AuthorizeAndExecute(userId, playlistId, async () => await AddVideoToPlaylistByIds(playlistId, videoId));
         }
 
         public async Task AuthorizeAndReorderVideoById(long userId, long playlistId, long videoId, long index) {
-            if (await DoesUserOwnPlaylist(userId, playlistId)) {
-                await ReorderVideoById(playlistId, videoId, index);
-            }
-            throw new ArgumentException("User doesn't own playlist!");
+            await AuthorizeAndExecute(userId, playlistId, async () => await ReorderVideoById(playlistId, videoId, index));
         }
 
         public async Task AuthorizeAndRemoveVideoFromPlaylistByIds(long userId, long playlistId, long videoId) {
-            if (await DoesUserOwnPlaylist(userId, playlistId)) {
-                await RemoveVideoFromPlaylistByIds(playlistId, videoId);
+            await AuthorizeAndExecute(userId, playlistId, async () => await RemoveVideoFromPlaylistByIds(playlistId, videoId));
+        }
+
+        private async Task AuthorizeAndExecute(long userId, long playlistId, Func<Task> function) {
+            var workaround = async () => {
+                await function();
+                return true;
+            };
+            await AuthorizeAndExecute(userId, playlistId, workaround);
+        }
+
+        private async Task<T> AuthorizeAndExecute<T>(long userId, long playlistId, Func<Task<T>> function) {
+            if (await DoesUserOwnPlaylist(playlistId, userId)) {
+                return await function();
             }
             throw new ArgumentException("User doesn't own playlist!");
         }
     }
+
 }

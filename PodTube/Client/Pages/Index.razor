@@ -1,13 +1,47 @@
 ﻿@page "/"
 @using PodTube.Client.Components.Login
-@inject PodTube.Client.Services.UserService userService;
+@inject PodTube.Client.Services.LoginService userService;
 @inject NavigationManager Navigator
 
-<LoginComponent OnLoginEvent="OnLoginEvent"></LoginComponent>
+<MudPaper Class="ma-4" Elevation="0">
+    <MudText Align="Align.Center" Typo="Typo.h2">Welcome!</MudText>
+    <MudText Typo="Typo.h5">
+        Introducing PodTube, the ultimate podcast app that enhances your listening experience by seamlessly incorporating visual content. Dive deeper into your favorite shows with presentation-type images that complement the audio. Discover, follow, and explore a vast library of podcasts. Enjoy a dynamic blend of audio and visuals, creating an immersive experience. Create personalized playlists, engage with the podcasting community, and immerse yourself in the world of podcasts like never before with PodTube.
+    </MudText>
+</MudPaper>
+
+
+
+<MudGrid>
+    <MudItem sm="6">
+        <MudStack Row Justify="Justify.Center">
+            <MudPaper @onclick="OnBrowseChannels" Width="200px" Height="200px" Square Class="lg-rounded">
+                <MudStack Class="ma-4" Justify="Justify.Center" AlignItems="AlignItems.Center" Style="height: 100%">
+                    <MudIcon Icon="@Icons.Material.Outlined.Videocam" Style="font-size: 4rem;"></MudIcon>
+                    <MudText Typo="Typo.h6">Browse Channels</MudText>
+                </MudStack>
+            </MudPaper>
+        </MudStack>
+    </MudItem>
+
+    <MudItem sm="6">
+        <MudStack Row Justify="Justify.Center">
+            <MudPaper @onclick="OnApi" Width="200px" Height="200px" Square Class="lg-rounded">
+                <MudStack Class="ma-4" Justify="Justify.Center" AlignItems="AlignItems.Center" Style="height: 100%">
+                    <MudIcon Icon="@Icons.Material.Outlined.Api" Style="font-size: 4rem;"></MudIcon>
+                    <MudText Typo="Typo.h6">Swagger Docs</MudText>
+                </MudStack>
+            </MudPaper>
+        </MudStack>
+    </MudItem>
+</MudGrid>
 
 @code{
-    private async Task OnLoginEvent(LoginComponent.LoginData loginData) {
-        await userService.Login(loginData.Email, loginData.Password);
-        Navigator.NavigateTo(Navigator.BaseUri + "channels", forceLoad: true);
+    private void OnBrowseChannels() {
+        Navigator.NavigateTo("/channels");
+    }
+
+    public void OnApi() {
+        Navigator.NavigateTo("/swagger/index.html", forceLoad: true);
     }
 }

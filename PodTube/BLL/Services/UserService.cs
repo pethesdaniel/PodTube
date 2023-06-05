@@ -9,7 +9,6 @@ using PodTube.Shared.Models.DTO;
 using PodTube.Shared.Models.RequestBody;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;

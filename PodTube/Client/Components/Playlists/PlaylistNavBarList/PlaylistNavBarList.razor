@@ -42,9 +42,13 @@
                 FullWidth = true,
             };
         var dialogRef = await DialogService.ShowAsync<CreatePlaylistDialog>("Create playlist", options);
-        var result = await dialogRef.Result;
-        if (!result.Canceled) {
-            await MakeChannelCreateRequest(result.Data as PlaylistRequestBody);
+        if(dialogRef == null) {
+            return;
+        }
+        DialogResult result = await dialogRef!.Result;
+        if (result != null && !result.Canceled && result.Data is PlaylistRequestBody) {
+            PlaylistRequestBody requestBody = result.Data as PlaylistRequestBody ?? default!;
+            await MakeChannelCreateRequest(requestBody);
         }
         await GetPlaylistsForCurrentPage();
     }

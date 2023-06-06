@@ -1,11 +1,12 @@
-﻿@using PodTube.Shared.Models.DTO;
+﻿@using PodTube.Client.Components.Menubar.UserHolder
+@using PodTube.Shared.Models.DTO;
 @inject NavigationManager Navigator
 <MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnHome">
     <MudText Typo="Typo.h5" Class="mx-3">PodTube</MudText>
 </MudButton>
 <MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnChannels">Channels</MudButton>
 <MudSpacer />
-<PodTube.Client.Components.Menubar.UserHolder.UserHolder></PodTube.Client.Components.Menubar.UserHolder.UserHolder>
+<UserHolder></UserHolder>
 
 @code{
     public void OnHome() {

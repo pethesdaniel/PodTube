@@ -1,23 +1,17 @@
 ﻿@using PodTube.Client.Components.Users.UserDisplay
+@using PodTube.Client.Services;
 @using PodTube.Shared.Models.DTO;
-@inject HttpClient httpClient
-@inject NavigationManager Navigator
+@inject HttpClient httpClient;
+@inject NavigationManager Navigator;
+@inject LoginService LoginService;
 
-@if(User == null) {
+@if(LoginService.IsLoggedIn) {
     <MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnLogin">Login</MudButton>
 } else {
     <MudStack Row>
         <UserDisplay User="User"></UserDisplay>
         <MudIconButton Color="Color.Inherit" Icon="@Icons.Material.Filled.Logout" OnClick="OnLogout" aria-label="logout"></MudIconButton>
     </MudStack>
-@*    <MudMenu>
-        <ActivatorContent>
-            <UserDisplay User="User"></UserDisplay>
-        </ActivatorContent>
-        <ChildContent>
-            <MudMenuItem OnClick="OnLogout" OnTouch="OnLogout">Sign Out</MudMenuItem>
-        </ChildContent>
-    </MudMenu>*@
 }
 
 
@@ -25,16 +19,12 @@
     [Parameter] public UserDto? User { get; set; } = null;
 
     protected override async Task OnInitializedAsync() {
-        var client = new UserApiClient(httpClient.BaseAddress.AbsolutePath, httpClient);
-        try {
+        var client = new UserApiClient(Navigator.BaseUri, httpClient);
+        if (LoginService.IsLoggedIn) {
             User = await client.GetUserSelfAsync();
-        } catch (ApiException _){}
-        
-        await base.OnInitializedAsync();
-    }
+        }
 
-    private void OnPlaylists() {
-        Navigator.NavigateTo("/playlists");
+        await base.OnInitializedAsync();
     }
 
     private void OnLogin() {

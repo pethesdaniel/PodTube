@@ -6,6 +6,7 @@
 @using PodTube.Client.Rest;
 @inject NavigationManager Navigator
 @inject HttpClient httpClient
+@inject RestHelper RestHelper
 <div class="video">
     <MudPaper Height="111" Class="my-2">
         <PodTubeVideoPlayer Video="video" Placeholder="@video.Thumbnail"></PodTubeVideoPlayer>
@@ -28,6 +29,11 @@
 
     protected override async Task OnInitializedAsync() {
         client = new VideoApiClient(Navigator.BaseUri, httpClient);
-        video = await client.GetVideoByIdAsync(Int64.Parse(videoId));
+        await RestHelper.MakeSafeRestCall(
+            async () =>
+            {
+                video = await client.GetVideoByIdAsync(Int64.Parse(videoId));
+            }
+        );
     }
 }

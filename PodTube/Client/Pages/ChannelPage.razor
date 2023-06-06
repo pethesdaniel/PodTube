@@ -72,7 +72,6 @@
         client = new ChannelApiClient(Navigator.BaseUri, httpClient);
         channel = await client.GetChannelByIdAsync(Convert.ToInt64(channelId));
         await GetVideosForCurrentPage();
-
         contentReady = true;
     }
 
@@ -80,9 +79,15 @@
         if(client == null) {
             return;
         }
-        var pagedVideo = await client.GetChannelVideosAsync(channel?.Id ?? 0, pageNumber, limit);
-        videos = pagedVideo.Content;
-        total = pagedVideo.Total;
+
+        await RestHelper.MakeSafeRestCall(
+            async () =>
+            {
+                var pagedVideo = await client.GetChannelVideosAsync(channel?.Id ?? 0, pageNumber, limit);
+                videos = pagedVideo.Content;
+                total = pagedVideo.Total;
+            }
+        );
     }
 
     public void OnVideoPlayClicked(long id) {

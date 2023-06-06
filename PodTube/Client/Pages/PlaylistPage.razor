@@ -4,6 +4,7 @@
 @using PodTube.Shared.Models.DTO;
 @inject NavigationManager Navigator
 @inject HttpClient httpClient
+@inject RestHelper RestHelper
 
 <MudCard Outlined="true">
     <MudCardHeader>
@@ -61,9 +62,15 @@
         client = new PlaylistApiClient(Navigator.BaseUri, httpClient);
 
         long id = Convert.ToInt64(playlistId);
-        playlist = await client.GetPlaylistByIdAsync(id);
-        var videosPaged = await client.GetPlaylistVideosAsync(id);
-        videos.Clear();
-        videos.AddRange(videosPaged);
+
+        await RestHelper.MakeSafeRestCall(
+            async () =>
+            {
+                playlist = await client.GetPlaylistByIdAsync(id);
+                var videosPaged = await client.GetPlaylistVideosAsync(id);
+                videos.Clear();
+                videos.AddRange(videosPaged);
+            }
+        );
     }
 }

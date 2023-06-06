@@ -21,7 +21,7 @@ builder.Services.AddScoped<RestHelper>();
 
 builder.Services.AddScoped(
     (sp) => {
-        var handler = sp.GetService<TokenHandler>();
+        var handler = sp.GetRequiredService<TokenHandler>();
         return new HttpClient(handler) {
             BaseAddress = new Uri(builder.HostEnvironment.BaseAddress),
         };

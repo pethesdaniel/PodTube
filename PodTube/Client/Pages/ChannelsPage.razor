@@ -47,10 +47,14 @@
         if(client == null) {
             return;
         }
-        var channels = await client.GetChannelsPagedAsync(pageNumber, limit);
-        this.channels = channels.Content;
-        total = channels.Total;
-        Console.Write(channels);
+        await RestHelper.MakeSafeRestCall(
+            async () =>
+            {
+                var channels = await client.GetChannelsPagedAsync(pageNumber, limit);
+                this.channels = channels.Content;
+                total = channels.Total;
+            }
+        );
     }
 
     private void OnChannelClicked(long id) {

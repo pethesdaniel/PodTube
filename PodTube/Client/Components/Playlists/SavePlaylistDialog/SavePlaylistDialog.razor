@@ -1,6 +1,7 @@
 ﻿@using PodTube.Shared.Models.DTO;
 @inject NavigationManager Navigator
 @inject HttpClient httpClient
+@inject RestHelper RestHelper
 
 <MudDialog>
     <DialogContent>
@@ -18,7 +19,7 @@
 
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public long videoId { get; set; }
 
     private PlaylistApiClient client;
@@ -42,13 +43,13 @@
         if (client == null) {
             return;
         }
-        try {
-            var playlists = await client.GetPlaylistsBasicAsync();
-            this.playlists = playlists;
-        } catch(ApiException e) {
-            if(e.StatusCode != 401) {
-                throw e;
-            }
-        }
+        await RestHelper.MakeSafeRestCall(
+            async () =>
+            {
+                var playlists = await client.GetPlaylistsBasicAsync();
+                this.playlists = playlists;
+            },
+            "Added to playlist!"
+        );
     }
 }

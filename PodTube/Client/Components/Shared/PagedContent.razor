@@ -1,8 +1,6 @@
 ﻿@using PodTube.Shared.Models.DTO;
 @using PodTube.Client.Rest;
 @using PodTube.Client.Components.Channels.ChannelGrid;
-@inject HttpClient httpClient
-@inject NavigationManager Navigator
 
 @if (ContentReady == false) {
     <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Style="height: 100%">

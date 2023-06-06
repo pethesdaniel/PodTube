@@ -7,7 +7,6 @@
 @using PodTube.Client.Rest;
 @using PodTube.Client.Components.Users.UserDisplay
 @inject NavigationManager Navigator
-@inject LoginService LoginService
 @inject RestHelper RestHelper
 @inject HttpClient httpClient
 @inject IDialogService DialogService
@@ -47,7 +46,7 @@
             <MudStack>
                 <PagedContent @bind-PageNumber="pageNumber" @bind-Limit="limit" Total="total" ContentReady="contentReady"
                           @bind-PageNumber:after="GetVideosForCurrentPage" @bind-Limit:after="GetVideosForCurrentPage">
-                    <VideoList Videos="videos" PlayPressed="OnVideoPlayClicked" SavePressed="OnVideoSaveClicked" ShowSaveButton="LoginService.IsLoggedIn"/>
+                    <VideoList Videos="videos" PlayPressed="OnVideoPlayClicked" SavePressed="OnVideoSaveClicked" ShowSaveButton="IsLoggedIn" />
                 </PagedContent>
             </MudStack>
         </MudCardContent>
@@ -58,6 +57,7 @@
 @code {
     [Parameter]
     public string channelId { get; set; } = "";
+    [CascadingParameter] public bool IsLoggedIn { get; set; } = false;
     private ChannelApiClient? client;
 
     private ChannelDto? channel;

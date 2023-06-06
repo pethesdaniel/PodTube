@@ -11,7 +11,7 @@
         </ChildContent>
         <ItemRenderer>
             <MudPaper Class="ma-2">
-                <VideoInfo Video="@context"></VideoInfo>
+                <VideoCard Video="@context" ShowSaveButton=false PlayPressed="PlayPressed"></VideoCard>
             </MudPaper>
         </ItemRenderer>
     </MudDropContainer>
@@ -19,6 +19,7 @@
 
 @code {
     [Parameter] public EventCallback<ReorderEvent> VideoReordered { get; set; }
+    [Parameter] public EventCallback<long> PlayPressed { get; set; }
     [Parameter] public List<VideoDto> Videos { get; set; } = new();
 
     private MudDropContainer<VideoDto> _container = null!;
@@ -46,6 +47,5 @@
             StateHasChanged();
             _container.Refresh();
         }
-        
     }
 }

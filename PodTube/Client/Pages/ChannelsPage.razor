@@ -7,18 +7,17 @@
 @using PodTube.Client.Components.Shared
 @using PodTube.Shared.Models.RequestBody;
 @inject HttpClient httpClient
-@inject LoginService LoginService
 @inject NavigationManager Navigator
 @inject IDialogService DialogService
 @inject RestHelper RestHelper
 
 <MudStack Row Justify="Justify.SpaceBetween">
     <MudText Typo="Typo.h4" Class="ma-3">Channels</MudText>
-    @if (LoginService.IsLoggedIn) {
+    <ShowLoggedIn>
         <MudStack Justify="Justify.Center" Class="mx-2">
             <MudButton OnClick="OnCreateChannel" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" Size="Size.Medium">Create</MudButton>
         </MudStack>
-    }
+    </ShowLoggedIn>
 </MudStack>
 
 

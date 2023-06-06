@@ -9,31 +9,36 @@
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
-<MudLayout>
-    <MudAppBar Elevation="1">
+<CascadingValue Value="@IsLoggedIn">
+    <MudLayout>
+        <MudAppBar Elevation="1">
+            <ShowLoggedIn>
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            </ShowLoggedIn>
+            <MenuBar></MenuBar>
+        </MudAppBar>
         <ShowLoggedIn>
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+                <NavMenu></NavMenu>
+            </MudDrawer>
         </ShowLoggedIn>
-        <MenuBar></MenuBar>
-    </MudAppBar>
-    <ShowLoggedIn>
-        <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-            <NavMenu></NavMenu>
-        </MudDrawer>
-    </ShowLoggedIn>
-    
-    <MudMainContent Style="height: 99vh;">
-        <MudContainer>
-            @Body
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
+
+        <MudMainContent Style="height: 99vh;">
+            <MudContainer>
+                @Body
+            </MudContainer>
+        </MudMainContent>
+    </MudLayout>
+</CascadingValue>
 
 @code {
     bool _drawerOpen = true;
 
+    bool IsLoggedIn = false;
+
     protected override async Task OnInitializedAsync() {
         await TokenService.LoadTokenFromPersistentStorage();
+        IsLoggedIn = LoginService.IsLoggedIn;
         await base.OnInitializedAsync();
     }
 

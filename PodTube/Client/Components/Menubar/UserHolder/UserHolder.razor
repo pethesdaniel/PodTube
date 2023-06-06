@@ -3,9 +3,8 @@
 @using PodTube.Shared.Models.DTO;
 @inject HttpClient httpClient;
 @inject NavigationManager Navigator;
-@inject LoginService LoginService;
 
-@if(LoginService.IsLoggedIn) {
+@if (!IsLoggedIn) {
     <MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="OnLogin">Login</MudButton>
 } else {
     <MudStack Row>
@@ -17,12 +16,12 @@
 
 @code {
     [Parameter] public UserDto? User { get; set; } = null;
+    [CascadingParameter] public bool IsLoggedIn { get; set; } = false;
+
+    private UserApiClient client = null!;
 
     protected override async Task OnInitializedAsync() {
-        var client = new UserApiClient(Navigator.BaseUri, httpClient);
-        if (LoginService.IsLoggedIn) {
-            User = await client.GetUserSelfAsync();
-        }
+        client = new UserApiClient(Navigator.BaseUri, httpClient);
 
         await base.OnInitializedAsync();
     }
@@ -33,5 +32,12 @@
 
     private void OnLogout() {
         Navigator.NavigateTo("/logout");
+    }
+
+    protected override async Task OnParametersSetAsync() {
+        if (IsLoggedIn && User == null) {
+            User = await client.GetUserSelfAsync();
+        }
+        await base.OnParametersSetAsync();
     }
 }

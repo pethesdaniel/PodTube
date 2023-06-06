@@ -1,6 +1,8 @@
 ﻿@page "/login"
 @using PodTube.Client.Components.Login
-@inject PodTube.Client.Services.LoginService userService;
+@using PodTube.Client.Services;
+@inject LoginService LoginService;
+@inject RestHelper RestHelper;
 @inject NavigationManager Navigator
 
 <MudGrid Justify="Justify.Center">
@@ -12,7 +14,12 @@
 
 @code {
     private async Task OnLoginEvent(LoginComponent.LoginData loginData) {
-        await userService.Login(loginData.Email, loginData.Password);
+        await RestHelper.MakeSafeRestCall(
+            async () =>
+            {
+                await LoginService.Login(loginData.Email, loginData.Password);
+            }
+        );
         Navigator.NavigateTo(Navigator.BaseUri + "channels", forceLoad: true);
     }
 }

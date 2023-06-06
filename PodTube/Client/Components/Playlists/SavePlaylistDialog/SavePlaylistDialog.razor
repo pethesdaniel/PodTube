@@ -42,7 +42,13 @@
         if (client == null) {
             return;
         }
-        var playlists = await client.GetPlaylistsBasicAsync();
-        this.playlists = playlists;
+        try {
+            var playlists = await client.GetPlaylistsBasicAsync();
+            this.playlists = playlists;
+        } catch(ApiException e) {
+            if(e.StatusCode != 401) {
+                throw e;
+            }
+        }
     }
 }

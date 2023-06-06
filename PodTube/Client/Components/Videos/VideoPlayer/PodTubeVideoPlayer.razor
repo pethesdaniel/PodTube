@@ -1,16 +1,28 @@
 ﻿@using PodTube.Shared.Models.DTO;
 @inject IJSRuntime js;
 
-<MudStack>
-    <MudImage Src="@CurrentFrame" ObjectFit="ObjectFit.Contain" Fluid="true" Elevation="25" Class="video-image rounded-lg ma-4" Style="max-height: 75vh;" />
-    <MudStack Row AlignItems="AlignItems.Center">
-        <MudToggleIconButton Toggled="@IsPaused"
-                             Icon="@Icons.Material.Filled.Pause" Title="Pause"
-                             ToggledIcon="@Icons.Material.Filled.PlayArrow" ToggledTitle="Play" @onclick="OnPlay" />
-        <MudSlider Class="pa-3" Variant="Variant.Filled" @bind-Value="SliderPosition"></MudSlider>
-    </MudStack>
-
-    </MudStack>
+<MudStack Spacing="0">
+    <MudImage Src="@CurrentFrame" ObjectFit="ObjectFit.Contain" Fluid="true" Elevation="0" Class="video-image rounded-lg" Style="max-height: 75vh;" />
+    <MudGrid Justify="Justify.SpaceBetween" Spacing="0">
+        <MudItem Class="d-flex flex-grow-0 align-end">
+            <MudToggleIconButton Toggled="@IsPaused"
+                                 Icon="@Icons.Material.Filled.Pause" Title="Pause"
+                                 ToggledIcon="@Icons.Material.Filled.PlayArrow" ToggledTitle="Play" @onclick="OnPlay" />
+        </MudItem>
+        <MudItem xs=11 md=9 Class="flex-grow-1">
+            <MudStack Class="px-3" Justify="Justify.FlexEnd" Style="height:100%">
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <MudText Typo="Typo.body2">@CurrentTimeReadable</MudText>
+                    <MudSlider Class="px-0 py-3" Variant="Variant.Filled" @bind-Value:get="Progress" @bind-Value:set="OnUserChangedCurrentTime"></MudSlider>
+                    <MudText Typo="Typo.body2">@DurationReadable</MudText>
+                </MudStack>
+            </MudStack>
+         </MudItem>
+        <MudItem xs=12 md=2>
+            <MudSlider Class="px-3" Variant="Variant.Filled" Min=0 Max=1 Step=0.01 @bind-Value:get="Volume" @bind-Value:set="OnUserChangedVolume">Volume</MudSlider>
+        </MudItem>
+    </MudGrid>
+</MudStack>
 
     @if (Video.Audio != string.Empty) {
     <audio preload="metadata" hidden @ref="audioElement" @ontimeupdate="OnTimeUpdate" @onloadedmetadata="OnTimeUpdate">
@@ -27,32 +39,33 @@
 
     private string CurrentFrame = string.Empty;
 
-    public double CurrentTime = 0;
+    private double _currentTime = 0;
+    public double CurrentTime {
+        get {
+            return _currentTime;
+        }
+        set {
+            _currentTime = value;
+            CurrentTimeReadable = $"{(value / 60).ToString("00")}:{(value % 60).ToString("00")}";
+        }
+    }
+    public string CurrentTimeReadable = "00:00";
 
-    public double Duration = 0;
+    private double _duration = 0;
+    public double Duration {
+        get {
+            return _duration;
+        }
+        set {
+            _duration = value;
+            DurationReadable = $"{(value / 60).ToString("00")}:{(value % 60).ToString("00")}";
+        }
+    }
+    public string DurationReadable = "00:00";
 
     public bool IsPaused = true;
-
-    public double Progress { 
-        get {
-            return CurrentTime / Duration * 100f;
-        }
-        set {
-            SetCurrentTime(value / 100f * Duration).RunSynchronously();
-        }
-    }
-    private double _sliderPosition = 0;
-    public double SliderPosition {
-        get {
-            return _sliderPosition;
-        }    
-        set {
-            if(_sliderPosition != value) {
-                _sliderPosition = value;
-                Progress = value;
-            }
-        }
-    }
+    public double Progress = 0;
+    public double Volume = 1;
 
     private IJSObjectReference componentJs = null!;
 
@@ -61,50 +74,58 @@
     protected override async Task OnAfterRenderAsync(bool firstRender) {
         componentJs = await js.InvokeAsync<IJSObjectReference>("import", "./Components/Videos/VideoPlayer/PodTubeVideoPlayer.razor.js");
         await base.OnAfterRenderAsync(firstRender);
+        Volume = await GetVolumeJS();
     }
-    protected override async Task OnInitializedAsync() {
-        await base.OnInitializedAsync();
-    }
-
     public async Task OnTimeUpdate() {
-        CurrentTime = await GetCurrentTime();
-        Duration = await GetDuration();
-        IsPaused = await GetIsPaused();
+        CurrentTime = await GetCurrentTimeJS();
+        Duration = await GetDurationJS();
+        IsPaused = await GetIsPausedJS();
+        Volume = await GetVolumeJS();
+        Progress = CurrentTime / Duration * 100f;
         UpdateFrame();
-        _sliderPosition = Progress;
     }
 
     public async Task OnPlay() {
         if (IsPaused) {
-            await PlayAudio();
+            await PlayAudioJS();
         } else {
-            await PauseAudio();
+            await PauseAudioJS();
         }
     }
 
-    public async Task<double> GetCurrentTime() {
+    public async Task<double> GetCurrentTimeJS() {
         return await componentJs.InvokeAsync<double>("getCurrentTime", audioElement);
     }
 
-    public async Task<double> GetDuration() {
+    public async Task<double> GetDurationJS() {
         return await componentJs.InvokeAsync<double>("getDuration", audioElement);
     }
 
-    public async Task<bool> GetIsPaused() {
+    public async Task<double> GetVolumeJS() {
+        return await componentJs.InvokeAsync<double>("getVolume", audioElement);
+    }
+
+    public async Task<bool> GetIsPausedJS() {
         return await componentJs.InvokeAsync<bool>("getIsPaused", audioElement);
     }
 
-    public async Task PlayAudio() {
+    public async Task PlayAudioJS() {
         await componentJs.InvokeVoidAsync("play", audioElement);
     }
 
-    public async Task PauseAudio() {
+    public async Task PauseAudioJS() {
         await componentJs.InvokeVoidAsync("pause", audioElement);
     }
 
-    public async Task SetCurrentTime(double time) {
-        Console.WriteLine(time);
+    public async Task SetCurrentTimeJS(double time) {
         await componentJs.InvokeVoidAsync("setCurrentTime", audioElement, time);
+    }
+
+    public async Task SetVolumeJS(double volume) {
+        if(volume != Volume) {
+            await componentJs.InvokeVoidAsync("setVolume", audioElement, volume);
+            Volume = volume;
+        }
     }
 
     public void UpdateFrame() {
@@ -114,6 +135,21 @@
         } else {
             CurrentFrame = Placeholder;
         }
-        Console.WriteLine(CurrentFrame);
+    }
+
+    public async Task OnUserChangedCurrentTime(double value) {
+        if(Progress != value) {
+            var currentTime = value / 100f * Duration;
+            await SetCurrentTimeJS(currentTime);
+            CurrentTime = currentTime;
+            Progress = value;
+        }
+    }
+
+    public async Task OnUserChangedVolume(double value) {
+        if(Volume != value) {
+            await SetVolumeJS(value);
+            Volume = value;
+        }
     }
 }

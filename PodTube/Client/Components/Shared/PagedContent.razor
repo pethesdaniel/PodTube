@@ -12,11 +12,11 @@
     <MudStack>
         @ChildContent
         <div class="d-flex flex-grow-1 gap-4 justify-space-between">
-            <MudPaper Width="100px" Elevation="0" />
+            <div style="width: 100px; height: 100px" />
             <MudPagination Rectangular="true" Variant="Variant.Text" @bind-Count="@Total" @bind-Selected="@PageNumber" />
-            <MudPaper Width="100px" Elevation="0">
+            <div style="width: 100px; height: 100px" >
                 <MudNumericField Class="pa-1" @bind-Value="Limit" Label="Limit" Variant="Variant.Text" Min="0" Max="10" />
-            </MudPaper>
+            </div>
         </div>
     </MudStack>
 }

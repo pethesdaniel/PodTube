@@ -1,11 +1,13 @@
-﻿@using PodTube.Client.Components.Shared
+﻿@using Blazored.LocalStorage;
+@using PodTube.Client.Components.Shared
 @using PodTube.Client.Services;
 @using PodTube.Shared.Models.DTO;
 @inject LoginService LoginService;
 @inject TokenService TokenService;
+@inject ILocalStorageService LocalStorage;
 @inherits LayoutComponentBase
 
-<MudThemeProvider/>
+<MudThemeProvider Theme="PodTubeTheme" @bind-IsDarkMode=_darkMode />
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
@@ -16,6 +18,9 @@
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
             </ShowLoggedIn>
             <MenuBar></MenuBar>
+            <MudToggleIconButton Toggled=_darkMode @onclick="async ()=> await DarkModeToggle()"
+                                 Icon="@Icons.Material.Filled.DarkMode" Color="@Color.Inherit" Title="Switch to Dark mode"
+                                 ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="@Color.Primary" ToggledTitle="Switch to Light mode" />
         </MudAppBar>
         <ShowLoggedIn>
             <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
@@ -33,16 +38,35 @@
 
 @code {
     bool _drawerOpen = true;
+    bool _darkMode = false;
 
     bool IsLoggedIn = false;
 
     protected override async Task OnInitializedAsync() {
         await TokenService.LoadTokenFromPersistentStorage();
         IsLoggedIn = LoginService.IsLoggedIn;
+        _darkMode = await LocalStorage.GetItemAsync<bool>("darkmode");
         await base.OnInitializedAsync();
     }
 
     void DrawerToggle() {
         _drawerOpen = !_drawerOpen;
     }
+
+    private async Task DarkModeToggle() {
+        _darkMode = !_darkMode;
+        await LocalStorage.SetItemAsync<bool>("darkmode", _darkMode);
+
+    }
+
+    MudTheme PodTubeTheme = new MudTheme() {
+            Palette = new PaletteLight() {
+                Primary = Colors.Orange.Default,
+                Secondary = Colors.Orange.Accent4,
+                AppbarBackground = Colors.Orange.Default,
+            },
+            PaletteDark = new PaletteDark() {
+                Primary = Colors.Orange.Lighten1
+            }
+        };
 }

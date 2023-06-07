@@ -26,7 +26,7 @@
     </MudCardHeader>
     <MudCardContent>
         <MudStack>
-            <PlaylistDisplay Videos="videos" VideoReordered="OnVideoReordered" PlayPressed="OnVideoPlayPressed"></PlaylistDisplay>
+            <PlaylistDisplay Playlist="playlist" Videos="videos" VideoReordered="OnVideoReordered" PlayPressed="OnVideoPlayPressed"></PlaylistDisplay>
         </MudStack>
     </MudCardContent>
 </MudCard>
@@ -43,12 +43,12 @@
     private PlaylistApiClient client;
 
     protected override async Task OnInitializedAsync() {
-        await GetPlaylist();
+        client = new PlaylistApiClient(Navigator.BaseUri, httpClient);
     }
 
-    private void OnVideoReordered(PlaylistDisplay.ReorderEvent reorderEvent) {
+    private async Task OnVideoReordered(PlaylistDisplay.ReorderEvent reorderEvent) {
         if(playlist != null) {
-            client.PostReorderVideoByIdAsync(playlist.Id ?? 0, reorderEvent.VideoId, reorderEvent.Index + 1);
+            await client.PostReorderVideoByIdAsync(playlist.Id ?? 0, reorderEvent.VideoId, reorderEvent.Index + 1);
         }
 
     }
@@ -59,8 +59,6 @@
     }
 
     private async Task GetPlaylist() {
-        client = new PlaylistApiClient(Navigator.BaseUri, httpClient);
-
         long id = Convert.ToInt64(playlistId);
 
         await RestHelper.MakeSafeRestCall(

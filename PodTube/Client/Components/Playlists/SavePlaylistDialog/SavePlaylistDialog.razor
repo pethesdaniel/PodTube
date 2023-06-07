@@ -34,7 +34,12 @@
         if(!(playlistId is long)) {
             return;
         }
-        await client.PostAddVideoToPlaylistByIdAsync((long)playlistId, videoId);
+        await RestHelper.MakeSafeRestCall(
+            async () => {
+                await client.PostAddVideoToPlaylistByIdAsync((long)playlistId, videoId);
+            },
+            "Added to playlist!"
+        );
         MudDialog.Close(DialogResult.Ok(true));
     }
     void Cancel() => MudDialog.Cancel();
@@ -48,8 +53,7 @@
             {
                 var playlists = await client.GetPlaylistsBasicAsync();
                 this.playlists = playlists;
-            },
-            "Added to playlist!"
+            }
         );
     }
 }

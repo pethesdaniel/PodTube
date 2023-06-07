@@ -1,17 +1,17 @@
 ﻿@using PodTube.Client.Components.Videos.VideoList
 @using PodTube.Shared.Models.DTO;
 @if(Videos != null && Videos.Count > 0) {
-    <MudDropContainer @ref="_container" T="VideoDto" ItemsSelector="@((item,dropzone) => true)" Items="Videos" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+    <MudDropContainer @ref="_container" T="DroplistEntry" ItemsSelector="@((item,dropzone) => true)" Items="_droplistVideos" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
         <ChildContent>
             <MudPaper Class="flex-grow-1" Elevation="0" Outlined="true">
                 <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
-                    <MudDropZone T="VideoDto" Class="flex-grow-1" AllowReorder="true" />
+                    <MudDropZone T="DroplistEntry" Class="flex-grow-1" AllowReorder="true" />
                 </MudList>
             </MudPaper>
         </ChildContent>
         <ItemRenderer>
             <MudPaper Class="ma-2">
-                <VideoCard Video="@context" ShowSaveButton=false PlayPressed="PlayPressed"></VideoCard>
+                <VideoCard Video="@context.Video" ShowSaveButton=false PlayPressed="PlayPressed"></VideoCard>
             </MudPaper>
         </ItemRenderer>
     </MudDropContainer>
@@ -20,16 +20,42 @@
 @code {
     [Parameter] public EventCallback<ReorderEvent> VideoReordered { get; set; }
     [Parameter] public EventCallback<long> PlayPressed { get; set; }
-    [Parameter] public List<VideoDto> Videos { get; set; } = new();
+    [Parameter] public List<VideoDto> Videos { get; set; }
+    [Parameter] public PlaylistDto Playlist { get; set; }
+    private PlaylistDto? PreviousPlaylist;
 
-    private MudDropContainer<VideoDto> _container = null!;
-    private bool initialized = false; 
 
-    private void ItemUpdated(MudItemDropInfo<VideoDto> dropItem) {
-        VideoReordered.InvokeAsync(new ReorderEvent {
+    private MudDropContainer<DroplistEntry> _container = null!;
+    private List<DroplistEntry> _droplistVideos = new();
+
+    private async Task ItemUpdated(MudItemDropInfo<DroplistEntry> dropItem) {
+        if(dropItem.Item == null) {
+            return;
+        }
+        dropItem.Item!.Index = dropItem.IndexInZone;
+        await VideoReordered.InvokeAsync(new ReorderEvent {
             Index = dropItem.IndexInZone,
-            VideoId = dropItem.Item?.Id ?? 0
+            VideoId = dropItem.Item!.Video.Id ?? 0
         });
+    }
+
+    protected override void OnParametersSet() {
+        base.OnParametersSet();
+        if(Playlist != null && PreviousPlaylist != Playlist) {
+            _droplistVideos = Videos.Select((video, index) => new DroplistEntry {
+                    Video = video,
+                    Index = index
+                }).OrderBy(e => e.Index).ToList();
+            PreviousPlaylist = Playlist;
+            RefreshContainer();
+        }
+    }
+
+    private void RefreshContainer() {
+        if (_container != null) {
+            StateHasChanged();
+            _container.Refresh();
+        }
     }
 
     public class ReorderEvent {
@@ -37,15 +63,8 @@
         public long VideoId { get; set; } = 0;
     }
 
-    protected override void OnParametersSet() {
-        RefreshContainer();
-        base.OnParametersSet();
-    }
-
-    private void RefreshContainer() {
-        if(_container != null) {
-            StateHasChanged();
-            _container.Refresh();
-        }
+    public class DroplistEntry {
+        public long Index { get; set; } = 0;
+        public VideoDto Video { get; set; } = new();
     }
 }

@@ -3,7 +3,6 @@
 @using PodTube.Client.Services;
 @using PodTube.Shared.Models.DTO;
 @inject LoginService LoginService;
-@inject TokenService TokenService;
 @inject ILocalStorageService LocalStorage;
 @inherits LayoutComponentBase
 
@@ -43,7 +42,7 @@
     bool IsLoggedIn = false;
 
     protected override async Task OnInitializedAsync() {
-        await TokenService.LoadTokenFromPersistentStorage();
+        await LoginService.TryAutoLogin();
         IsLoggedIn = LoginService.IsLoggedIn;
         _darkMode = await LocalStorage.GetItemAsync<bool>("darkmode");
         await base.OnInitializedAsync();

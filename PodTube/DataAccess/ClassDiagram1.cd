@@ -1,85 +1,130 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
-  <Class Name="PodTube.DataAccess.Model.Channel">
-    <Position X="13.75" Y="0.5" Width="2" />
+  <Class Name="PodTube.DataAccess.Entities.Channel">
+    <Position X="3.75" Y="1.75" Width="1.5" />
+    <AssociationLine Name="Thumbnail" Type="PodTube.DataAccess.Entities.File">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.921" Y="0.841" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Owner" Type="PodTube.DataAccess.Entities.User">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.338" Y="0.477" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAACgACIAAAgAAAAAAAAAAQAAAAAABAAAAAAAAAAAAg=</HashCode>
-      <FileName>Model\Channel.cs</FileName>
+      <HashCode>AAACAASIAAAgAAAAAAAACAQAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Entities\Channel.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
+      <Property Name="Thumbnail" />
       <Property Name="Owner" />
-      <Property Name="Picture" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Videos" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="PodTube.DataAccess.Model.File">
-    <Position X="2.5" Y="3.5" Width="1.75" />
+  <Class Name="PodTube.DataAccess.Entities.File">
+    <Position X="14.75" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
-      <FileName>Model\File.cs</FileName>
+      <FileName>Entities\File.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="PodTube.DataAccess.Model.Frame">
-    <Position X="5" Y="2.5" Width="1.5" />
+  <Class Name="PodTube.DataAccess.Entities.Frame">
+    <Position X="11.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAABBAEAAAAAAAAAAIAAAA=</HashCode>
-      <FileName>Model\Frame.cs</FileName>
+      <FileName>Entities\Frame.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="File" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="PodTube.DataAccess.Model.Playlist">
-    <Position X="13.25" Y="4.5" Width="2" />
+  <Class Name="PodTube.DataAccess.Entities.Playlist">
+    <Position X="4.5" Y="4.5" Width="2" />
+    <AssociationLine Name="Thumbnail" Type="PodTube.DataAccess.Entities.File">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.162" Y="0.133" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Owner" Type="PodTube.DataAccess.Entities.User">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.275" Y="0.195" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAACgACIAAAgAAAAAAAAAAQAAAAAABAAAAAAAAAAAAg=</HashCode>
-      <FileName>Model\Playlist.cs</FileName>
+      <HashCode>AAACAASIAAAgAAAAAAAACAQAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Entities\Playlist.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="Picture" />
+      <Property Name="Thumbnail" />
+      <Property Name="Owner" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Videos" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="PodTube.DataAccess.Model.Sound">
-    <Position X="5" Y="4.5" Width="1.5" />
+  <Class Name="PodTube.DataAccess.Entities.PlaylistVideo">
+    <Position X="8.5" Y="5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAIAAAA=</HashCode>
-      <FileName>Model\Sound.cs</FileName>
+      <HashCode>AAAQAAAAAAAAAAAAAAABAAAAAIAAAAAAAAEAAAAAAAg=</HashCode>
+      <FileName>Entities\PlaylistVideo.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="File" />
+      <Property Name="Video" />
+      <Property Name="Playlist" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="PodTube.DataAccess.Model.User">
-    <Position X="9.75" Y="0.5" Width="2" />
+  <Class Name="PodTube.DataAccess.Entities.User">
+    <Position X="3.5" Y="7.5" Width="2.25" />
+    <Members>
+      <Property Name="Favorites" Hidden="true" />
+    </Members>
+    <AssociationLine Name="Playlists" Type="PodTube.DataAccess.Entities.Playlist">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.732" Y="0.85" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="ProfilePicture" Type="PodTube.DataAccess.Entities.File">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.067" Y="0.102" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAASAAAAAAAEAAAAAAAAAAQAAAAAAAAABACAAAAAAAA=</HashCode>
-      <FileName>Model\User.cs</FileName>
+      <HashCode>AAAQAAAAAAAEAAAAAAAAAAAAAAAAAAAABACAAAAAAAA=</HashCode>
+      <FileName>Entities\User.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="ProfilePicture" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
-      <Property Name="Favorites" />
       <Property Name="Playlists" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="PodTube.DataAccess.Model.Video">
-    <Position X="7.25" Y="4" Width="2" />
+  <Class Name="PodTube.DataAccess.Entities.Video">
+    <Position X="8" Y="2" Width="2" />
+    <AssociationLine Name="Audio" Type="PodTube.DataAccess.Entities.File">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.091" Y="0.391" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Thumbnail" Type="PodTube.DataAccess.Entities.File">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.015" Y="0.081" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAACAAQgAAAgAAAAAAAACAQAAAAAAAAABAQAAAAAAAE=</HashCode>
-      <FileName>Model\Video.cs</FileName>
+      <HashCode>AAASAAQgAAAgAAAAAAEACAYAAAAAAAAAAAQAEAAAAAE=</HashCode>
+      <FileName>Entities\Video.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="Channel" />
-      <Property Name="Sound" />
+      <Property Name="Audio" />
       <Property Name="Thumbnail" />
+      <Property Name="Channel" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
+      <Property Name="Playlists" />
       <Property Name="Frames" />
     </ShowAsCollectionAssociation>
   </Class>

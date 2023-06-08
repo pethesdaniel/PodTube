@@ -4,7 +4,9 @@
         <VideoInfo Video="Video"></VideoInfo>
     </MudCardContent>
     <MudCardActions>
-        <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="async () => await PlayPressed.InvokeAsync(Video.Id ?? 0)">Play</MudButton>
+        @if (ShowPlayButton) {
+            <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="async () => await PlayPressed.InvokeAsync(Video.Id ?? 0)">Play</MudButton>
+        }
         @if (ShowSaveButton) {
             <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="async () => await SavePressed.InvokeAsync(Video.Id ?? 0)">Save</MudButton>
         }
@@ -15,4 +17,5 @@
     [Parameter] public EventCallback<long> PlayPressed { get; set; }
     [Parameter] public EventCallback<long> SavePressed { get; set; }
     [Parameter] public bool ShowSaveButton { get; set; } = true;
+    [Parameter] public bool ShowPlayButton { get; set; } = true;
 }

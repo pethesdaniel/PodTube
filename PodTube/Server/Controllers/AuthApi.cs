@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PodTube.BLL.Services;
 using PodTube.DataAccess.Contexts;
@@ -53,6 +54,13 @@ namespace PodTube.Server.Controllers {
             } catch (ArgumentException) {
                 return BadRequest("Bad credentials");
             }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("verify")]
+        public IActionResult Verify() {
+            return Ok();
         }
     }
 }

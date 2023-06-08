@@ -1,10 +1,12 @@
 ﻿@page "/video/{videoId}"
+@using PodTube.Client.Components.Playlists.SavePlaylistDialog;
 @using PodTube.Shared.Models.DTO;
 @using PodTube.Client.Components.Shared
 @using PodTube.Client.Components.Videos.VideoPlayer
 @using PodTube.Client.Components.Videos.VideoList
 @using PodTube.Client.Rest;
 @inject NavigationManager Navigator
+@inject IDialogService DialogService
 @inject HttpClient httpClient
 @inject RestHelper RestHelper
 <div class="video">
@@ -13,15 +15,19 @@
     </MudPaper>
 </div>
 <div class="info">
-    <MudPaper Class="pa-2 ">
+    <VideoCard Video="video" ShowSaveButton=IsLoggedIn ShowPlayButton=false SavePressed="OnVideoSaveClicked"></VideoCard>
+    @*<MudPaper Class="pa-2 ">
         <VideoInfo Video="video"></VideoInfo>
-    </MudPaper>
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Send</MudButton>
+    </MudPaper>*@
 </div>
 
 
 @code {
     [Parameter]
     public string videoId { get; set; } = "";
+
+    [CascadingParameter] public bool IsLoggedIn { get; set; } = false;
 
     private VideoDto video = new();
 
@@ -35,5 +41,14 @@
                 video = await client.GetVideoByIdAsync(Int64.Parse(videoId));
             }
         );
+    }
+
+    public async Task OnVideoSaveClicked(long id) {
+        var options = new DialogOptions {
+                CloseOnEscapeKey = true,
+                FullWidth = true,
+            };
+        var parameters = new DialogParameters { ["videoId"] = id };
+        var dialogRef = await DialogService.ShowAsync<SavePlaylistDialog>("Save video to playlist...", parameters, options);
     }
 }

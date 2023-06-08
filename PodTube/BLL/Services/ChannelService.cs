@@ -50,7 +50,7 @@ namespace PodTube.BLL.Services
         }
 
         public async Task<ChannelDto> CreateChannel(ChannelRequestBody channelRequest, long ownerId) {
-            if(dbContext.Users.Count(user=> user.Id == ownerId) == 0) {
+            if(dbContext.Users.Any(user=> user.Id == ownerId) == false) {
                 throw new ArgumentException("Invalid ownerId!");
             }
 

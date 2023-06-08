@@ -20,6 +20,9 @@
                 <MudStack>
                     <MudText Typo="Typo.h4">@playlist.Name</MudText>
                     <MudText Typo="Typo.h5">@playlist.Description</MudText>
+                    <MudStack Row>
+                        <MudButton OnClick="DeletePlaylist" Variant="Variant.Filled" Color="@Color.Error" StartIcon="@Icons.Material.Filled.Delete">Delete</MudButton>
+                    </MudStack>
                 </MudStack>
             </MudStack>
         }
@@ -68,6 +71,17 @@
                 var videosPaged = await client.GetPlaylistVideosAsync(id);
                 videos.Clear();
                 videos.AddRange(videosPaged);
+            }
+        );
+    }
+
+    private async Task DeletePlaylist() {
+        long id = Convert.ToInt64(playlistId);
+
+        await RestHelper.MakeSafeRestCall(
+            async () => {
+                await client.DeletePlaylistByIdAsync(id);
+                Navigator.NavigateTo("/channels", forceLoad: true);
             }
         );
     }

@@ -1,0 +1,51 @@
+﻿@inject IJSRuntime JS;
+@implements IAsyncDisposable
+
+<div @ref="waveformRef" @attributes="@CapturedAttributes" />
+<audio preload="auto" hidden @ref="mediaElementRef" @onloadedmetadata="OnGetMetadata">
+    <source src="@Url">
+    Your browser does not support the audio element.
+</audio>
+
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> CapturedAttributes { get; set; }
+
+    [Parameter] public string? Url { get; set; }
+    [Parameter] public EventCallback<double> OnWaveformLoaded { get; set; } = new EventCallback<double>();
+
+    private ElementReference waveformRef { get; set; }
+    private IJSObjectReference waveSurferObject { get; set; }
+    private ElementReference mediaElementRef { get; set; }
+
+    private IJSObjectReference? jsModule;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender) {
+            jsModule = await JS.InvokeAsync<IJSObjectReference>(
+                "import", "./_content/PodTube.Client.Editor/Components/Waveform/WaveformDisplay.razor.js");
+        }
+        if (firstRender && Url != null && waveSurferObject == null && jsModule != null) {
+            await CreateWaveform();
+        }
+    }
+
+    private async Task CreateWaveform() {
+        waveSurferObject = await jsModule!.InvokeAsync<IJSObjectReference>("createWaveform", waveformRef, Url, mediaElementRef);
+    }
+
+    private async Task OnGetMetadata() {
+        if (jsModule != null) {
+            var duration = await jsModule!.InvokeAsync<double>("getDuration", mediaElementRef);
+            await OnWaveformLoaded.InvokeAsync(duration);
+        }
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync() {
+        if (jsModule is not null) {
+            await jsModule.DisposeAsync();
+        }
+    }
+}

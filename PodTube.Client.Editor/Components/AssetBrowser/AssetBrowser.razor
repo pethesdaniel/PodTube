@@ -1,0 +1,56 @@
+﻿@using PodTube.Shared.Models.Editor;
+<RadzenRow>
+    <RadzenColumn>
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.Caption">Add new asset</RadzenText>
+            <RadzenFormField Text="Name" Style="width: 100%;">
+                <RadzenTextBox @bind-Value="@NewItemName" Style="width: 100%;" />
+            </RadzenFormField>
+            <RadzenFormField Text="Url" Style="width: 100%;">
+                <RadzenTextBox @bind-Value="@NewItemUrl" Style="width: 100%;" />
+            </RadzenFormField>
+            <RadzenStack Orientation="Orientation.Vertical" Gap="4px">
+                IsAudio
+                <RadzenSwitch @bind-Value="@NewItemIsAudio" Style="margin-top: 4px;" />
+            </RadzenStack>
+            <RadzenButton Click=@(args => OnCreateNewItem()) Icon="add" Text="Add" ButtonStyle="ButtonStyle.Primary" />
+        </RadzenCard>
+    </RadzenColumn>
+    <RadzenColumn>
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.Caption">AssetBrowser</RadzenText>
+            <RadzenRow>
+                @foreach (var asset in Assets) {
+                    <RadzenCard class="p-1 rz-background-color-success rz-color-on-success rz-text-align-center">
+                        <PodTube.Client.Editor.Components.AssetDisplay.AssetDisplay Value="asset"></PodTube.Client.Editor.Components.AssetDisplay.AssetDisplay>
+                        <RadzenButton Click=@(args => OnAddToTimeline(asset)) Text="To Timeline" ButtonStyle="ButtonStyle.Primary" />
+                    </RadzenCard>
+                }
+            </RadzenRow>
+            
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>
+
+@code {
+    [Parameter] public EventCallback<Asset> AddAssetToTimeline { get; set; }
+
+    private List<Asset> Assets { get; set; } = new List<Asset>();
+    private string NewItemName { get; set; }
+    private string NewItemUrl { get; set; }
+    private bool NewItemIsAudio { get; set; }
+
+    public void OnCreateNewItem() {
+        Assets.Add(new Asset
+            {
+                Name = NewItemName,
+                Url = NewItemUrl,
+                IsAudio = NewItemIsAudio
+            }
+        );
+    }
+
+    public void OnAddToTimeline(Asset asset) {
+        AddAssetToTimeline.InvokeAsync(asset);
+    }
+}

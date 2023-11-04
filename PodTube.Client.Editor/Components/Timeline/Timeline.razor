@@ -1,0 +1,59 @@
+﻿@using PodTube.Client.Editor.Components.TimelineItemDisplay
+@using PodTube.Shared.Models.Editor;
+@*<RadzenSplitter Orientation="Radzen.Orientation.Vertical" style="height: 200px; border: 1px solid rgba(0,0,0,.08);">
+    <RadzenSplitterPane Size="100px">
+        <RadzenSplitter>
+            @foreach (var assets in AssetsOnTimeline) {
+                <RadzenSplitterPane Collapsible=false>
+                    @assets.Name
+                </RadzenSplitterPane>
+            }
+        </RadzenSplitter>
+    </RadzenSplitterPane>
+</RadzenSplitter>*@
+@if (Value != null) {
+    <RadzenButton Click=@(args => TimelineScale *= 2) Icon="zoom_in" ButtonStyle="ButtonStyle.Primary" />
+    <RadzenButton Click=@(args => TimelineScale *= 0.5) Icon="zoom_out" ButtonStyle="ButtonStyle.Primary" />
+    <div style="display: flex; flex-direction: column; overflow:scroll">
+        <div style="display: flex; flex-direction: row;">
+            @for (int i = 0; i < Value.VisualItems.Count; ++i) {
+                <TimelineItemDisplay Value="@Value.VisualItems[i]"
+                                     TimelineScale="TimelineScale"
+                                     DisplayChangeDuration=true
+                                     DisplayLeftSwap="i > 0"
+                                     DisplayRightSwap="i < Value.VisualItems.Count - 1"
+                                     OnLeftSwap="@((value)=> SwapItems(Value.VisualItems, right: value))"
+                                     OnRightSwap="@((value)=> SwapItems(Value.VisualItems, left: value))" />
+            }
+        </div>
+        <div style="display: flex; flex-direction: row;">
+            @for (int i = 0; i < Value.AudioItems.Count; ++i) {
+                <TimelineItemDisplay Value="@Value.AudioItems[i]"
+                                     TimelineScale="TimelineScale"
+                                     DisplayLeftSwap="i > 0"
+                                     DisplayRightSwap="i < Value.AudioItems.Count - 1"
+                                     OnLeftSwap="@((value)=> SwapItems(Value.AudioItems, right: value))"
+                                     OnRightSwap="@((value)=> SwapItems(Value.AudioItems, left: value))" />
+            }
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter] public TimelineModel? Value { get; set; } = null!;
+
+    private double TimelineScale = 1.0f;
+
+    public void SwapItems(List<TimelineItem> container, TimelineItem? left = null, TimelineItem? right = null) {
+        if (left == null) {
+            left = container[container.IndexOf(right) - 1];
+        } else if (right == null) {
+            right = container[container.IndexOf(left) + 1];
+        } else {
+            return;
+        }
+        container.Remove(left);
+        container.Insert(container.IndexOf(right) + 1, left);
+    }
+}

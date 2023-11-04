@@ -7,6 +7,7 @@ using PodTube.Client;
 using PodTube.Client.Rest;
 using PodTube.Client.Rest.Authorization;
 using PodTube.Client.Services;
+using PodTube.Client.Editor.Util;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
@@ -34,5 +35,7 @@ builder.Services.AddScoped(
 builder.Services.AddMudServices();
 
 builder.Services.AddBlazoredLocalStorage();
+
+builder.Services.AddEditorServices();
 
 await builder.Build().RunAsync();

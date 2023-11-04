@@ -1,0 +1,13 @@
+﻿<RadzenCard>
+    <RadzenStack>
+        <RadzenNumeric @bind-Value=@value />
+        <RadzenButton Click=@(args => OnDone.InvokeAsync(value)) Text="@Operation" ButtonStyle="ButtonStyle.Primary" />
+    </RadzenStack>
+</RadzenCard>
+
+
+@code {
+    [Parameter] public EventCallback<double> OnDone { get; set; } = new EventCallback<double>();
+    [Parameter] public string Operation { get; set; } = "";
+    private int value = 5;
+}

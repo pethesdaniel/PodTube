@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PodTube.Server", "PodTube\Server\PodTube.Server.csproj", "{DDCAC67E-BC8F-4DC2-BB6C-A71670CD6160}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8740FB1A-80A3-40E2-B697-0DCFD913F1CD} = {8740FB1A-80A3-40E2-B697-0DCFD913F1CD}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PodTube.Client", "PodTube\Client\PodTube.Client.csproj", "{95A4F183-7BE2-463C-A9F0-4953FB10E269}"
 EndProject
@@ -12,6 +15,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PodTube.BLL", "PodTube\BLL\PodTube.BLL.csproj", "{0FA12F05-2773-4B35-9E18-EE2F4B8F62D6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PodTube.DataAccess", "PodTube\DataAccess\PodTube.DataAccess.csproj", "{F1974BFC-B61A-4ED3-B439-E782F8196A4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PodTube.Client.Editor", "PodTube.Client.Editor\PodTube.Client.Editor.csproj", "{8740FB1A-80A3-40E2-B697-0DCFD913F1CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D2BBB48A-F757-46F1-8F5E-DED8F559458A} = {D2BBB48A-F757-46F1-8F5E-DED8F559458A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +47,10 @@ Global
 		{F1974BFC-B61A-4ED3-B439-E782F8196A4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1974BFC-B61A-4ED3-B439-E782F8196A4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1974BFC-B61A-4ED3-B439-E782F8196A4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8740FB1A-80A3-40E2-B697-0DCFD913F1CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8740FB1A-80A3-40E2-B697-0DCFD913F1CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8740FB1A-80A3-40E2-B697-0DCFD913F1CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8740FB1A-80A3-40E2-B697-0DCFD913F1CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

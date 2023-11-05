@@ -1,0 +1,55 @@
+﻿@using PodTube.Shared.Models.DTO;
+@using PodTube.Shared.Models.Editor;
+
+<RadzenRow>
+    <RadzenColumn>
+        <PodTube.Client.Editor.Components.AssetBrowser.AssetBrowser AddAssetToTimeline=AddAssetToTimeline></PodTube.Client.Editor.Components.AssetBrowser.AssetBrowser>
+        <PodTube.Client.Editor.Components.Timeline.Timeline Value="Timeline" OnTimelineChanged="TimelineChanged"></PodTube.Client.Editor.Components.Timeline.Timeline>
+    </RadzenColumn>
+    <RadzenColumn>
+        <PodTube.Client.Components.Videos.VideoPlayer.PodTubeVideoPlayer Video="VideoDto"></PodTube.Client.Components.Videos.VideoPlayer.PodTubeVideoPlayer>
+    </RadzenColumn>
+</RadzenRow>
+
+
+
+@code {
+    private TimelineModel Timeline { get; set; } = new TimelineModel();
+    private VideoDto VideoDto { get; set; } = new VideoDto();
+
+    public void AddAssetToTimeline(Asset asset) {
+        if (asset.IsAudio) {
+            Timeline.AudioItems.Add(new TimelineItem {
+                    Asset = asset,
+                    Duration = 100
+                });
+        } else {
+            Timeline.VisualItems.Add(new TimelineItem {
+                    Asset = asset,
+                    Duration = 100
+            });
+        }
+        TimelineChanged();
+    }
+
+    public void TimelineChanged() {
+        VideoDto = ToVideoDto();
+    }
+
+    public VideoDto ToVideoDto() {
+        var frames = new List<FrameDto>();
+        foreach (var item in Timeline.VisualItems) {
+            frames.Add(new FrameDto {
+                    Url = item.Asset.Url,
+                    TimestampStart = frames.Count > 0 ? frames[frames.Count - 1].TimestampEnd : 0,
+                    TimestampEnd = frames.Count > 0 ? frames[frames.Count - 1].TimestampEnd + (int)(item.Duration) : (int)item.Duration,
+                });
+        }
+        return new VideoDto {
+                Id = 0,
+                Name = "Preview",
+                Audio = Timeline.AudioItems.FirstOrDefault()?.Asset.Url ?? "",
+                Frames = frames
+            };
+    }
+}

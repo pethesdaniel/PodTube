@@ -13,14 +13,15 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.3" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="6.2.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Radzen.Blazor" Version="4.20.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\PodTube.Client.Editor\PodTube.Client.Editor.csproj" />
     <ProjectReference Include="..\Shared\PodTube.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Editor\Services\" />
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\sample\" />
   </ItemGroup>

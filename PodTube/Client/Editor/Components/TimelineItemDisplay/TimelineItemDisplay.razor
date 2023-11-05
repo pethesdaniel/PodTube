@@ -1,5 +1,6 @@
 ﻿@using PodTube.Shared.Models.Editor;
 @using Radzen.Blazor.Rendering;
+@using Orientation = Radzen.Orientation
 
 <RadzenCard class="p-0 rz-background-color-info rz-color-on-info rz-text-align-center" Style=@GetStyle() >
     @if (Value.Asset.IsAudio) {
@@ -55,6 +56,8 @@
     [Parameter] public bool DisplayChangeDuration { get; set; } = false;
     [Parameter] public EventCallback<TimelineItem> OnLeftSwap { get; set; } = new EventCallback<TimelineItem>();
     [Parameter] public EventCallback<TimelineItem> OnRightSwap { get; set; } = new EventCallback<TimelineItem>();
+    [Parameter] public EventCallback OnChanged { get; set; } = new EventCallback();
+
 
     private Popup IncreasePopup;
     private Popup DecreasePopup;
@@ -72,15 +75,18 @@
     public void OnIncreaseDuration(double value) {
         Value.Duration += value;
         IncreasePopup.CloseAsync();
+        OnChanged.InvokeAsync();
     }
 
     public void OnDecreaseDuration(double value) {
         Value.Duration -= value;
         DecreasePopup.CloseAsync();
+        OnChanged.InvokeAsync();
     }
 
     public void SetDuration(double value) {
         Value.Duration = value;
+        OnChanged.InvokeAsync();
     }
 
     private async Task OnWaveformLoaded(double value) {

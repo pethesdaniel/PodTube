@@ -23,7 +23,8 @@
                                      DisplayLeftSwap="i > 0"
                                      DisplayRightSwap="i < Value.VisualItems.Count - 1"
                                      OnLeftSwap="@((value)=> SwapItems(Value.VisualItems, right: value))"
-                                     OnRightSwap="@((value)=> SwapItems(Value.VisualItems, left: value))" />
+                                     OnRightSwap="@((value)=> SwapItems(Value.VisualItems, left: value))"
+                                     OnChanged="OnItemChanged"/>
             }
         </div>
         <div style="display: flex; flex-direction: row;">
@@ -33,7 +34,8 @@
                                      DisplayLeftSwap="i > 0"
                                      DisplayRightSwap="i < Value.AudioItems.Count - 1"
                                      OnLeftSwap="@((value)=> SwapItems(Value.AudioItems, right: value))"
-                                     OnRightSwap="@((value)=> SwapItems(Value.AudioItems, left: value))" />
+                                     OnRightSwap="@((value)=> SwapItems(Value.AudioItems, left: value))"
+                                     OnChanged="OnItemChanged" />
             }
         </div>
     </div>
@@ -42,6 +44,7 @@
 
 @code {
     [Parameter] public TimelineModel? Value { get; set; } = null!;
+    [Parameter] public EventCallback OnTimelineChanged { get; set; } = new EventCallback();
 
     private double TimelineScale = 1.0f;
 
@@ -55,5 +58,10 @@
         }
         container.Remove(left);
         container.Insert(container.IndexOf(right) + 1, left);
+        OnTimelineChanged.InvokeAsync();
+    }
+
+    private void OnItemChanged() {
+        OnTimelineChanged.InvokeAsync();
     }
 }

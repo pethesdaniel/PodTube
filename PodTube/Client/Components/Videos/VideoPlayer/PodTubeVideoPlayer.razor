@@ -25,23 +25,46 @@
     </MudGrid>
 </MudStack>
 
-    @if (Video.Audio != string.Empty) {
-    <audio preload="metadata" hidden @ref="audioElement" @ontimeupdate="OnTimeUpdate" @onloadedmetadata="OnTimeUpdate">
-        <source src="@Video.Audio">
-        Your browser does not support the audio element.
-    </audio>
+@foreach (var audio in Video.Audios.Distinct()) {
+    <PodTube.Client.Components.Videos.VideoPlayer.AudioPlayer.AudioPlayer Url="@audio" audioController="audioController"></PodTube.Client.Components.Videos.VideoPlayer.AudioPlayer.AudioPlayer>
 }
 
 
 @code {
-    [Parameter] public VideoDto Video { get; set; } = new();
+    private VideoDto _videoDto = new();
+    [Parameter]
+    public VideoDto Video
+    {
+        get
+        {
+            return _videoDto;
+        }
+        set
+        {
+            if(value != _videoDto) {
+                _videoDto = value;
+                Audios = value.Audios.Select(a => new Audio
+                    {
+                        Guid = Guid.NewGuid(),
+                        Url = a
+                    }).ToList();
+                ResetPlayback();
+            }
+        }
+    }
 
     [Parameter] public string Placeholder { get; set; } = string.Empty;
+
+    private Audio CurrentAudio = new();
+    private List<Audio> Audios = new List<Audio>();
+    private Dictionary<string, AudioMetadata> Metadata = new Dictionary<string, AudioMetadata>();
+
+    private AudioController audioController = new AudioController();
 
     private string CurrentFrame = string.Empty;
 
     private double _currentTime = 0;
-    public double CurrentTime {
+    private double CurrentTime {
         get {
             return _currentTime;
         }
@@ -50,10 +73,10 @@
             CurrentTimeReadable = $"{(value / 60).ToString("00")}:{(value % 60).ToString("00")}";
         }
     }
-    public string CurrentTimeReadable = "00:00";
+    private string CurrentTimeReadable = "00:00";
 
     private double _duration = 0;
-    public double Duration {
+    private double Duration {
         get {
             return _duration;
         }
@@ -62,74 +85,75 @@
             DurationReadable = $"{(value / 60).ToString("00")}:{(value % 60).ToString("00")}";
         }
     }
-    public string DurationReadable = "00:00";
+    private string DurationReadable = "00:00";
 
-    public bool IsPaused = true;
-    public double Progress = 0;
-    public double Volume = 1;
+    private bool IsPaused = true;
+    private double Progress = 0;
+    private double Volume = 1;
 
-    private IJSObjectReference componentJs = null!;
 
     private ElementReference audioElement;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender) {
-        componentJs = await js.InvokeAsync<IJSObjectReference>("import", "./Components/Videos/VideoPlayer/PodTubeVideoPlayer.razor.js");
-        await base.OnAfterRenderAsync(firstRender);
-        Volume = await GetVolumeJS();
+    protected override async Task OnInitializedAsync() {
+        await base.OnInitializedAsync();
+        audioController.OnTimeUpdatedEvent += OnTimeUpdated;
+        audioController.OnMetadataLoadedEvent += OnMetadataLoaded;
     }
-    public async Task OnTimeUpdate() {
-        CurrentTime = await GetCurrentTimeJS();
-        Duration = await GetDurationJS();
-        IsPaused = await GetIsPausedJS();
-        Volume = await GetVolumeJS();
+
+    public void OnMetadataLoaded(AudioMetadata metadata) {
+        Metadata.TryAdd(metadata.Url, metadata);
+    }
+
+
+    private void OnTimeUpdated(AudioPlayerState state) {
+        CurrentTime = CalculateCurrentTime(state.CurrentTime);
+        Duration = CalculateDuration();
+        IsPaused = state.IsPaused;
+        Volume = state.Volume;
         Progress = CurrentTime / Duration * 100f;
         UpdateFrame();
+
+        if (state.CurrentTime == state.Duration) {
+            SwitchAudioToNext();
+        }
+        StateHasChanged();
     }
 
-    public async Task OnPlay() {
+    private void SwitchAudioToNext() {
+        var indx = Audios.IndexOf(CurrentAudio);
+        if(indx >= Audios.Count -1) {
+            ResetPlayback();
+            return;
+        }
+        SwitchAudio(Audios[indx + 1], 0, true);
+    }
+
+    private void SwitchAudio(Audio audio, double time = 0, bool continuePlayback = false) {
+        var isTrackSwitch = audio.Url != CurrentAudio.Url;
+        if (isTrackSwitch) {
+            audioController.PauseAudioWithUrl(CurrentAudio.Url);
+            audioController.SeekAudioWithUrl(CurrentAudio.Url, 0);
+        }
+        CurrentAudio = audio;
+        audioController.SeekAudioWithUrl(CurrentAudio.Url, time);
+        if (continuePlayback) {
+            audioController.PlayAudioWithUrl(CurrentAudio.Url);
+        }
+    }
+
+    private void ResetPlayback() {
+        CurrentAudio = Audios.FirstOrDefault() ?? new();
+    }
+
+    private void OnPlay() {
         if (IsPaused) {
-            await PlayAudioJS();
+            audioController.PlayAudioWithUrl(CurrentAudio.Url);
         } else {
-            await PauseAudioJS();
+            audioController.PauseAudioWithUrl(CurrentAudio.Url);
         }
     }
 
-    public async Task<double> GetCurrentTimeJS() {
-        return await componentJs.InvokeAsync<double>("getCurrentTime", audioElement);
-    }
-
-    public async Task<double> GetDurationJS() {
-        return await componentJs.InvokeAsync<double>("getDuration", audioElement);
-    }
-
-    public async Task<double> GetVolumeJS() {
-        return await componentJs.InvokeAsync<double>("getVolume", audioElement);
-    }
-
-    public async Task<bool> GetIsPausedJS() {
-        return await componentJs.InvokeAsync<bool>("getIsPaused", audioElement);
-    }
-
-    public async Task PlayAudioJS() {
-        await componentJs.InvokeVoidAsync("play", audioElement);
-    }
-
-    public async Task PauseAudioJS() {
-        await componentJs.InvokeVoidAsync("pause", audioElement);
-    }
-
-    public async Task SetCurrentTimeJS(double time) {
-        await componentJs.InvokeVoidAsync("setCurrentTime", audioElement, time);
-    }
-
-    public async Task SetVolumeJS(double volume) {
-        if(volume != Volume) {
-            await componentJs.InvokeVoidAsync("setVolume", audioElement, volume);
-            Volume = volume;
-        }
-    }
-
-    public void UpdateFrame() {
+    private void UpdateFrame() {
         var frameCandidate = Video.Frames.FirstOrDefault(f => f.TimestampStart <= CurrentTime && f.TimestampEnd > CurrentTime)?.Url;
         if(frameCandidate != null) {
             CurrentFrame = CurrentFrame != frameCandidate ? frameCandidate : CurrentFrame;
@@ -138,25 +162,69 @@
         }
     }
 
-    public async Task OnUserChangedCurrentTime(double value) {
+    private void OnUserChangedCurrentTime(double value) {
         if(Progress != value) {
             var currentTime = value / 100f * Duration;
-            await SetCurrentTimeJS(currentTime);
+            var coords = CalculateAudioCoordinates(currentTime);
+            SwitchAudio(coords.Audio, coords.Time, !IsPaused);
             CurrentTime = currentTime;
             Progress = value;
         }
     }
 
-    public async Task OnUserChangedVolume(double value) {
+    private void OnUserChangedVolume(double value) {
         if(Volume != value) {
-            await SetVolumeJS(value);
+            audioController.SetVolume(value);
             Volume = value;
         }
     }
 
     public async ValueTask DisposeAsync() {
-        if (componentJs is not null) {
-            await componentJs.DisposeAsync();
-        }
+        audioController.OnTimeUpdatedEvent -= OnTimeUpdated;
+        audioController.OnMetadataLoadedEvent -= OnMetadataLoaded;
     }
+
+    private double CalculateCurrentTime(double timeInCurrentUrl) {
+        double acculTime = 0;
+        for (int i = 0; i < Audios.IndexOf(CurrentAudio); ++i) {
+            acculTime += Metadata[Audios[i].Url].Duration;
+        }
+        acculTime += timeInCurrentUrl;
+        return acculTime;
+    }
+
+    private double CalculateDuration() {
+        double acculTime = 0;
+        for (int i = 0; i < Audios.Count; ++i) {
+            acculTime += Metadata[Audios[i].Url].Duration;
+        }
+        return acculTime;
+    }
+
+    private AudioCoordinates CalculateAudioCoordinates(double time) {
+        double acculTime = 0;
+        double returnTime = 0;
+        Audio? returnAudio = null;
+        for (int i = 0; i < Audios.Count; ++i) {
+            double duration = Metadata[Audios[i].Url].Duration;
+            if (acculTime + duration > time) {
+                returnAudio = Audios[i];
+                returnTime = time - acculTime;
+                break;
+            } else {
+                acculTime += duration;
+            }
+        }
+        return new AudioCoordinates
+            {
+                Audio = returnAudio,
+                Time = returnTime
+            };
+    }
+
+    private class AudioCoordinates {
+        public Audio Audio { get; set; }
+        public double Time { get; set; }
+    }
+
 }

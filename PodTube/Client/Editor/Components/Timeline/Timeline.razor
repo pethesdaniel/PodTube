@@ -12,9 +12,10 @@
     </RadzenSplitterPane>
 </RadzenSplitter>*@
 @if (Value != null) {
+    <RadzenText TextStyle="TextStyle.Caption">Timeline</RadzenText>
     <RadzenButton Click=@(args => TimelineScale *= 2) Icon="zoom_in" ButtonStyle="ButtonStyle.Primary" />
     <RadzenButton Click=@(args => TimelineScale *= 0.5) Icon="zoom_out" ButtonStyle="ButtonStyle.Primary" />
-    <div style="display: flex; flex-direction: column; overflow:scroll">
+    <div style="display: flex; flex-direction: column; overflow-x:scroll; overflow-y: inherit">
         <div style="display: flex; flex-direction: row;">
             @for (int i = 0; i < Value.VisualItems.Count; ++i) {
                 <TimelineItemDisplay Value="@Value.VisualItems[i]"
@@ -24,7 +25,7 @@
                                      DisplayRightSwap="i < Value.VisualItems.Count - 1"
                                      OnLeftSwap="@((value)=> SwapItems(Value.VisualItems, right: value))"
                                      OnRightSwap="@((value)=> SwapItems(Value.VisualItems, left: value))"
-                                     OnChanged="OnItemChanged"/>
+                                     OnChanged="OnItemChanged" />
             }
         </div>
         <div style="display: flex; flex-direction: row;">

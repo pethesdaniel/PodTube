@@ -4,13 +4,14 @@
 
 <MudStack Spacing="0">
     <MudImage Src="@CurrentFrame" ObjectFit="ObjectFit.Contain" Fluid="true" Elevation="0" Class="video-image rounded-lg" Style="max-height: 75vh;" />
+    <div style="display:flex"></div>
     <MudGrid Justify="Justify.SpaceBetween" Spacing="0">
         <MudItem Class="d-flex flex-grow-0 align-end">
             <MudToggleIconButton Toggled="@IsPaused"
                                  Icon="@Icons.Material.Filled.Pause" Title="Pause"
                                  ToggledIcon="@Icons.Material.Filled.PlayArrow" ToggledTitle="Play" @onclick="OnPlay" />
         </MudItem>
-        <MudItem xs=11 md=9 Class="flex-grow-1">
+        <MudItem sm=11 md=9 Class="flex-grow-1">
             <MudStack Class="px-3" Justify="Justify.FlexEnd" Style="height:100%">
                 <MudStack Row AlignItems="AlignItems.Center">
                     <MudText Typo="Typo.body2">@CurrentTimeReadable</MudText>
@@ -19,7 +20,7 @@
                 </MudStack>
             </MudStack>
          </MudItem>
-        <MudItem xs=12 md=2>
+        <MudItem sm=12 md=2>
             <MudSlider Class="px-3" Variant="Variant.Filled" Min=0 Max=1 Step=0.01 @bind-Value:get="Volume" @bind-Value:set="OnUserChangedVolume">Volume</MudSlider>
         </MudItem>
     </MudGrid>

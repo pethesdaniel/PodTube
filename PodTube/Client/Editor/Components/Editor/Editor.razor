@@ -4,14 +4,18 @@
 <RadzenRow>
     <RadzenColumn>
         <PodTube.Client.Editor.Components.AssetBrowser.AssetBrowser AddAssetToTimeline=AddAssetToTimeline></PodTube.Client.Editor.Components.AssetBrowser.AssetBrowser>
-        <PodTube.Client.Editor.Components.Timeline.Timeline Value="Timeline" OnTimelineChanged="TimelineChanged"></PodTube.Client.Editor.Components.Timeline.Timeline>
     </RadzenColumn>
     <RadzenColumn>
-        <PodTube.Client.Components.Videos.VideoPlayer.PodTubeVideoPlayer Video="VideoDto"></PodTube.Client.Components.Videos.VideoPlayer.PodTubeVideoPlayer>
+        <RadzenCard Style="min-height: 300px">
+            <PodTube.Client.Components.Videos.VideoPlayer.PodTubeVideoPlayer Video="VideoDto"></PodTube.Client.Components.Videos.VideoPlayer.PodTubeVideoPlayer>
+        </RadzenCard>
     </RadzenColumn>
 </RadzenRow>
-
-
+<RadzenRow>
+    <RadzenColumn Size="12">
+         <PodTube.Client.Editor.Components.Timeline.Timeline Value="Timeline" OnTimelineChanged="TimelineChanged"></PodTube.Client.Editor.Components.Timeline.Timeline>
+    </RadzenColumn>
+</RadzenRow>
 
 @code {
     private TimelineModel Timeline { get; set; } = new TimelineModel();

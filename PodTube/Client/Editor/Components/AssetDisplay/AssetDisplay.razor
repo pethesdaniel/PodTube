@@ -1,15 +1,24 @@
 ﻿@using PodTube.Shared.Models.Editor;
-<RadzenCard>
-    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
-        @if(Value.Url != null) {
-            @if (!Value.IsAudio) {
-                <RadzenImage Path="@Value.Url" Style="width: 50px; height: 50px; border-radius: 50%;" />
-            }
+<RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+    @if (Value.Url != null) {
+        @if (!Value.IsAudio) {
+            <RadzenImage Path="@Value.Url" Style="max-width: 100px; max-height: 100px;" class="rz-border-radius" />
         }
-        <RadzenText TextStyle="TextStyle.Body1"><b>@(Value.Name)</b></RadzenText>
-    </RadzenStack>
-</RadzenCard>
+    }
+    <RadzenText TextStyle="TextStyle.Body1"><b>@(Value.Name)</b></RadzenText>
+</RadzenStack>
+@*<RadzenCard Style=@GetStyle()>
+    <RadzenImage Path="https://www.radzen.com/assets/radzen-logo-top-b2d6e9dcacf7d344bbab515b8748c5f4d702c6c5bfc349bd9ff9003016a3a6ee.svg" Style="width: 15rem;" />
+    
+</RadzenCard>*@
 
 @code {
     [Parameter] public Asset Value { get; set; }
+
+    public string GetStyle() {
+        if(Value == null) {
+            return "";
+        }
+        return $"background-image: url({Value.Url}); background-size: cover;";
+    }
 }

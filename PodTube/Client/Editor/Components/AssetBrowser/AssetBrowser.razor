@@ -1,36 +1,36 @@
 ﻿@using PodTube.Shared.Models.Editor;
-<RadzenRow>
-    <RadzenColumn>
-        <RadzenCard>
-            <RadzenText TextStyle="TextStyle.Caption">Add new asset</RadzenText>
-            <RadzenFormField Text="Name" Style="width: 100%;">
-                <RadzenTextBox @bind-Value="@NewItemName" Style="width: 100%;" />
-            </RadzenFormField>
-            <RadzenFormField Text="Url" Style="width: 100%;">
-                <RadzenTextBox @bind-Value="@NewItemUrl" Style="width: 100%;" />
-            </RadzenFormField>
-            <RadzenStack Orientation="Orientation.Vertical" Gap="4px">
-                IsAudio
-                <RadzenSwitch @bind-Value="@NewItemIsAudio" Style="margin-top: 4px;" />
-            </RadzenStack>
-            <RadzenButton Click=@(args => OnCreateNewItem()) Icon="add" Text="Add" ButtonStyle="ButtonStyle.Primary" />
-        </RadzenCard>
-    </RadzenColumn>
-    <RadzenColumn>
-        <RadzenCard>
-            <RadzenText TextStyle="TextStyle.Caption">AssetBrowser</RadzenText>
-            <RadzenRow>
-                @foreach (var asset in Assets) {
-                    <RadzenCard class="p-1 rz-background-color-success rz-color-on-success rz-text-align-center">
-                        <PodTube.Client.Editor.Components.AssetDisplay.AssetDisplay Value="asset"></PodTube.Client.Editor.Components.AssetDisplay.AssetDisplay>
-                        <RadzenButton Click=@(args => OnAddToTimeline(asset)) Text="To Timeline" ButtonStyle="ButtonStyle.Primary" />
-                    </RadzenCard>
-                }
-            </RadzenRow>
-            
-        </RadzenCard>
-    </RadzenColumn>
-</RadzenRow>
+@using Radzen.Blazor.Rendering;
+<RadzenCard Style="min-height: 300px">
+    <RadzenRow AlignItems="Radzen.AlignItems.Center">
+        <RadzenText TextStyle="TextStyle.Caption">Asset Browser</RadzenText>
+        <RadzenButton @ref=AddButton Click="@(args => AddPopup.ToggleAsync(AddButton.Element))" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-10"/>
+    </RadzenRow>
+    <RadzenRow class="m-2">
+        @foreach (var asset in Assets) {
+            <RadzenCard class="p-2 rz-background-color-success rz-color-on-success rz-text-align-center">
+                <PodTube.Client.Editor.Components.AssetDisplay.AssetDisplay Value="asset"></PodTube.Client.Editor.Components.AssetDisplay.AssetDisplay>
+                <RadzenButton Click=@(args => OnAddToTimeline(asset)) Icon="view_timeline" Text="Add" ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-10"/>
+            </RadzenCard>
+        }
+    </RadzenRow>
+</RadzenCard>
+
+<Popup @ref=AddPopup Style="display:none;position:absolute;height:300px;width:600px;">
+    <RadzenCard>
+        <RadzenText TextStyle="TextStyle.Caption">Add new asset</RadzenText>
+        <RadzenFormField Text="Name" Style="width: 100%;">
+            <RadzenTextBox @bind-Value="@NewItemName" Style="width: 100%;" />
+        </RadzenFormField>
+        <RadzenFormField Text="Url" Style="width: 100%;">
+            <RadzenTextBox @bind-Value="@NewItemUrl" Style="width: 100%;" />
+        </RadzenFormField>
+        <RadzenStack Orientation="Orientation.Vertical" Gap="4px">
+            IsAudio
+            <RadzenSwitch @bind-Value="@NewItemIsAudio" Style="margin-top: 4px;" />
+        </RadzenStack>
+        <RadzenButton Click=@(args => OnCreateNewItem()) Icon="add" Text="Add" ButtonStyle="ButtonStyle.Primary" />
+    </RadzenCard>
+</Popup>
 
 @code {
     [Parameter] public EventCallback<Asset> AddAssetToTimeline { get; set; }
@@ -39,6 +39,9 @@
     private string NewItemName { get; set; }
     private string NewItemUrl { get; set; }
     private bool NewItemIsAudio { get; set; }
+
+    private Popup AddPopup;
+    RadzenButton AddButton;
 
     public void OnCreateNewItem() {
         Assets.Add(new Asset

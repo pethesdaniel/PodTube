@@ -26,10 +26,4 @@
     <Folder Include="wwwroot\sample\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Components\Videos\VideoPlayer\PodTubeVideoPlayer.razor.js">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

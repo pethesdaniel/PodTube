@@ -65,7 +65,7 @@ namespace PodTube.Shared.Models.DTO {
         [Required]
         [DataMember(Name = "audio")]
         [JsonPropertyName("audio")]
-        public string Audio { get; set; } = string.Empty;
+        public List<string> Audios { get; set; } = new ();
 
         /// <summary>
         /// Returns the string presentation of the object

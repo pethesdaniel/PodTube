@@ -48,7 +48,7 @@
         return new VideoDto {
                 Id = 0,
                 Name = "Preview",
-                Audio = Timeline.AudioItems.FirstOrDefault()?.Asset.Url ?? "",
+                Audios = Timeline.AudioItems.Select(ai => ai.Asset.Url).ToList(),
                 Frames = frames
             };
     }

@@ -1,0 +1,133 @@
+﻿@using PodTube.Shared.Models.DTO;
+@inject IJSRuntime js;
+@implements IAsyncDisposable;
+
+@if (Url != string.Empty) {
+    <audio preload="metadata" hidden @ref="audioElement" @ontimeupdate="OnTimeUpdate" @onloadedmetadata="OnMetadataLoaded">
+        <source src="@Url">
+        Your browser does not support the audio element.
+    </audio>
+}
+
+
+@code {
+    [Parameter] public string Url { get; set; } = string.Empty;
+    [Parameter] public AudioController? audioController { get; set; }
+
+    private double CurrentTime = 0;
+    private double Duration = 0;
+    private bool IsPaused = true;
+    private double Progress = 0;
+    private double Volume = 1;
+
+    private IJSObjectReference componentJs = null!;
+
+    private ElementReference audioElement;
+
+    protected async override Task OnInitializedAsync() {
+        audioController.PlayAudioWithUrlEvent += OnPlayAudioWithUrlEvent;
+        audioController.PauseAudioWithUrlEvent += OnPauseAudioWithUrlEvent;
+        audioController.SetVolumeEvent += SetVolumeEvent;
+        audioController.SeekAudioWithUrlEvent += OnSeekAudioWithUrlEvent;
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        componentJs = await js.InvokeAsync<IJSObjectReference>("import", "./Components/Videos/VideoPlayer/AudioPlayer/AudioPlayer.razor.js");
+        await base.OnAfterRenderAsync(firstRender);
+        Volume = await GetVolumeJS();
+    }
+
+    private async Task UpdateCSharpFields() {
+        CurrentTime = await GetCurrentTimeJS();
+        Duration = await GetDurationJS();
+        IsPaused = await GetIsPausedJS();
+        Volume = await GetVolumeJS();
+        Progress = CurrentTime / Duration * 100f;
+    }
+
+    private async Task OnMetadataLoaded() {
+        await UpdateCSharpFields();
+
+        audioController.OnMetadataLoaded(new AudioMetadata {
+                Url = this.Url,
+                Duration = this.Duration,
+        });
+    }
+
+    private async Task OnTimeUpdate() {
+        await UpdateCSharpFields();
+
+        audioController.OnTimeUpdated(new AudioPlayerState {
+            Url = this.Url,
+            Duration = this.Duration,
+            CurrentTime = this.CurrentTime,
+            IsPaused = this.IsPaused,
+            Volume = this.Volume
+        });
+    }
+
+    private async Task<double> GetCurrentTimeJS() {
+        return await componentJs.InvokeAsync<double>("getCurrentTime", audioElement);
+    }
+
+    private async Task<double> GetDurationJS() {
+        return await componentJs.InvokeAsync<double>("getDuration", audioElement);
+    }
+
+    private async Task<double> GetVolumeJS() {
+        return await componentJs.InvokeAsync<double>("getVolume", audioElement);
+    }
+
+    private async Task<bool> GetIsPausedJS() {
+        return await componentJs.InvokeAsync<bool>("getIsPaused", audioElement);
+    }
+
+    private async Task PlayAudioJS() {
+        await componentJs.InvokeVoidAsync("play", audioElement);
+    }
+
+    private async Task PauseAudioJS() {
+        await componentJs.InvokeVoidAsync("pause", audioElement);
+    }
+
+    private async Task SetCurrentTimeJS(double time) {
+        await componentJs.InvokeVoidAsync("setCurrentTime", audioElement, time);
+    }
+
+    private async Task SetVolumeJS(double volume) {
+        if (volume != Volume) {
+            await componentJs.InvokeVoidAsync("setVolume", audioElement, volume);
+            Volume = volume;
+        }
+    }
+
+    public async ValueTask DisposeAsync() {
+        if (componentJs is not null) {
+            await componentJs.DisposeAsync();
+        }
+    }
+
+
+    private void OnPlayAudioWithUrlEvent(string url) {
+        if (Url == url) {
+            PlayAudioJS();
+        }
+    }
+
+    private void OnPauseAudioWithUrlEvent(string url) {
+        if (Url == url) {
+            PauseAudioJS();
+        }
+    }
+
+    private void SetVolumeEvent(double volume) {
+        SetVolumeJS(volume);
+    }
+
+    private void OnSeekAudioWithUrlEvent(string url, double time) {
+        if (Url == url) {
+            SetCurrentTimeJS(time);
+        }
+    }
+}

@@ -4,26 +4,17 @@
 
 <MudStack Spacing="0">
     <MudImage Src="@CurrentFrame" ObjectFit="ObjectFit.Contain" Fluid="true" Elevation="0" Class="video-image rounded-lg" Style="max-height: 75vh;" />
-    <div style="display:flex"></div>
-    <MudGrid Justify="Justify.SpaceBetween" Spacing="0">
-        <MudItem Class="d-flex flex-grow-0 align-end">
-            <MudToggleIconButton Toggled="@IsPaused"
-                                 Icon="@Icons.Material.Filled.Pause" Title="Pause"
-                                 ToggledIcon="@Icons.Material.Filled.PlayArrow" ToggledTitle="Play" @onclick="OnPlay" />
-        </MudItem>
-        <MudItem sm=11 md=9 Class="flex-grow-1">
-            <MudStack Class="px-3" Justify="Justify.FlexEnd" Style="height:100%">
-                <MudStack Row AlignItems="AlignItems.Center">
-                    <MudText Typo="Typo.body2">@CurrentTimeReadable</MudText>
-                    <MudSlider Class="px-0 py-3" Variant="Variant.Filled" @bind-Value:get="Progress" @bind-Value:set="OnUserChangedCurrentTime"></MudSlider>
-                    <MudText Typo="Typo.body2">@DurationReadable</MudText>
-                </MudStack>
-            </MudStack>
-         </MudItem>
-        <MudItem sm=12 md=2>
-            <MudSlider Class="px-3" Variant="Variant.Filled" Min=0 Max=1 Step=0.01 @bind-Value:get="Volume" @bind-Value:set="OnUserChangedVolume">Volume</MudSlider>
-        </MudItem>
-    </MudGrid>
+    <div style="display:flex">
+        <MudToggleIconButton Toggled="@IsPaused"
+                             Icon="@Icons.Material.Filled.Pause" Title="Pause"
+                             ToggledIcon="@Icons.Material.Filled.PlayArrow" ToggledTitle="Play" @onclick="OnPlay" />
+        <MudStack Row AlignItems="AlignItems.Center" Style="flex-grow: 1; min-width:150px">
+            <MudText Typo="Typo.body2">@CurrentTimeReadable</MudText>
+            <MudSlider Class="px-0 py-3" Variant="Variant.Filled" @bind-Value:get="Progress" @bind-Value:set="OnUserChangedCurrentTime"></MudSlider>
+            <MudText Typo="Typo.body2">@DurationReadable</MudText>
+        </MudStack>
+        <MudSlider Class="px-3" Variant="Variant.Filled" Min=0 Max=1 Step=0.01 @bind-Value:get="Volume" @bind-Value:set="OnUserChangedVolume" Style="max-width:150px; flex-grow: 0">Volume</MudSlider>
+    </div>
 </MudStack>
 
 @foreach (var audio in Video.Audios.Distinct()) {
@@ -144,6 +135,7 @@
 
     private void ResetPlayback() {
         CurrentAudio = Audios.FirstOrDefault() ?? new();
+        audioController.SeekAudioWithUrl(CurrentAudio.Url, 0);
     }
 
     private void OnPlay() {

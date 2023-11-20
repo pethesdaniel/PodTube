@@ -9,5 +9,8 @@ namespace PodTube.Shared.Models.Editor {
         public string Name { get; set; }
         public string Url { get; set; }
         public bool IsAudio { get; set; } = false;
+
+        public byte[] Data { get; set; } = Array.Empty<byte>();
+        public string MimeType { get; set; } = "";
     }
 }

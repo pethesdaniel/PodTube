@@ -1,7 +1,14 @@
 ﻿::deep .timeline-item {
-    height: 250px;
     overflow: hidden;
     flex-shrink: 0;
     position: relative;
     padding: 16px 0px;
+}
+
+::deep .timeline-item-height-audio {
+    height: 300px;
+}
+
+::deep .timeline-item-height-image {
+    height: 200px;
 }

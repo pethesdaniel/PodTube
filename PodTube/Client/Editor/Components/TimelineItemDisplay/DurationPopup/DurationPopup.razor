@@ -1,7 +1,9 @@
 ﻿<RadzenCard>
-    <RadzenStack>
-        <RadzenNumeric @bind-Value=@value />
-        <RadzenButton Click=@(args => OnDone.InvokeAsync(value)) Text="@Operation" ButtonStyle="ButtonStyle.Primary" />
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center">
+        <RadzenNumeric @bind-Value=@valueMinute Style="max-width: 100px" Format="00" />
+        :
+        <RadzenNumeric @bind-Value=@valueSeconds Style="max-width: 100px" Format="00" />
+        <RadzenButton Click=@(args => OnDone.InvokeAsync(GetValue())) Text="@Operation" ButtonStyle="ButtonStyle.Primary" />
     </RadzenStack>
 </RadzenCard>
 
@@ -9,5 +11,10 @@
 @code {
     [Parameter] public EventCallback<double> OnDone { get; set; } = new EventCallback<double>();
     [Parameter] public string Operation { get; set; } = "";
-    private int value = 5;
+    private int valueMinute = 0;
+    private int valueSeconds = 1;
+
+    private int GetValue() {
+        return valueMinute * 60 + valueSeconds;
+    }
 }

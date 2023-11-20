@@ -1,13 +1,13 @@
 ﻿@using PodTube.Shared.Models.Editor;
 @using Radzen.Blazor.Rendering;
 <div>
-    <RadzenCard class="p-0 rz-background-color-info rz-color-on-info rz-text-align-center timeline-item" Style=@GetStyle()>
+    <RadzenCard class="@{"p-0 rz-text-align-center timeline-item " + GetColorClass() + " " + GetHeightClass()}" Style=@GetStyle()>
         @if (Value.Asset.IsAudio) {
             <PodTube.Client.Editor.Components.Waveform.WaveformDisplay Url="@Value.Asset.Url" OnWaveformLoaded=OnWaveformLoaded style="width: 100%; height: 128px"></PodTube.Client.Editor.Components.Waveform.WaveformDisplay>
         }
         <RadzenStack Orientation="Orientation.Horizontal">
             @if (!Value.Asset.IsAudio) {
-                <RadzenImage Path="@Value.Asset.Url" Style="height: 250px;" />
+                <RadzenImage Path="@Value.Asset.Url" class="timeline-item-height-image" />
             }
             <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
                 <RadzenStack JustifyContent="JustifyContent.Start" Gap="0">
@@ -69,6 +69,14 @@
         return $"width: {TimelineScale * Value.Duration}px;";
     }
 
+    public string GetColorClass() {
+        return Value.Asset.IsAudio ? "rz-background-color-warning" : "rz-background-color-info";
+    }
+
+    public string GetHeightClass() {
+        return Value.Asset.IsAudio ? "timeline-item-height-audio" : "timeline-item-height-image";
+    }
+
     public void OnIncreaseDuration(double value) {
         Value.Duration += value;
         IncreasePopup.CloseAsync();
@@ -77,6 +85,9 @@
 
     public void OnDecreaseDuration(double value) {
         Value.Duration -= value;
+        if(Value.Duration < 0) {
+            Value.Duration = 0;
+        }
         DecreasePopup.CloseAsync();
         OnChanged.InvokeAsync();
     }

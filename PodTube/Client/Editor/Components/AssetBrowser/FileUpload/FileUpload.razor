@@ -13,15 +13,17 @@
     <RadzenFormField Text="Name" Style="width: 100%;" class="mb-2">
         <RadzenTextBox @bind-Value="@NewItemName" Style="width: 100%;" />
     </RadzenFormField>
-    <RadzenUpload Url=@GetApiUrl() Complete=@CompleteUpload class="w-100">
+    <RadzenUpload @ref="upload" Auto="false" Url=@GetApiUrl() Complete=@CompleteUpload class="w-100">
         <RadzenUploadHeader Name="Authorization" Value=@token />
     </RadzenUpload>
+    <RadzenButton Text="Upload" Click=@(args => upload.Upload()) class="d-block mt-4" />
+
 </RadzenCard>
 
 @code {
     [Parameter] public EventCallback<Asset> OnUploaded { get; set; } = new EventCallback<Asset>();
 
-    private ContentInspector? MimeInspector;
+    private RadzenUpload upload = null!;
 
     private string NewItemName { get; set; } = "";
 
@@ -29,10 +31,6 @@
 
     protected override void OnInitialized() {
         base.OnInitialized();
-        MimeInspector = new ContentInspectorBuilder() {
-                Definitions = MimeDetective.Definitions.Default.All()
-        }.Build();
-
         GetBearerToken();
     }
 

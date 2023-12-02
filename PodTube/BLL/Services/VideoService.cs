@@ -29,7 +29,8 @@ namespace PodTube.BLL.Services
                 .Include(v => v.Thumbnail)
                 .Include(v => v.Frames)
                 .ThenInclude(f => f.File)
-                .Include(v => v.Audio)
+                .Include(v => v.Audios)
+                .ThenInclude(a => a.File)
                 .Where(v => v.Id == id)
                 .FirstOrDefaultAsync();
             return mapper.Map<VideoDto>(video);

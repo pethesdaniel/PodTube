@@ -94,6 +94,13 @@
 
     public void OnMetadataLoaded(AudioMetadata metadata) {
         Metadata.TryAdd(metadata.Url, metadata);
+        UpdatePreplay();
+    }
+
+    private void UpdatePreplay() {
+        Duration = CalculateDuration();
+        UpdateFrame();
+        StateHasChanged();
     }
 
 

@@ -1,0 +1,71 @@
+﻿@using MimeDetective;
+@using Newtonsoft.Json;
+@using PodTube.Client.Services;
+@using PodTube.Shared.Models.DTO;
+@using PodTube.Shared.Models.Editor;
+@inject NavigationManager navigator;
+@inject TokenService tokenService;
+@inject HttpClient client;
+
+
+<RadzenCard>
+    <RadzenText TextStyle="TextStyle.Caption">Add new asset</RadzenText>
+    <RadzenFormField Text="Name" Style="width: 100%;" class="mb-2">
+        <RadzenTextBox @bind-Value="@NewItemName" Style="width: 100%;" />
+    </RadzenFormField>
+    <RadzenUpload Url=@GetApiUrl() Complete=@CompleteUpload class="w-100">
+        <RadzenUploadHeader Name="Authorization" Value=@token />
+    </RadzenUpload>
+</RadzenCard>
+
+@code {
+    [Parameter] public EventCallback<Asset> OnUploaded { get; set; } = new EventCallback<Asset>();
+
+    private ContentInspector? MimeInspector;
+
+    private string NewItemName { get; set; } = "";
+
+    private string token = "";
+
+    protected override void OnInitialized() {
+        base.OnInitialized();
+        MimeInspector = new ContentInspectorBuilder() {
+                Definitions = MimeDetective.Definitions.Default.All()
+        }.Build();
+
+        GetBearerToken();
+    }
+
+    private string GetApiUrl() {
+        return navigator.BaseUri + "api/file";
+    }
+
+    private async Task GetBearerToken() {
+        token =  "Bearer " + await tokenService.GetToken();
+    }
+
+    async Task CompleteUpload(UploadCompleteEventArgs args) {
+        var responseRaw = args.RawResponse;
+        var response = JsonConvert.DeserializeObject<FileUploadResponseDTO>(responseRaw);
+        if(response == null) {
+            return;
+        }
+        var data = await client.GetByteArrayAsync(response.Url);
+
+        var substituteFilename = response.Url.Split("/").LastOrDefault("");
+
+        var asset = new Asset {
+                Name = NewItemName == "" ? substituteFilename : NewItemName,
+                Url = response.Url,
+                IsAudio = response.MimeType.Contains("audio"),
+                Data = data,
+                MimeType = response.MimeType,
+        };
+        ResetPopup();
+        await OnUploaded.InvokeAsync(asset);
+    }
+
+    public void ResetPopup() {
+        NewItemName = "";
+    }
+}

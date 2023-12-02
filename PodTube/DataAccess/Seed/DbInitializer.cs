@@ -68,7 +68,13 @@ namespace PodTube.DataAccess.Seed {
                    Description = "This is a test video :)",
                    DatePublished = DateTime.Now,
                    Frames = new List<Frame> { frames[0], frames[1] },
-                   Audio = files[12],
+                   Audios = new List<Audio> {
+                       new Audio
+                       {
+                        File = files[12],
+                        Index = 0
+                       }
+                   },
                    Thumbnail = files[6],
                    Channel = channels[0]
                 },
@@ -77,7 +83,13 @@ namespace PodTube.DataAccess.Seed {
                    Description = "This is also a test video :3",
                    DatePublished = DateTime.Now,
                    Frames = new List<Frame> { frames[2] },
-                   Audio = files[12],
+                   Audios = new List<Audio> { 
+                       new Audio 
+                       {
+                        File = files[12],
+                        Index = 0
+                       } 
+                   },
                    Thumbnail = files[7],
                    Channel = channels[0]
                 }

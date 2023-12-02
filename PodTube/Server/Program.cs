@@ -71,6 +71,7 @@ builder.Services.AddScoped<ChannelService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<PlaylistService>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<FileService>();
 
 builder.Services.Configure<KestrelServerOptions>(options => {
     options.Limits.MaxRequestBodySize = 1073741824; // 1GB

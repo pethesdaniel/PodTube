@@ -45,6 +45,8 @@ namespace PodTube.BLL.Mapper
              */
             CreateMap<Video, VideoDto>().ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(video => video.Thumbnail.ResourceURI));
 
+            CreateMap<Audio, string>().ConvertUsing(audio => audio.File.ResourceURI);
+
             CreateMap<Playlist, PlaylistDto>().ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(playlist => playlist.Thumbnail.ResourceURI));
             CreateMap<Playlist, PlaylistBasicDto>();
 

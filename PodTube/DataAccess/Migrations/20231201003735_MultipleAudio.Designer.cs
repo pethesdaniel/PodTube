@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PodTube.DataAccess.Contexts;
 
@@ -11,9 +12,11 @@ using PodTube.DataAccess.Contexts;
 namespace PodTube.DataAccess.Migrations
 {
     [DbContext(typeof(PodTubeDbContext))]
-    partial class PodTubeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231201003735_MultipleAudio")]
+    partial class MultipleAudio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -223,16 +226,11 @@ namespace PodTube.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("OwnerId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("ResourceURI")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OwnerId");
 
                     b.ToTable("File", (string)null);
                 });
@@ -507,15 +505,6 @@ namespace PodTube.DataAccess.Migrations
                     b.Navigation("Thumbnail");
                 });
 
-            modelBuilder.Entity("PodTube.DataAccess.Entities.File", b =>
-                {
-                    b.HasOne("PodTube.DataAccess.Entities.User", "Owner")
-                        .WithMany("Files")
-                        .HasForeignKey("OwnerId");
-
-                    b.Navigation("Owner");
-                });
-
             modelBuilder.Entity("PodTube.DataAccess.Entities.Frame", b =>
                 {
                     b.HasOne("PodTube.DataAccess.Entities.File", "File")
@@ -604,8 +593,6 @@ namespace PodTube.DataAccess.Migrations
             modelBuilder.Entity("PodTube.DataAccess.Entities.User", b =>
                 {
                     b.Navigation("Favorites");
-
-                    b.Navigation("Files");
 
                     b.Navigation("Playlists");
                 });

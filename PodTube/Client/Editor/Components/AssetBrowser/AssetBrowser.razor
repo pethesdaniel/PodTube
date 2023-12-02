@@ -2,6 +2,7 @@
 @using PodTube.Shared.Models.Editor;
 @using Radzen.Blazor.Rendering;
 @inject HttpClient client
+
 <RadzenCard Style="min-height: 300px">
     <RadzenRow AlignItems="Radzen.AlignItems.Center">
         <RadzenText TextStyle="TextStyle.Caption">Asset Browser</RadzenText>
@@ -18,56 +19,20 @@
 </RadzenCard>
 
 <Popup @ref=AddPopup Style="display:none;position:absolute;height:300px;width:600px;">
-    <RadzenCard>
-        <RadzenText TextStyle="TextStyle.Caption">Add new asset</RadzenText>
-        <RadzenFormField Text="Name" Style="width: 100%;"class="mb-2">
-            <RadzenTextBox @bind-Value="@NewItemName" Style="width: 100%;" />
-        </RadzenFormField>
-        <RadzenFormField Text="Url" Style="width: 100%;" class="mb-2">
-            <RadzenTextBox @bind-Value="@NewItemUrl" Style="width: 100%;" />
-        </RadzenFormField>
-        @*<RadzenStack Orientation="Orientation.Vertical" Gap="4px">
-            IsAudio
-            <RadzenSwitch @bind-Value="@NewItemIsAudio" Style="margin-top: 4px;" />
-        </RadzenStack>*@
-        <RadzenButton Click=@(args => OnCreateNewItem()) Icon="add" Text="Add" ButtonStyle="ButtonStyle.Primary" />
-    </RadzenCard>
+    <PodTube.Client.Editor.Components.AssetBrowser.FileUpload.FileUpload OnUploaded=@OnCreateNewItem></PodTube.Client.Editor.Components.AssetBrowser.FileUpload.FileUpload>
 </Popup>
 
 @code {
     [Parameter] public EventCallback<Asset> AddAssetToTimeline { get; set; }
 
     private List<Asset> Assets { get; set; } = new List<Asset>();
-    private string NewItemName { get; set; } = "";
-    private string NewItemUrl { get; set; } = "";
     //private bool NewItemIsAudio { get; set; } = false;
 
     private Popup AddPopup;
     RadzenButton AddButton;
 
-    private ContentInspector? MimeInspector;
-
-    protected override void OnInitialized() {
-        base.OnInitialized();
-        MimeInspector = new ContentInspectorBuilder() {
-                Definitions = MimeDetective.Definitions.Default.All()
-        }.Build();
-    }
-
-    public async Task OnCreateNewItem() {
-        var test = await client.GetByteArrayAsync("file:///D:/Downloads/_23ef0fed-8290-4b66-bf96-af1697fabd65.jpg");
-        var data = await client.GetByteArrayAsync(NewItemUrl);
-        var mimetype = MimeInspector!.Inspect(data);
-        Assets.Add(new Asset
-            {
-                Name = NewItemName,
-                Url = NewItemUrl,
-                IsAudio = mimetype[0].Definition.File.Categories.Any(c => c == MimeDetective.Storage.Category.Audio),
-                Data = data,
-                MimeType = mimetype[0].Definition.File.MimeType ?? "",
-            }
-        );
-        ResetPopup();
+    public async Task OnCreateNewItem(Asset asset) {
+        Assets.Add(asset);
         await AddPopup.CloseAsync();
     }
 
@@ -75,9 +40,4 @@
         AddAssetToTimeline.InvokeAsync(asset);
     }
 
-    public void ResetPopup() {
-        NewItemName = "";
-        NewItemUrl = "";
-        //NewItemIsAudio = false;
-    }
 }

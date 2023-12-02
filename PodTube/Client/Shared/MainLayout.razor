@@ -4,6 +4,7 @@
 @using PodTube.Shared.Models.DTO;
 @inject LoginService LoginService;
 @inject ILocalStorageService LocalStorage;
+@inject NavigationManager Navigator
 @inherits LayoutComponentBase
 
 <MudThemeProvider Theme="PodTubeTheme" @bind-IsDarkMode=_darkMode />

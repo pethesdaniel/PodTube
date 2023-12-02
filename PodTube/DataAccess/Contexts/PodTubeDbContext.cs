@@ -21,7 +21,7 @@ namespace PodTube.DataAccess.Contexts {
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<Entities.Channel>().ToTable("Channel");
-            modelBuilder.Entity<Entities.File>().ToTable("File");
+            modelBuilder.Entity<Entities.File>().ToTable("File").HasOne(f=> f.Owner).WithMany(u=>u.Files).HasForeignKey(f=>f.OwnerId);
             modelBuilder.Entity<Entities.Frame>().ToTable("Frame");
             modelBuilder.Entity<Entities.Playlist>().ToTable("Playlist");
             modelBuilder.Entity<Entities.User>().ToTable("User");

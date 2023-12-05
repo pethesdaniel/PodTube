@@ -27,31 +27,6 @@ namespace PodTube.Controllers
         }
 
         ///// <summary>
-        ///// Deletes a video
-        ///// </summary>
-        ///// <param name="videoId">ID of video to return</param>
-        ///// <response code="200">Successful operation</response>
-        ///// <response code="404">Video not found</response>
-        ///// <response code="405">Validation exception</response>
-        //[HttpDelete]
-        //[Route("/video/{videoId}")]
-        //[ValidateModelState]
-        //[SwaggerOperation(OperationId = "VideoVideoIdDelete")]
-        //public virtual IActionResult VideoVideoIdDelete([FromRoute][Required]long? videoId)
-        //{ 
-        //    //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-        //    // return StatusCode(200);
-
-        //    //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-        //    // return StatusCode(404);
-
-        //    //TODO: Uncomment the next line to return response 405 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-        //    // return StatusCode(405);
-
-        //    throw new NotImplementedException();
-        //}
-
-        ///// <summary>
         ///// Get information and content of a video
         ///// </summary>
         ///// <param name="videoId">ID of video to return</param>
@@ -74,17 +49,37 @@ namespace PodTube.Controllers
             return new ObjectResult(result);
         }
 
+
+        /// <summary>
+        /// Upload a video
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <response code="200">Successful operation</response>
+        /// <response code="400">Invalid input</response>
+        [Authorize]
         [HttpPost("upload")]
-        [Consumes("multipart/form-data")]
         [ValidateModelState]
         [SwaggerOperation(OperationId = "PostUploadVideo")]
         [SwaggerResponse(statusCode: 200, description: "Successful operation")]
-        public async Task<ActionResult<VideoDto>> PostUploadVideo([FromForm][Required] string metadata, [FromForm][Required] List<IFormFile> files) {
-            var metadataDto = JsonSerializer.Deserialize<VideoRequestBody>(metadata);
-            var success = _videoService.UploadVideo(metadataDto!, files);
+        public async Task<ActionResult> PostUploadVideo([FromBody][Required] VideoUploadRequestBody metadata) {
+            var success = _videoService.UploadVideo(metadata);
             if (!success) {
                 return StatusCode(400);
             }
+            return StatusCode(200);
+        }
+
+        /// <summary>
+        /// Create a new playlist
+        /// </summary>
+        /// <param name="body"></param>
+        /// <response code="200">Successful operation</response>
+        /// <response code="405">Invalid input</response>
+        [HttpPost]
+        [ValidateModelState]
+        [SwaggerOperation(OperationId = "PostCreatePlaylist")]
+        [SwaggerResponse(statusCode: 200, description: "Successful operation")]
+        public async Task<ActionResult<PlaylistDto>> PostCreatePlaylist([FromBody][Required] VideoUploadRequestBody body) {
             return StatusCode(200);
         }
     }

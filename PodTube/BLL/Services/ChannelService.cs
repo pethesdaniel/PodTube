@@ -70,5 +70,10 @@ namespace PodTube.BLL.Services
 
             return mapper.Map<ChannelDto>(channel);
         }
+
+        public async Task<List<ChannelMetaDto>> GetOwnedChannels(long ownerId) {
+            var channels = dbContext.Channels.Where(channel => channel.OwnerId == ownerId).ToList();
+            return mapper.Map<List<ChannelMetaDto>>(channels) ?? new List<ChannelMetaDto>();
+        }
     }
 }

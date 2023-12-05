@@ -122,5 +122,32 @@ namespace PodTube.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        /// <summary>
+        /// Get a list of all owned channels
+        /// </summary>
+        /// <param name="page">Number of the currentpage</param>
+        /// <param name="limit">Number of channels on a page</param>
+        /// <response code="200">Successful operation</response>
+        /// <response code="400">Validation exception</response>
+        [HttpGet("mine")]
+        [ValidateModelState]
+        [SwaggerOperation(OperationId = "GetOwnedChannels")]
+        [SwaggerResponse(statusCode: 200, description: "Successful operation")]
+        public async Task<ActionResult<List<ChannelMetaDto>>> GetOwnedChannels() {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
+            var user = await _userService.GetAuthorizedUserId(User);
+            if (user == 0) {
+                return StatusCode(401);
+            }
+            try {
+                var result = await _channelService.GetOwnedChannels(user);
+                return new ObjectResult(result);
+            } catch (ArgumentException e) {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }

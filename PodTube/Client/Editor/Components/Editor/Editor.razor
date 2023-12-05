@@ -1,6 +1,8 @@
 ﻿@using PodTube.Shared.Models.DTO;
 @using PodTube.Shared.Models.Editor;
 
+<RadzenComponents />
+
 <RadzenRow>
     <RadzenColumn>
         <PodTube.Client.Editor.Components.AssetBrowser.AssetBrowser AddAssetToTimeline=AddAssetToTimeline></PodTube.Client.Editor.Components.AssetBrowser.AssetBrowser>
@@ -8,7 +10,10 @@
     <RadzenColumn>
         <RadzenCard Style="min-height: 300px; display: flex; flex-direction: column; justify-content: space-between;">
             <RadzenText TextStyle="TextStyle.Caption">Preview</RadzenText>
-            <PodTube.Client.Components.Videos.VideoPlayer.PodTubeVideoPlayer Video="VideoDto"></PodTube.Client.Components.Videos.VideoPlayer.PodTubeVideoPlayer>
+            <div>
+                <PodTube.Client.Components.Videos.VideoPlayer.PodTubeVideoPlayer Video="VideoDto"></PodTube.Client.Components.Videos.VideoPlayer.PodTubeVideoPlayer>
+                <PodTube.Client.Editor.Components.UploadPodtube.UploadPodtube timeline="Timeline"></PodTube.Client.Editor.Components.UploadPodtube.UploadPodtube>
+            </div>
         </RadzenCard>
     </RadzenColumn>
 </RadzenRow>

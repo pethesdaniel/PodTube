@@ -38,16 +38,17 @@ namespace PodTube.BLL.Services {
                     await file.CopyToAsync(fileStream);
                 }
                 fileCreated = absolutePath;
-                dbContext.Add(mapper.Map<DataAccess.Entities.File>(new FileCreate 
-                {
+                var fileDb = mapper.Map<DataAccess.Entities.File>(new FileCreate {
                     Path = relativePath,
                     UserId = userId
-                }));
+                });
+                dbContext.Add(fileDb);
                 await dbContext.SaveChangesAsync();
 
                 return new FileUploadResponseDTO {
                     Url = relativePath,
-                    MimeType = MimeTypes.GetMimeType(relativePath)
+                    MimeType = MimeTypes.GetMimeType(relativePath),
+                    FileId = fileDb.Id
                 };
             } catch (Exception _) {
                 if (!fileCreated.IsNullOrEmpty()) {

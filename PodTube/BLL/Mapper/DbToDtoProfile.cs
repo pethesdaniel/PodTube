@@ -21,6 +21,7 @@ namespace PodTube.BLL.Mapper
                 Owner = channel?.Owner?.ToUserInfoDto() ?? null
              */
             CreateMap<Channel, ChannelDto>().ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(channel => channel.Thumbnail.ResourceURI));
+            CreateMap<Channel, ChannelMetaDto>();
 
             /*
                 Url = frame.File.ResourceURI,

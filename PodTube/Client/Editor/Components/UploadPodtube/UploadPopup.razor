@@ -1,0 +1,26 @@
+﻿@using PodTube.Shared.Models.DTO;
+@inject DialogService DialogService
+<RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Title</RadzenText>
+<RadzenTextBox @bind-Value=@Name class="w-100" />
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Description</RadzenText>
+<RadzenTextArea @bind-Value=@Description class="w-100" />
+<RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Channel</RadzenText>
+<RadzenDropDown @bind-Value=@selectedChannel Data=@Channels TextProperty="Name" ValueProperty="Id" Style="width: 100%; max-width: 400px;" />
+<RadzenButton Click=@(args => OnClick()) Text="Upload" ButtonStyle="ButtonStyle.Primary" />
+
+@code {
+    [Parameter] public ICollection<ChannelMetaDto> Channels { get; set; } = new List<ChannelMetaDto>();
+
+    private long selectedChannel = 0;
+    private string Name = "";
+    private string Description = "";
+
+    private void OnClick() {
+        DialogService.Close(new UploadPopupResult
+            {
+                ChannelId = selectedChannel,
+                Name = this.Name,
+                Description = this.Description
+            });
+    }
+}

@@ -62,7 +62,7 @@
         }
         set {
             _currentTime = value;
-            CurrentTimeReadable = $"{(value / 60).ToString("00")}:{(value % 60).ToString("00")}";
+            CurrentTimeReadable = TimeSpan.FromSeconds(value).ToString(@"hh\:mm\:ss");
         }
     }
     private string CurrentTimeReadable = "00:00";
@@ -74,7 +74,7 @@
         }
         set {
             _duration = value;
-            DurationReadable = $"{(value / 60).ToString("00")}:{(value % 60).ToString("00")}";
+            DurationReadable = TimeSpan.FromSeconds(value).ToString(@"hh\:mm\:ss");
         }
     }
     private string DurationReadable = "00:00";
@@ -187,7 +187,7 @@
     private double CalculateCurrentTime(double timeInCurrentUrl) {
         double acculTime = 0;
         for (int i = 0; i < Audios.IndexOf(CurrentAudio); ++i) {
-            acculTime += Metadata[Audios[i].Url].Duration;
+            acculTime += Metadata.GetValueOrDefault(Audios[i].Url)?.Duration ?? 0;
         }
         acculTime += timeInCurrentUrl;
         return acculTime;
@@ -196,7 +196,7 @@
     private double CalculateDuration() {
         double acculTime = 0;
         for (int i = 0; i < Audios.Count; ++i) {
-            acculTime += Metadata[Audios[i].Url].Duration;
+            acculTime += Metadata.GetValueOrDefault(Audios[i].Url)?.Duration ?? 0;
         }
         return acculTime;
     }
@@ -206,7 +206,7 @@
         double returnTime = 0;
         Audio? returnAudio = null;
         for (int i = 0; i < Audios.Count; ++i) {
-            double duration = Metadata[Audios[i].Url].Duration;
+            double duration = Metadata.GetValueOrDefault(Audios[i].Url)?.Duration ?? 0;
             if (acculTime + duration > time) {
                 returnAudio = Audios[i];
                 returnTime = time - acculTime;

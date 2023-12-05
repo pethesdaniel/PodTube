@@ -8,5 +8,6 @@ namespace PodTube.Shared.Models.DTO {
     public class FileUploadResponseDTO {
         public string Url { get; set; } = "";
         public string MimeType { get; set; } = "";
+        public long FileId { get; set; }
     }
 }

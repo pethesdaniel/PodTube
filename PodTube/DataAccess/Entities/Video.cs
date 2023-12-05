@@ -13,7 +13,6 @@ namespace PodTube.DataAccess.Entities
         public virtual List<Frame> Frames { get; set; } = new();
 
         public virtual List<Audio> Audios { get; set; } = new ();
-        public long AudioId { get; set; }
 
         public virtual Channel Channel { get; set; } = null!;
         public long ChannelId { get; set; }

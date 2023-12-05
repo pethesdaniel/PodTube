@@ -58,6 +58,7 @@
                 IsAudio = response.MimeType.Contains("audio"),
                 Data = data,
                 MimeType = response.MimeType,
+                FileId = response.FileId 
         };
         ResetPopup();
         await OnUploaded.InvokeAsync(asset);
@@ -65,5 +66,6 @@
 
     public void ResetPopup() {
         NewItemName = "";
+        upload.ClearFiles();
     }
 }

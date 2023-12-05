@@ -9,20 +9,15 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace PodTube.Shared.Models.RequestBody {
-    public class FrameRequestBody {
+    public class AudioRequestBody {
         [Required]
         [DataMember(Name = "fileId")]
         [JsonPropertyName("fileId")]
         public long FileId { get; set; }
 
         [Required]
-        [DataMember(Name = "timestampStart")]
-        [JsonPropertyName("timestampStart")]
-        public int TimestampStart { get; set; }
-
-        [Required]
-        [DataMember(Name = "timestampEnd")]
-        [JsonPropertyName("timestampEnd")]
-        public int TimestampEnd { get; set; }
+        [DataMember(Name = "index")]
+        [JsonPropertyName("index")]
+        public int Index { get; set; }
     }
 }

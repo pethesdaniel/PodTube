@@ -1,0 +1,62 @@
+﻿@using PodTube.Shared.Models.DTO;
+@using PodTube.Shared.Models.Editor;
+@using PodTube.Shared.Models.RequestBody;
+@using Radzen.Blazor.Rendering;
+@inject HttpClient httpClient
+@inject NavigationManager Navigator
+@inject DialogService DialogService
+@inject RestHelper RestHelper
+
+
+<RadzenButton @ref="button" Click=@(args => OnClick()) Text="Upload" ButtonStyle="ButtonStyle.Primary" />
+
+
+@code {
+    [Parameter] public TimelineModel timeline { get; set; } = null!;
+
+    RadzenButton button = null!;
+
+    public async Task OnClick() {
+        var channelClient = new ChannelApiClient(Navigator.BaseUri, httpClient);
+        var videoClient = new VideoApiClient(Navigator.BaseUri, httpClient);
+
+        var channels = await channelClient.GetOwnedChannelsAsync();
+
+        var result = await DialogService.OpenAsync<UploadPopup>("",
+               new Dictionary<string, object>() { { "Channels", channels } },
+               new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = false });
+        var popupResult = (UploadPopupResult?)result;
+
+        if(popupResult == null) {
+            return;
+        }
+
+        var frames = new List<FrameRequestBody>();
+        foreach (var item in timeline.VisualItems) {
+            frames.Add(new FrameRequestBody {
+                    FileId = item.Asset.FileId,
+                    TimestampStart = frames.Count > 0 ? frames[frames.Count - 1].TimestampEnd : 0,
+                    TimestampEnd = frames.Count > 0 ? frames[frames.Count - 1].TimestampEnd + (int)(item.Duration) : (int)item.Duration,
+            });
+        }
+
+        var audios = timeline.AudioItems.Select((audio, index) => new PodTube.Shared.Models.RequestBody.AudioRequestBody
+            {
+                FileId = audio.Asset.FileId,
+                Index = index
+            }).ToList();
+
+        await RestHelper.MakeSafeRestCall(
+           async () => {
+               await videoClient.PostUploadVideoAsync(new PodTube.Shared.Models.RequestBody.VideoUploadRequestBody {
+                       Name = popupResult.Name,
+                       ChannelId = popupResult.ChannelId,
+                       Description = popupResult.Description,
+                       Audios = audios,
+                       Frames = frames
+                   });
+           },
+           "Video uploaded!"
+       );
+    }
+}

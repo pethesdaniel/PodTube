@@ -18,10 +18,10 @@ namespace PodTube.BLL.Mapper
                 .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(file => file.UserId))
                 .ForMember(dest => dest.MimeType, opt => opt.MapFrom(file => file.MimeType));
             CreateMap<PlaylistRequestBody, Playlist>();
-            //CreateMap<VideoRequestBody, Video>()
-            //    .ForMember(dest => dest.Audio, opt => opt.MapFrom(video => video.AudioFilename));
-            CreateMap<FrameRequestBody, Frame>();
-
+            CreateMap<VideoUploadRequestBody, Video>().ForMember(dest => dest.DatePublished, opt => opt.MapFrom(video => DateTime.UtcNow))
+                .ForMember(dest => dest.ThumbnailId, opt => opt.MapFrom(video => video.Frames.FirstOrDefault().FileId));
+            CreateMap<FrameRequestBody, Frame>(); 
+            CreateMap<AudioRequestBody, Audio>();
 
         }
     }

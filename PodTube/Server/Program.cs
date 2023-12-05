@@ -40,7 +40,6 @@ builder.Services.AddSwaggerGen(c => {
 
     // Include DataAnnotation attributes on Controller Action parameters as Swagger validation rules (e.g required, pattern, ..)
     // Use [ValidateModelState] on Actions to actually validate it in C# as well!
-    c.MapType<VideoRequestBody>(() => new OpenApiSchema { Type = "string" });
     c.EnableAnnotations();
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
         In = ParameterLocation.Header,

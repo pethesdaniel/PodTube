@@ -12,5 +12,7 @@ namespace PodTube.Shared.Models.Editor {
 
         public byte[] Data { get; set; } = Array.Empty<byte>();
         public string MimeType { get; set; } = "";
+
+        public long FileId { get; set; }
     }
 }

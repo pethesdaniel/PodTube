@@ -1,35 +1,18 @@
 ﻿@using PodTube.Shared.Models.Editor;
 @using Radzen.Blazor.Rendering;
 <div>
-    <RadzenCard class="@{"p-0 rz-text-align-center timeline-item " + GetColorClass() + " " + GetHeightClass()}" Style=@GetStyle()>
+    <RadzenCard @ref=Card 
+        class="@{"p-0 rz-text-align-center timeline-item " + GetColorClass() + " " + GetHeightClass()}"
+        Style=@GetStyle()
+                @onclick="OnEdit">
+        <div @ref=EditPopupLocation style=@EditPopupStyle></div>
         @if (Value.Asset.IsAudio) {
             <PodTube.Client.Editor.Components.Waveform.WaveformDisplay Url="@Value.Asset.Url" OnWaveformLoaded=OnWaveformLoaded style="width: 100%; height: 128px"></PodTube.Client.Editor.Components.Waveform.WaveformDisplay>
         }
         <RadzenStack Orientation="Orientation.Horizontal">
             @if (!Value.Asset.IsAudio) {
-                <RadzenImage Path="@Value.Asset.Url" class="timeline-item-height-image" />
+                <RadzenImage Path="@Value.Asset.Url" class="timeline-item-height-image"/>
             }
-            <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
-                <RadzenStack JustifyContent="JustifyContent.Start" Gap="0">
-                    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Start"><b>@(Value.Asset.Name)</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0">Duration</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-display-flex rz-mt-0"><b>@(GetDuration(Value.Duration))</b></RadzenText>
-                </RadzenStack>
-                <RadzenStack Orientation="Orientation.Horizontal">
-                    @if (DisplayLeftSwap) {
-                        <RadzenButton Click=@(args => OnLeftSwap.InvokeAsync(Value)) Icon="fast_rewind" ButtonStyle="ButtonStyle.Primary" />
-                    }
-                    @if (DisplayChangeDuration) {
-                        <RadzenButton @ref=IncreaseButtonRef Click=@(args => IncreasePopup.ToggleAsync(IncreaseButtonRef.Element)) Icon="add" ButtonStyle="ButtonStyle.Primary" />
-                        <RadzenButton @ref=DecreaseButtonRef Click=@(args => DecreasePopup.ToggleAsync(DecreaseButtonRef.Element)) Icon="remove" ButtonStyle="ButtonStyle.Primary" />
-                    }
-                    @if (DisplayRightSwap) {
-                        <RadzenButton Click=@(args => OnRightSwap.InvokeAsync(Value)) Icon="fast_forward" ButtonStyle="ButtonStyle.Primary" />
-                    }
-                    <RadzenButton Click=@(args => OnDelete.InvokeAsync(Value)) Icon="delete" ButtonStyle="ButtonStyle.Primary" />
-                </RadzenStack>
-            </RadzenStack>
-
         </RadzenStack>
 
     </RadzenCard>
@@ -44,11 +27,35 @@
     <PodTube.Client.Editor.Components.TimelineItemDisplay.DurationPopup.DurationPopup OnDone="OnDecreaseDuration" Operation="Remove time"/>
 </Popup>
 
-
+<Popup @ref=EditPopop Lazy=true Style="display:none;position:absolute;background-color:var(--rz-panel-background-color);">
+     <RadzenCard>
+        <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+            <RadzenStack JustifyContent="JustifyContent.Start" Gap="0">
+                <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Start"><b>@(Value.Asset.Name)</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0">Duration</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1" class="rz-display-flex rz-mt-0"><b>@(GetDuration(Value.Duration))</b></RadzenText>
+            </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal">
+                @if (DisplayLeftSwap) {
+                    <RadzenButton Click=@(args => OnLeftSwap.InvokeAsync(Value)) Icon="fast_rewind" ButtonStyle="ButtonStyle.Primary" />
+                }
+                @if (DisplayChangeDuration) {
+                    <RadzenButton @ref=IncreaseButtonRef Click=@(args => OpenIncreasePopup()) Icon="add" ButtonStyle="ButtonStyle.Primary" />
+                    <RadzenButton @ref=DecreaseButtonRef Click=@(args => OpenDecreasePopup()) Icon="remove" ButtonStyle="ButtonStyle.Primary" />
+                }
+                @if (DisplayRightSwap) {
+                    <RadzenButton Click=@(args => OnRightSwap.InvokeAsync(Value)) Icon="fast_forward" ButtonStyle="ButtonStyle.Primary" />
+                }
+                <RadzenButton Click=@(args => Delete()) Icon="delete" ButtonStyle="ButtonStyle.Primary" />
+            </RadzenStack>
+        </RadzenStack>
+     </RadzenCard>
+</Popup>
 
 @code {
     [Parameter] public TimelineItem Value { get; set; }
     [Parameter] public double TimelineScale { get; set; }
+    [Parameter] public bool AlternateColor { get; set; } = false;
     [Parameter] public bool DisplayLeftSwap { get; set; } = false;
     [Parameter] public bool DisplayRightSwap { get; set; } = false;
     [Parameter] public bool DisplayChangeDuration { get; set; } = false;
@@ -57,11 +64,16 @@
     [Parameter] public EventCallback<TimelineItem> OnDelete { get; set; } = new EventCallback<TimelineItem>();
     [Parameter] public EventCallback OnChanged { get; set; } = new EventCallback();
 
-
+    private ElementReference EditPopupLocation;
     private Popup IncreasePopup;
     private Popup DecreasePopup;
+    private Popup EditPopop;
+    private RadzenCard Card;
     private RadzenButton IncreaseButtonRef;
     private RadzenButton DecreaseButtonRef;
+
+    private string EditPopupStyle = "";
+    private bool openEditPopup = false;
 
     public string GetDuration(double value) {
         return TimeSpan.FromSeconds(value).ToString("c");
@@ -72,11 +84,33 @@
     }
 
     public string GetColorClass() {
-        return Value.Asset.IsAudio ? "rz-background-color-warning" : "rz-background-color-info";
+        if (Value.Asset.IsAudio) {
+            if (AlternateColor) {
+                return "rz-background-color-warning-dark";
+            } else {
+                return "rz-background-color-warning";
+            }
+        } else {
+            if (AlternateColor) {
+                return "rz-background-color-info-dark";
+            } else {
+                return "rz-background-color-info";
+            }
+        }
     }
 
     public string GetHeightClass() {
         return Value.Asset.IsAudio ? "timeline-item-height-audio" : "timeline-item-height-image";
+    }
+
+    private async Task OpenIncreasePopup() {
+        await DecreasePopup.CloseAsync();
+        await IncreasePopup.ToggleAsync(IncreaseButtonRef.Element);
+    }
+
+    private async Task OpenDecreasePopup() {
+        await IncreasePopup.CloseAsync();
+        await DecreasePopup.ToggleAsync(DecreaseButtonRef.Element);
     }
 
     public void OnIncreaseDuration(double value) {
@@ -90,6 +124,9 @@
         if(Value.Duration < 0) {
             Value.Duration = 0;
         }
+        if(Value.Duration == 0) {
+            Delete();
+        }
         DecreasePopup.CloseAsync();
         OnChanged.InvokeAsync();
     }
@@ -99,7 +136,30 @@
         OnChanged.InvokeAsync();
     }
 
+    public void Delete() {
+        OnDelete.InvokeAsync(Value);
+    }
+
     private async Task OnWaveformLoaded(double value) {
         SetDuration(value);
     }
+
+    private void GetEditPopupLocation(double x, double y) {
+        EditPopupStyle = $"position:relative; top: {y}px; left:{x}px;";
+    }
+
+    private void OnEdit(MouseEventArgs args) {
+        GetEditPopupLocation(args.OffsetX, args.OffsetY);
+        openEditPopup = true;
+    }
+
+    protected override void OnAfterRender(bool firstRender) {
+        if (openEditPopup) {
+            EditPopop.ToggleAsync(EditPopupLocation);
+            openEditPopup = false;
+            StateHasChanged();
+        }
+        base.OnAfterRender(firstRender);
+    }
+
 }

@@ -5,7 +5,8 @@
         waveColor: '#4F4A85',
         progressColor: '#383351',
         media: media,
-        url: url
+        url: url,
+        interact: false
     })
 }
 export function getDuration(element) {

@@ -21,6 +21,7 @@
                 <TimelineItemDisplay Value="@Value.VisualItems[i]"
                                      TimelineScale="TimelineScale"
                                      DisplayChangeDuration=true
+                                     AlternateColor=@(i%2 == 1)
                                      DisplayLeftSwap="i > 0"
                                      DisplayRightSwap="i < Value.VisualItems.Count - 1"
                                      OnLeftSwap="@((value)=> SwapItems(Value.VisualItems, right: value))"
@@ -34,6 +35,7 @@
             @for (int i = 0; i < Value.AudioItems.Count; ++i) {
                 <TimelineItemDisplay Value="@Value.AudioItems[i]"
                                      TimelineScale="TimelineScale"
+                                     AlternateColor=@(i%2 == 1)
                                      DisplayLeftSwap="i > 0"
                                      DisplayRightSwap="i < Value.AudioItems.Count - 1"
                                      OnLeftSwap="@((value)=> SwapItems(Value.AudioItems, right: value))"

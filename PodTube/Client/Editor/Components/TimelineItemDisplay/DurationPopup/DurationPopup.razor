@@ -12,7 +12,7 @@
     [Parameter] public EventCallback<double> OnDone { get; set; } = new EventCallback<double>();
     [Parameter] public string Operation { get; set; } = "";
     private int valueMinute = 0;
-    private int valueSeconds = 1;
+    private int valueSeconds = 0;
 
     private int GetValue() {
         return valueMinute * 60 + valueSeconds;

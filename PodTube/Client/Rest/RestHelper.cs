@@ -9,11 +9,17 @@ namespace PodTube.Client.Rest {
         }
 
         public async Task MakeSafeRestCall(Func<Task> action, string OnSuccess = "") {
+            await MakeSafeRestCall<object>(() => { action(); return null!; }, OnSuccess);
+        }
+
+
+        public async Task<T?> MakeSafeRestCall<T>(Func<Task<T>> action, string OnSuccess = "") {
             try {
-                await action();
-                if(OnSuccess.Length > 0) {
+                T result = await action();
+                if (OnSuccess.Length > 0) {
                     _snackbar.Add(OnSuccess, Severity.Success);
                 }
+                return result;
             } catch (ApiException e) {
                 string message;
                 if (e.StatusCode == 401) {
@@ -22,6 +28,7 @@ namespace PodTube.Client.Rest {
                     message = e.Response != null ? e.Response : e.Message;
                 }
                 _snackbar.Add(message, Severity.Error);
+                return default(T);
             }
         }
     }

@@ -26,6 +26,7 @@
                     @if (DisplayRightSwap) {
                         <RadzenButton Click=@(args => OnRightSwap.InvokeAsync(Value)) Icon="fast_forward" ButtonStyle="ButtonStyle.Primary" />
                     }
+                    <RadzenButton Click=@(args => OnDelete.InvokeAsync(Value)) Icon="delete" ButtonStyle="ButtonStyle.Primary" />
                 </RadzenStack>
             </RadzenStack>
 
@@ -53,6 +54,7 @@
     [Parameter] public bool DisplayChangeDuration { get; set; } = false;
     [Parameter] public EventCallback<TimelineItem> OnLeftSwap { get; set; } = new EventCallback<TimelineItem>();
     [Parameter] public EventCallback<TimelineItem> OnRightSwap { get; set; } = new EventCallback<TimelineItem>();
+    [Parameter] public EventCallback<TimelineItem> OnDelete { get; set; } = new EventCallback<TimelineItem>();
     [Parameter] public EventCallback OnChanged { get; set; } = new EventCallback();
 
 

@@ -9,7 +9,7 @@ namespace PodTube.BLL.DomainObject {
     public class FileCreate {
         public long UserId { get; set; }
         public string Path { get; set; } = null!;
-
         public string MimeType { get; set; } = "";
+        public string UserFriendlyName { get; set; } = "";
     }
 }

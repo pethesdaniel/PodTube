@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PodTube.Shared.Models.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +15,10 @@ namespace PodTube.Shared.Models.Editor {
         public string MimeType { get; set; } = "";
 
         public long FileId { get; set; }
+
+        public bool UsedElsewhere { get; set; } = false;
+
+        public bool Deleted { get; set; } = false;
+
     }
 }

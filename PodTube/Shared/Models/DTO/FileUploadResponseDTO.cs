@@ -9,5 +9,7 @@ namespace PodTube.Shared.Models.DTO {
         public string Url { get; set; } = "";
         public string MimeType { get; set; } = "";
         public long FileId { get; set; }
+        public string UserFriendlyName { get; set; } = "";
+        public bool IsUsedElsewhere { get; set; } = false;
     }
 }

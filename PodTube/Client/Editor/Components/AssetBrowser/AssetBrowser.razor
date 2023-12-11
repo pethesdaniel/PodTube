@@ -1,19 +1,30 @@
 ﻿@using MimeDetective;
+@using PodTube.Client.Editor.Util
 @using PodTube.Shared.Models.Editor;
 @using Radzen.Blazor.Rendering;
-@inject HttpClient client
+@inject NavigationManager navigator;
+@inject HttpClient client;
 
-<RadzenCard Style="min-height: 300px">
+<RadzenCard>
     <RadzenRow AlignItems="Radzen.AlignItems.Center">
         <RadzenText TextStyle="TextStyle.Caption">Asset Browser</RadzenText>
         <RadzenButton @ref=AddButton Click="@(args => AddPopup.ToggleAsync(AddButton.Element))" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-10"/>
+            <div>
+            <RadzenCheckBox TValue="bool" Value=@filter Change=@(args => Filter(args)) Name="Filter" />
+            <RadzenLabel Text="Filter used assets" Component="Filter" Style="margin-left: 8px; vertical-align: middle;" />
+            </div>
     </RadzenRow>
-    <RadzenRow class="m-2">
-        @foreach (var asset in Assets) {
-            <RadzenCard class="p-2 rz-text-align-center">
-                <PodTube.Client.Editor.Components.AssetDisplay.AssetDisplay Value="asset"></PodTube.Client.Editor.Components.AssetDisplay.AssetDisplay>
-                <RadzenButton Click=@(args => OnAddToTimeline(asset)) Icon="view_timeline" Text="Add" ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-10"/>
-            </RadzenCard>
+    <RadzenRow class="m-2" Style="max-height: 300px; overflow: scroll">
+        @if (FilteredAssets != null) {
+            foreach (var asset in FilteredAssets) {
+                <RadzenCard class="p-2 rz-text-align-center">
+                    <PodTube.Client.Editor.Components.AssetDisplay.AssetDisplay Value="asset"></PodTube.Client.Editor.Components.AssetDisplay.AssetDisplay>
+                    <RadzenButton Click=@(args => OnAddToTimeline(asset)) Icon="view_timeline" Text="Add" ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-10" />
+                    @if (!asset.UsedElsewhere) {
+                        <RadzenButton Click=@(args => Delete(asset)) Icon="delete" Text="Delete" ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-10" />
+                    }
+                </RadzenCard>
+            }
         }
     </RadzenRow>
 </RadzenCard>
@@ -23,13 +34,31 @@
 </Popup>
 
 @code {
+    [Parameter] public TimelineModel Timeline { get; set; }
     [Parameter] public EventCallback<Asset> AddAssetToTimeline { get; set; }
+    [Parameter] public EventCallback<Asset> DeleteAsset { get; set; }
 
     private List<Asset> Assets { get; set; } = new List<Asset>();
+
+    private IEnumerable<Asset> FilteredAssets { get; set; }
     //private bool NewItemIsAudio { get; set; } = false;
 
-    private Popup AddPopup;
-    RadzenButton AddButton;
+    private bool filter = true;
+
+    private Popup AddPopup = null!;
+    RadzenButton AddButton = null!;
+
+
+    protected override async Task OnInitializedAsync() {
+        await base.OnInitializedAsync();
+        var fileApiClient = new FileApiClient(navigator.BaseUri, client);
+        var files = await fileApiClient.GetFilesAsync();
+        foreach(var fileDto in files) {
+            Assets.Add(await FileConverter.AssetFromFileUploadDto(fileDto, client));
+        }
+        Filter(filter);
+    }
+
 
     public async Task OnCreateNewItem(Asset asset) {
         Assets.Add(asset);
@@ -38,6 +67,18 @@
 
     public void OnAddToTimeline(Asset asset) {
         AddAssetToTimeline.InvokeAsync(asset);
+    }
+
+    private void Filter(bool state) {
+        filter = state;
+        FilteredAssets = Assets.Where(asset => !asset.UsedElsewhere || !filter);
+    }
+
+    private async Task Delete(Asset asset) {
+        await DeleteAsset.InvokeAsync(asset);
+        if (asset.Deleted) {
+            Assets.Remove(asset);
+        }
     }
 
 }

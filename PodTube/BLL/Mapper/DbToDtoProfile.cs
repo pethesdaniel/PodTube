@@ -51,6 +51,13 @@ namespace PodTube.BLL.Mapper
             CreateMap<Playlist, PlaylistDto>().ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(playlist => playlist.Thumbnail.ResourceURI));
             CreateMap<Playlist, PlaylistBasicDto>();
 
+            CreateMap<DataAccess.Entities.File, FileUploadResponseDTO>()
+                .ForMember(dest => dest.FileId, opt => opt.MapFrom(file => file.Id))
+                .ForMember(dest => dest.MimeType, opt => opt.MapFrom(file => file.MimeType))
+                .ForMember(dest => dest.Url, opt => opt.MapFrom(file => file.ResourceURI))
+                .ForMember(dest => dest.UserFriendlyName, opt => opt.MapFrom(file => file.UserFriendlyName))
+                .ForMember(dest => dest.IsUsedElsewhere, opt => opt.MapFrom(file => file.IsUsed()));
+
         }
     }
 }

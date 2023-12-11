@@ -1,5 +1,6 @@
 ﻿@using MimeDetective;
 @using Newtonsoft.Json;
+@using PodTube.Client.Editor.Util
 @using PodTube.Client.Services;
 @using PodTube.Shared.Models.DTO;
 @using PodTube.Shared.Models.Editor;
@@ -10,9 +11,9 @@
 
 <RadzenCard>
     <RadzenText TextStyle="TextStyle.Caption">Add new asset</RadzenText>
-    <RadzenFormField Text="Name" Style="width: 100%;" class="mb-2">
+@*     <RadzenFormField Text="Name" Style="width: 100%;" class="mb-2">
         <RadzenTextBox @bind-Value="@NewItemName" Style="width: 100%;" />
-    </RadzenFormField>
+    </RadzenFormField> *@
     <RadzenUpload @ref="upload" Auto="false" Url=@GetApiUrl() Complete=@CompleteUpload class="w-100">
         <RadzenUploadHeader Name="Authorization" Value=@token />
     </RadzenUpload>
@@ -25,7 +26,7 @@
 
     private RadzenUpload upload = null!;
 
-    private string NewItemName { get; set; } = "";
+    //private string NewItemName { get; set; } = "";
 
     private string token = "";
 
@@ -48,24 +49,14 @@
         if(response == null) {
             return;
         }
-        var data = await client.GetByteArrayAsync(response.Url);
 
-        var substituteFilename = response.Url.Split("/").LastOrDefault("");
-
-        var asset = new Asset {
-                Name = NewItemName == "" ? substituteFilename : NewItemName,
-                Url = response.Url,
-                IsAudio = response.MimeType.Contains("audio"),
-                Data = data,
-                MimeType = response.MimeType,
-                FileId = response.FileId 
-        };
+        var asset = await FileConverter.AssetFromFileUploadDto(response, client);
         ResetPopup();
         await OnUploaded.InvokeAsync(asset);
     }
 
     public void ResetPopup() {
-        NewItemName = "";
+        //NewItemName = "";
         upload.ClearFiles();
     }
 }

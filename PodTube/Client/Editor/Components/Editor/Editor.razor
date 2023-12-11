@@ -1,11 +1,15 @@
 ﻿@using PodTube.Shared.Models.DTO;
 @using PodTube.Shared.Models.Editor;
+@inject NavigationManager navigator;
+@inject HttpClient client;
+@inject DialogService dialogService
+@inject RestHelper RestHelper
 
 <RadzenComponents />
 
 <RadzenRow>
     <RadzenColumn>
-        <PodTube.Client.Editor.Components.AssetBrowser.AssetBrowser AddAssetToTimeline=AddAssetToTimeline></PodTube.Client.Editor.Components.AssetBrowser.AssetBrowser>
+        <PodTube.Client.Editor.Components.AssetBrowser.AssetBrowser AddAssetToTimeline=AddAssetToTimeline DeleteAsset="DeleteAsset"></PodTube.Client.Editor.Components.AssetBrowser.AssetBrowser>
     </RadzenColumn>
     <RadzenColumn>
         <RadzenCard Style="min-height: 300px; display: flex; flex-direction: column; justify-content: space-between;">
@@ -61,5 +65,27 @@
                 Audios = Timeline.AudioItems.Select(ai => ai.Asset.Url).ToList(),
                 Frames = frames
             };
+    }
+
+    public async Task DeleteAsset(Asset asset) {
+        if(
+            Timeline.VisualItems.All(timelineAsset => timelineAsset.Asset.FileId != asset.FileId) &&
+            Timeline.AudioItems.All(timelineAsset => timelineAsset.Asset.FileId != asset.FileId)
+        ) {
+            var fileApiClient = new FileApiClient(navigator.BaseUri, client);
+            asset.Deleted = await RestHelper.MakeSafeRestCall<bool>(async () => { await fileApiClient.DeleteFileAsync(asset.FileId); return true; }, "Asset deleted!");
+
+        } else {
+            await dialogService.OpenAsync("Can't delete an item that's on the timeline!",
+            ds => 
+            @<RadzenStack>
+                <RadzenText>Remove it from the timeline first.</RadzenText>
+            </RadzenStack>,
+            new DialogOptions() {
+                ShowTitle = true,
+                Style = "min-height:auto;min-width:auto;width:auto"
+            }
+            );
+        }
     }
 }

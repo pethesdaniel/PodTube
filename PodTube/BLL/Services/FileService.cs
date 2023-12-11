@@ -7,6 +7,7 @@ using PodTube.Shared.Models.DTO;
 using PodTube.Shared.Models.RequestBody;
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +32,8 @@ namespace PodTube.BLL.Services {
             var fileCreated = "";
             try {
                 var fileName = Guid.NewGuid();
-                var fileExtension = file.FileName.Split(".").LastOrDefault("");
+                var split = file.FileName.Split(".");
+                var fileExtension = split.LastOrDefault("");
                 var relativePath = Path.Combine("uploads", fileName.ToString() + (fileExtension != "" ? "." + fileExtension : ""));
                 var absolutePath = Path.Combine(wwwrootDir, relativePath);
                 using (var fileStream = new FileStream(absolutePath, FileMode.Create)) {
@@ -40,15 +42,18 @@ namespace PodTube.BLL.Services {
                 fileCreated = absolutePath;
                 var fileDb = mapper.Map<DataAccess.Entities.File>(new FileCreate {
                     Path = relativePath,
-                    UserId = userId
+                    UserId = userId,
+                    MimeType = MimeTypes.GetMimeType(relativePath),
+                    UserFriendlyName = split.FirstOrDefault("")
                 });
                 dbContext.Add(fileDb);
                 await dbContext.SaveChangesAsync();
 
                 return new FileUploadResponseDTO {
                     Url = relativePath,
-                    MimeType = MimeTypes.GetMimeType(relativePath),
-                    FileId = fileDb.Id
+                    MimeType = fileDb.MimeType,
+                    FileId = fileDb.Id,
+                    UserFriendlyName = fileDb.UserFriendlyName
                 };
             } catch (Exception _) {
                 if (!fileCreated.IsNullOrEmpty()) {
@@ -73,6 +78,18 @@ namespace PodTube.BLL.Services {
                 return false;
             }
             return true;
+        }
+
+        public async Task<List<FileUploadResponseDTO>> GetFilesForUser(long userId) {
+            var files = await dbContext.Files
+                .Include(file => file.Audios)
+                .Include(file => file.Frames)
+                .Include(file => file.ChannelThumbnails)
+                .Include(file => file.PlaylistThumbnails)
+                .Include(file => file.ProfilePictures)
+                .Include(file => file.VideoThumbnails)
+                .Where(file => file.OwnerId == userId).ToListAsync();
+            return mapper.Map<List<FileUploadResponseDTO>>(files);
         }
     }
 }

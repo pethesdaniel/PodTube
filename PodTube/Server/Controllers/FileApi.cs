@@ -65,5 +65,22 @@ namespace PodTube.Server.Controllers {
                 return BadRequest(e.Message);
             }
         }
+
+        [Authorize]
+        [HttpGet()]
+        [ValidateModelState]
+        [SwaggerOperation(OperationId = "GetFiles")]
+        [SwaggerResponse(statusCode: 200, description: "Successful operation")]
+        public async Task<ActionResult<List<FileUploadResponseDTO>>> GetFiles() {
+            var user = await _userService.GetAuthorizedUserId(User);
+            if (user == 0) {
+                return StatusCode(401);
+            }
+            try {
+                 return await _fileService.GetFilesForUser(user);
+            } catch (ArgumentException e) {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }

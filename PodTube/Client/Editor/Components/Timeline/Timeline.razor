@@ -25,7 +25,9 @@
                                      DisplayRightSwap="i < Value.VisualItems.Count - 1"
                                      OnLeftSwap="@((value)=> SwapItems(Value.VisualItems, right: value))"
                                      OnRightSwap="@((value)=> SwapItems(Value.VisualItems, left: value))"
-                                     OnChanged="OnItemChanged" />
+                                     OnChanged="OnItemChanged"
+                                     OnDelete="OnDelete"
+                                     />
             }
         </div>
         <div style="display: flex; flex-direction: row;">
@@ -36,7 +38,8 @@
                                      DisplayRightSwap="i < Value.AudioItems.Count - 1"
                                      OnLeftSwap="@((value)=> SwapItems(Value.AudioItems, right: value))"
                                      OnRightSwap="@((value)=> SwapItems(Value.AudioItems, left: value))"
-                                     OnChanged="OnItemChanged" />
+                                     OnChanged="OnItemChanged"
+                                     OnDelete="OnDelete" />
             }
         </div>
     </div>
@@ -63,6 +66,15 @@
     }
 
     private void OnItemChanged() {
+        OnTimelineChanged.InvokeAsync();
+    }
+
+    private void OnDelete(TimelineItem item) {
+        if (Value.VisualItems.Contains(item)) {
+            Value.VisualItems.Remove(item);
+        } else if (Value.AudioItems.Contains(item)) {
+            Value.AudioItems.Remove(item);
+        }
         OnTimelineChanged.InvokeAsync();
     }
 }

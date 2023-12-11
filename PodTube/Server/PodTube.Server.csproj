@@ -29,5 +29,9 @@
     <ProjectReference Include="..\Shared\PodTube.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\" />
+  </ItemGroup>
+
 
 </Project>

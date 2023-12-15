@@ -64,9 +64,18 @@ namespace PodTube.BLL.Services {
         }
 
         public async Task<bool> DeleteFile(long fileId, long userId) {
-            var file = dbContext.Files.FirstOrDefault(file => file.Id == fileId && file.OwnerId == userId);
+            var file = dbContext.Files.Include(file => file.Audios)
+                .Include(file => file.Frames)
+                .Include(file => file.ChannelThumbnails)
+                .Include(file => file.PlaylistThumbnails)
+                .Include(file => file.ProfilePictures)
+                .Include(file => file.VideoThumbnails)
+                .FirstOrDefault(file => file.Id == fileId && file.OwnerId == userId);
             if(file == null) {
                 throw new ArgumentException("No such file id for user");
+            }
+            if (file.IsUsed()) {
+                throw new ArgumentException("File is in use. Delete resource first.");
             }
             var wwwrootDir = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot");
             var absolutePath = Path.Combine(wwwrootDir, file.ResourceURI);
